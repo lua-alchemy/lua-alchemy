@@ -1,0 +1,6 @@
+Port of the Lua programming language for ActionScript using Alchemy.
+
+Alchemy works by translating C/C++ code to ActionScript through a LLVM compiler
+which instead of producing machine or bytecode produces ActionScript. 
+The translated C/C++ code uses a big ActionScript ByteArray as the C/C++ heap and stack.
+ 
