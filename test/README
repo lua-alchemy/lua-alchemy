@@ -1,0 +1,4 @@
+This directory includes files we use to test Lua Alchemy.
+
+  lua5.1-tests/ -- The Official Lua 5.1 Test Suite from 
+                   http://www.inf.puc-rio.br/~roberto/lua/lua5.1-tests.tar.gz
