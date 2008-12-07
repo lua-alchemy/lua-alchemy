@@ -7,4 +7,4 @@
 .settings
 .actionScriptProperties
 .flexProperties
-
+test/FluintLuaTests/bin-*
