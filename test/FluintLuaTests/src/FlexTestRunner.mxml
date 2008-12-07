@@ -8,13 +8,15 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import net.digitalprimates.fluint.unitTests.frameworkSuite.FrameworkSuite;
+			import wrapperSuite.WrapperSuite;
+			import luaalchemy.lua_wrapper;
 			
 			protected function startTestProcess( event:Event ) : void
 			{
 				var suiteArray:Array = new Array();
-					suiteArray.push( new FrameworkSuite() );
-				
+
+				suiteArray.push(new WrapperSuite());
+
 				testRunner.startTests( suiteArray );
 			}
 			

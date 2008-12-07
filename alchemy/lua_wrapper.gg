@@ -1,0 +1,100 @@
+{ // start of pass-thru C section
+/*
+** This is the generated file produced from lua_wrapper.gg
+** Wrapper for Lua.
+**
+*/
+
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdio.h>
+
+/* Include the Lua API header files. */
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
+/* AS3.h is included automatically by gluegen */
+
+void sztrace(char*);
+
+/* Some global variables initialized in ggInit() */
+AS3_Val no_params = NULL;
+AS3_Val zero_param = NULL;
+AS3_Val ByteArray_class = NULL;
+
+/* Create an ActionScript array from the lua stack values */
+static AS3_Val createArrayFromLuaStack(lua_State *L, int start, int end)
+{
+  AS3_Val array = AS3_Array("");
+  const char *value;
+  int i;
+  for (i = start; i <= end; i++)
+  {
+    value = lua_tostring(L, i);
+    AS3_CallS("push", array, AS3_Array("StrType", value));
+  }
+  return array;
+}
+
+static void register_as3_functions(lua_State *lua_ctx)
+{
+
+}
+
+/* 
+  Creates the lua context, opens the standard libs, and registers functions
+*/
+static lua_State * create_context()
+{
+  lua_State *lua_ctx;
+	lua_ctx = lua_open();
+  luaL_openlibs(lua_ctx);
+  register_as3_functions(lua_ctx);
+  return lua_ctx;
+}
+
+/* Helper function get an actionscript class with the given namespace and class name */
+static AS3_Val get_class(const char *as_namespace, const char *as_class)
+{
+  AS3_Val flash_namespace = AS3_String(as_namespace);
+  AS3_Val ret = AS3_NSGetS(flash_namespace, as_class);
+	AS3_Release(flash_namespace);
+	return ret;
+}
+
+/* This function will be called at the top of the generated main(). The GGINIT_DEFINED macro is required. */
+#define GGINIT_DEFINED true
+static void ggInit()
+{
+	sztrace("setting up lua_wrapper library");
+
+	/* setup some useful constants */
+	no_params = AS3_Array("");
+	zero_param = AS3_Int(0);
+	ByteArray_class = get_class("flash.utils", "ByteArray");
+}
+
+
+/* end of passthru C section */
+}
+
+public function luaCreateContext():(lua_State *)uint
+{
+  return create_context();
+}
+
+public function luaClose(lua_ctx:(lua_State *)uint):void
+{
+  lua_close(lua_ctx);
+}
+
+public function luaDoString(lua_ctx:(lua_State *)uint, str:String):(AS3_Val)Array
+{
+  sztrace(str);
+  int status;
+
+  status = luaL_dostring(lua_ctx, str);  
+  return createArrayFromLuaStack(lua_ctx, 1, lua_gettop(lua_ctx));
+}

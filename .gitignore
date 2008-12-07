@@ -7,4 +7,16 @@
 .settings
 .actionScriptProperties
 .flexProperties
+
 test/FluintLuaTests/bin-*
+
+alchemy/glue.*
+alchemy/bin
+alchemy/lua_wrapper.as
+alchemy/lua_wrapper.swc
+
+lua/src/*.o
+lua/src/liblua.a
+lua/src/lua
+lua/src/lua.l.bc
+lua/src/luac
