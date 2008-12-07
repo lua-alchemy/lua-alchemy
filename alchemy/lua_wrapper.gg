@@ -56,11 +56,23 @@ static lua_State * create_context()
 }
 
 /* Helper function get an actionscript class with the given namespace and class name */
-static AS3_Val get_class(const char *as_namespace, const char *as_class)
+static AS3_Val get_class(const char *as_class_path)
 {
-  AS3_Val flash_namespace = AS3_String(as_namespace);
-  AS3_Val ret = AS3_NSGetS(flash_namespace, as_class);
-	AS3_Release(flash_namespace);
+  char *class_ptr = strrchr(as_class_path, '.');
+  if (class_ptr == NULL)
+    return AS3_Null();
+  
+  AS3_Val as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
+  AS3_Val as_class = AS3_String(class_ptr+1);
+
+  AS3_Trace(as_namespace);
+  AS3_Trace(as_class);
+  
+  AS3_Val ret = AS3_NSGet(as_namespace, as_class);
+
+	AS3_Release(as_namespace);
+	AS3_Release(as_class);
+
 	return ret;
 }
 
@@ -73,7 +85,7 @@ static void ggInit()
 	/* setup some useful constants */
 	no_params = AS3_Array("");
 	zero_param = AS3_Int(0);
-	ByteArray_class = get_class("flash.utils", "ByteArray");
+	ByteArray_class = get_class("flash.utils.ByteArray");
 }
 
 
