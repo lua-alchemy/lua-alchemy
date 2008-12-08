@@ -22,6 +22,10 @@ void sztrace(char*);
 /* Some global variables initialized in ggInit() */
 AS3_Val no_params = NULL;
 AS3_Val zero_param = NULL;
+AS3_Val Number_class = NULL;
+AS3_Val int_class = NULL;
+AS3_Val String_class = NULL;
+AS3_Val Boolean_class = NULL;
 
 typedef struct AS3LuaUserData
 {
@@ -91,11 +95,19 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
         value = AS3_Number(lua_tonumber(L, i));
         break;
 
+      case LUA_TNIL:  /* nil */
+        value = AS3_Null();
+        break;
+
       case LUA_TUSERDATA:  /* userdata should only be AS3LuaUserData */
         userdata = (AS3LuaUserData *) lua_touserdata(L, i);
         value = userdata->value;
         break;
-
+      
+      case LUA_TLIGHTUSERDATA: /* not used */
+      case LUA_TTABLE: /* TODO deal with this type */
+      case LUA_TFUNCTION: /* TODO deal with this type */
+      case LUA_TTHREAD: /* TODO deal with this type */
       default:  /* other values */
         value = AS3_String(lua_typename(L, t));
         break;
@@ -105,6 +117,16 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
   }
   sztrace("create_as3_array_from_lua_stack() end");
   return array;
+}
+
+static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
+{
+  AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
+  userdata->value = val;
+}
+
+static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
+{
 }
 
 static void clear_lua_stack(lua_State *L)
@@ -118,15 +140,15 @@ static void clear_lua_stack(lua_State *L)
 static int as3_class(lua_State *L)
 {
   sztrace("as3_class()");
+
   const char *classname = lua_tostring(L, 1);
   luaL_argcheck(L, classname != NULL, 1, "'package.ClassName' expected");
-    
-  AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
-  userdata->value = get_class(classname);
-  sztrace("as3_class() object");
-  AS3_Trace(userdata->value);
-  /* TODO error if as_class == null */
   
+  AS3_Val as_class = get_class(classname);
+  luaL_argcheck(L, as_class != NULL, 1, "'package.ClassName' must be valid");
+  
+  push_as3_lua_userdata(L, as_class);
+
   return 1;
 }
 
@@ -143,11 +165,10 @@ static int as3_new(lua_State *L)
   sztrace("as3_new() params");
   AS3_Val params = create_as3_array_from_lua_stack(L, 2, lua_gettop(L));
   
-  AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
-  userdata->value = AS3_New(as_class, params);
-  sztrace("as3_new() object");
-  AS3_Trace(userdata->value);
+  AS3_Val as_object = AS3_New(as_class, params);
   /* TODO error if as_object == null */
+
+  push_as3_lua_userdata(L, as_object);
   
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
@@ -247,6 +268,10 @@ static void ggInit()
 	/* setup some useful constants */
 	no_params = AS3_Array("");
 	zero_param = AS3_Int(0);
+  Number_class = get_class("Number");
+  int_class = get_class("int");
+  String_class = get_class("String");
+  Boolean_class = get_class("Boolean");
 }
 
 
