@@ -68,11 +68,17 @@ package wrapperSuite.tests
 			assertTrue(stack[0] is Class);
 		}
 		
-/*
 		public function testAS3Get():void
 		{
+			var script:String = "v = as3.new(\"Array\")\nreturn as3.get(v, \"length\")"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertTrue(stack[0] is int);
+			assertEquals(0, stack[0]);
 		}
 		
+		// TODO test getting every possible type defined in push_as3_to_lua_stack(), also check type on lua end
+/*		
 		public function testAS3Set():void
 		{
 		}

@@ -127,6 +127,34 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 {
+  if (AS3_InstanceOf(val, Number_class))
+  {
+    lua_pushnumber(L, AS3_NumberValue(val));
+  }
+  else if (AS3_InstanceOf(val, int_class))
+  {
+    lua_pushnumber(L, AS3_IntValue(val));
+  }
+  else if (AS3_InstanceOf(val, String_class))
+  {
+    AS3_Malloced_Str str = AS3_StringValue(val);
+    lua_pushstring(L, str);
+    free(str);
+  }
+  else if (AS3_InstanceOf(val, Boolean_class))
+  {
+    AS3_Malloced_Str str = AS3_StringValue(val);
+    lua_pushboolean(L, strcmp(str, "true") == 0);
+    free(str);
+  }
+  else if (val == AS3_Undefined() || val == AS3_Null())
+  {
+    lua_pushnil(L);
+  }
+  else
+  {
+    push_as3_lua_userdata(L, val);
+  }
 }
 
 static void clear_lua_stack(lua_State *L)
@@ -197,8 +225,16 @@ static int as3_get(lua_State *L)
 
   AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
   luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  
+  const char *property = lua_tostring(L, 2);
+  luaL_argcheck(L, property != NULL, 2, "'property' expected");
+  
+  AS3_Val val = AS3_GetS(userdata->value, property);
+  /* TODO check for invalid property */
 
-  return 0;
+  push_as3_to_lua_stack(L, val);
+  
+  return 1;
 }
 
 static int as3_set(lua_State *L)
