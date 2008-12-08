@@ -24,37 +24,6 @@ AS3_Val no_params = NULL;
 AS3_Val zero_param = NULL;
 AS3_Val ByteArray_class = NULL;
 
-/* Create an ActionScript array from the lua stack values */
-static AS3_Val createArrayFromLuaStack(lua_State *L, int start, int end)
-{
-  AS3_Val array = AS3_Array("");
-  const char *value;
-  int i;
-  for (i = start; i <= end; i++)
-  {
-    value = lua_tostring(L, i);
-    AS3_CallS("push", array, AS3_Array("StrType", value));
-  }
-  return array;
-}
-
-static void register_as3_functions(lua_State *lua_ctx)
-{
-
-}
-
-/* 
-  Creates the lua context, opens the standard libs, and registers functions
-*/
-static lua_State * create_context()
-{
-  lua_State *lua_ctx;
-	lua_ctx = lua_open();
-  luaL_openlibs(lua_ctx);
-  register_as3_functions(lua_ctx);
-  return lua_ctx;
-}
-
 /* Helper function get an actionscript class with the given namespace and class name */
 static AS3_Val get_class(const char *as_class_path)
 {
@@ -74,6 +43,103 @@ static AS3_Val get_class(const char *as_class_path)
 	AS3_Release(as_class);
 
 	return ret;
+}
+
+/* Create an ActionScript array from the lua stack values */
+static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
+{
+  AS3_Val array = AS3_Array("");
+  const char *value;
+  int i;
+  for (i = start; i <= end; i++)
+  {
+    value = lua_tostring(L, i);
+    /* TODO create the proper AS3 type based on the type in the stack */
+    AS3_CallS("push", array, AS3_Array("StrType", value));
+  }
+  return array;
+}
+
+static void clear_lua_stack(lua_State *L)
+{
+  int i;
+  i = lua_gettop(L);
+  for (i = lua_gettop(L); i > 0; i--)
+    lua_remove(L, i);
+}
+
+static int as3_class(lua_State *L)
+{
+  sztrace("as3_class()");
+  return 0;
+}
+
+static int as3_new(lua_State *L)
+{
+  sztrace("as3_new()");
+  return 0;
+}
+
+static int as3_release(lua_State *L)
+{
+  sztrace("as3_release()");
+  return 0;
+}
+
+static int as3_get(lua_State *L)
+{
+  sztrace("as3_get()");
+  return 0;
+}
+
+static int as3_set(lua_State *L)
+{
+  sztrace("as3_set()");
+  return 0;
+}
+
+static int as3_call(lua_State *L)
+{
+  sztrace("as3_call()");
+  return 0;
+}
+
+static int as3_yield(lua_State *L)
+{
+  sztrace("as3_new()");
+  return 0;
+}
+
+static int as3_stage(lua_State *L)
+{
+  sztrace("as3_stage()");
+  return 0;
+}
+
+static const luaL_reg AS3_LUA_LIB[] =
+{
+  { "as3Class", as3_class },
+  { "as3New", as3_new },
+  { "as3Release", as3_release },
+  { "as3Get", as3_get },
+  { "as3Set", as3_set },
+  { "as3Call", as3_call },
+  { "as3Yield", as3_yield },
+  { "as3Stage", as3_stage },
+  { NULL, NULL } /* The end */
+};
+
+/* 
+  Creates the lua context, opens the standard libs, and registers functions
+*/
+static lua_State * create_context()
+{
+  lua_State *lua_ctx;
+	lua_ctx = lua_open();
+  luaL_openlibs(lua_ctx);
+  luaL_register(lua_ctx, "as3", AS3_LUA_LIB);
+  clear_lua_stack(lua_ctx); /* TODO the call above put something on the stack */
+  return lua_ctx;
 }
 
 /* This function will be called at the top of the generated main(). The GGINIT_DEFINED macro is required. */
@@ -108,5 +174,5 @@ public function luaDoString(lua_ctx:(lua_State *)uint, str:String):(AS3_Val)Arra
   int status;
 
   status = luaL_dostring(lua_ctx, str);  
-  return createArrayFromLuaStack(lua_ctx, 1, lua_gettop(lua_ctx));
+  return create_as3_array_from_lua_stack(lua_ctx, 1, lua_gettop(lua_ctx));
 }
