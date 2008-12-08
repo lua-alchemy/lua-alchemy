@@ -60,11 +60,15 @@ package wrapperSuite.tests
 			assertNull(stack[0]);
 		}
 		 
-/*
 		public function testAS3Class():void
 		{
+			var script:String = "v = as3.class(\"String\")\nreturn v"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertTrue(stack[0] is Class);
 		}
 		
+/*
 		public function testAS3Get():void
 		{
 		}

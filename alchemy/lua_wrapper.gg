@@ -35,6 +35,8 @@ static AS3_Val get_class(const char *as_class_path)
   sprintf(msg, "get_class %s", as_class_path);
   sztrace(msg);
 
+  /* TODO might want to store classes in a table to save loading again */
+
   char *class_ptr = strrchr(as_class_path, '.');
   
   AS3_Val as_namespace;
@@ -116,7 +118,16 @@ static void clear_lua_stack(lua_State *L)
 static int as3_class(lua_State *L)
 {
   sztrace("as3_class()");
-  return 0;
+  const char *classname = lua_tostring(L, 1);
+  luaL_argcheck(L, classname != NULL, 1, "'package.ClassName' expected");
+    
+  AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
+  userdata->value = get_class(classname);
+  sztrace("as3_class() object");
+  AS3_Trace(userdata->value);
+  /* TODO error if as_class == null */
+  
+  return 1;
 }
 
 static int as3_new(lua_State *L)
@@ -124,7 +135,7 @@ static int as3_new(lua_State *L)
   sztrace("as3_new()");
 
   const char *classname = lua_tostring(L, 1);
-  /* TODO error if classname == null */
+  luaL_argcheck(L, classname != NULL, 1, "'package.ClassName' expected");
   
   AS3_Val as_class = get_class(classname);
   /* TODO error if as_class == null */
