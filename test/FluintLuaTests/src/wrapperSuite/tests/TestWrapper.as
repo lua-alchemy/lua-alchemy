@@ -52,15 +52,19 @@ package wrapperSuite.tests
 			assertTrue(stack[0] is ByteArray);
 		}
 
+		public function testAS3Release():void
+		{
+			var script:String = "v = as3.new(\"flash.utils.ByteArray\")\nas3.release(v)\nreturn v"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertNull(stack[0]);
+		}
+		 
 /*
 		public function testAS3Class():void
 		{
 		}
 		
-		public function testAS3Release():void
-		{
-		}
-		 
 		public function testAS3Get():void
 		{
 		}

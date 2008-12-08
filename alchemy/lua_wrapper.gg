@@ -146,24 +146,46 @@ static int as3_new(lua_State *L)
 static int as3_release(lua_State *L)
 {
   sztrace("as3_release()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+
+  if (userdata->value != AS3_Null())
+  {
+    AS3_Release(userdata->value);
+    userdata->value = AS3_Null();
+  }
+  
   return 0;
 }
 
 static int as3_get(lua_State *L)
 {
   sztrace("as3_get()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+
   return 0;
 }
 
 static int as3_set(lua_State *L)
 {
   sztrace("as3_set()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+
   return 0;
 }
 
 static int as3_call(lua_State *L)
 {
   sztrace("as3_call()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+
   return 0;
 }
 
