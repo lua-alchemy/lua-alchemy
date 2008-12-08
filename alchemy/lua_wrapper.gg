@@ -219,6 +219,18 @@ static int as3_release(lua_State *L)
   return 0;
 }
 
+static int as3_toluatype(lua_State *L)
+{
+  sztrace("as3_toluatype()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  
+  push_as3_to_lua_stack(L, userdata->value);
+  
+  return 1;
+}
+
 static int as3_get(lua_State *L)
 {
   sztrace("as3_get()");
@@ -274,6 +286,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
+  { "toluatype", as3_toluatype },
   { "get", as3_get },
   { "set", as3_set },
   { "call", as3_call },

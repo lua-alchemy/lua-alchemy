@@ -60,6 +60,14 @@ package wrapperSuite.tests
 			assertNull(stack[0]);
 		}
 		 
+		public function testAS3ToLuaTypeNumber():void
+		{
+			var script:String = "n1 = as3.new(\"int\", 7)\nn2 = as3.new(\"Number\", 6)\nreturn as3.toluatype(n1) + as3.toluatype(n2)"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertEquals(13, stack[0]);
+		}
+		 
 		public function testAS3Class():void
 		{
 			var script:String = "v = as3.class(\"String\")\nreturn v"
