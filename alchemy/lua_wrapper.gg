@@ -22,18 +22,34 @@ void sztrace(char*);
 /* Some global variables initialized in ggInit() */
 AS3_Val no_params = NULL;
 AS3_Val zero_param = NULL;
-AS3_Val ByteArray_class = NULL;
+
+typedef struct AS3LuaUserData
+{
+  AS3_Val value;
+} AS3LuaUserData;
 
 /* Helper function get an actionscript class with the given namespace and class name */
 static AS3_Val get_class(const char *as_class_path)
 {
-  char *class_ptr = strrchr(as_class_path, '.');
-  if (class_ptr == NULL)
-    return AS3_Null();
-  
-  AS3_Val as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
-  AS3_Val as_class = AS3_String(class_ptr+1);
+  char msg[1024];
+  sprintf(msg, "get_class %s", as_class_path);
+  sztrace(msg);
 
+  char *class_ptr = strrchr(as_class_path, '.');
+  
+  AS3_Val as_namespace;
+  AS3_Val as_class;
+  
+  if (class_ptr > as_class_path)
+  {
+    as_namespace= AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
+    as_class = AS3_String(class_ptr+1);
+  }
+  else
+  {
+    as_namespace = AS3_String("");
+    as_class = AS3_String(as_class_path);
+  }
   AS3_Trace(as_namespace);
   AS3_Trace(as_class);
   
@@ -48,15 +64,44 @@ static AS3_Val get_class(const char *as_class_path)
 /* Create an ActionScript array from the lua stack values */
 static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
 {
+  char msg[1024];
+  sprintf(msg, "create_as3_array_from_lua_stack() start %d %d", start, end);
+  sztrace(msg);
+  
   AS3_Val array = AS3_Array("");
-  const char *value;
+  AS3_Val value;
+  AS3LuaUserData *userdata;
   int i;
   for (i = start; i <= end; i++)
   {
-    value = lua_tostring(L, i);
-    /* TODO create the proper AS3 type based on the type in the stack */
-    AS3_CallS("push", array, AS3_Array("StrType", value));
+    int t = lua_type(L, i);
+    switch (t)
+    {
+      case LUA_TSTRING:  /* strings */
+        value = AS3_String(lua_tostring(L, i));
+        break;
+
+      case LUA_TBOOLEAN:  /* booleans */
+        value = lua_toboolean(L, i) ? AS3_True() : AS3_False();
+        break;
+      
+      case LUA_TNUMBER:  /* numbers */
+        value = AS3_Number(lua_tonumber(L, i));
+        break;
+
+      case LUA_TUSERDATA:  /* userdata should only be AS3LuaUserData */
+        userdata = (AS3LuaUserData *) lua_touserdata(L, i);
+        value = userdata->value;
+        break;
+
+      default:  /* other values */
+        value = AS3_String(lua_typename(L, t));
+        break;
+    }
+    AS3_Trace(value);
+    AS3_CallS("push", array, AS3_Array("AS3ValType", value));    
   }
+  sztrace("create_as3_array_from_lua_stack() end");
   return array;
 }
 
@@ -77,7 +122,25 @@ static int as3_class(lua_State *L)
 static int as3_new(lua_State *L)
 {
   sztrace("as3_new()");
-  return 0;
+
+  const char *classname = lua_tostring(L, 1);
+  /* TODO error if classname == null */
+  
+  AS3_Val as_class = get_class(classname);
+  /* TODO error if as_class == null */
+  
+  sztrace("as3_new() params");
+  AS3_Val params = create_as3_array_from_lua_stack(L, 2, lua_gettop(L));
+  
+  AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
+  userdata->value = AS3_New(as_class, params);
+  sztrace("as3_new() object");
+  AS3_Trace(userdata->value);
+  /* TODO error if as_object == null */
+  
+  AS3_Release(params);
+  AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
+  return 1;
 }
 
 static int as3_release(lua_State *L)
@@ -118,14 +181,14 @@ static int as3_stage(lua_State *L)
 
 static const luaL_reg AS3_LUA_LIB[] =
 {
-  { "as3Class", as3_class },
-  { "as3New", as3_new },
-  { "as3Release", as3_release },
-  { "as3Get", as3_get },
-  { "as3Set", as3_set },
-  { "as3Call", as3_call },
-  { "as3Yield", as3_yield },
-  { "as3Stage", as3_stage },
+  { "class", as3_class },
+  { "new", as3_new },
+  { "release", as3_release },
+  { "get", as3_get },
+  { "set", as3_set },
+  { "call", as3_call },
+  { "yield", as3_yield },
+  { "stage", as3_stage },
   { NULL, NULL } /* The end */
 };
 
@@ -151,7 +214,6 @@ static void ggInit()
 	/* setup some useful constants */
 	no_params = AS3_Array("");
 	zero_param = AS3_Int(0);
-	ByteArray_class = get_class("flash.utils.ByteArray");
 }
 
 
@@ -170,9 +232,8 @@ public function luaClose(lua_ctx:(lua_State *)uint):void
 
 public function luaDoString(lua_ctx:(lua_State *)uint, str:String):(AS3_Val)Array
 {
-  sztrace(str);
   int status;
-
-  status = luaL_dostring(lua_ctx, str);  
+  status = luaL_dostring(lua_ctx, str);
+  /* TODO handle status */
   return create_as3_array_from_lua_stack(lua_ctx, 1, lua_gettop(lua_ctx));
 }

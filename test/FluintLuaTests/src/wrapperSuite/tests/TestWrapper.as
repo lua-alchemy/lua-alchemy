@@ -1,5 +1,7 @@
 package wrapperSuite.tests
 {
+	import flash.utils.ByteArray;
+	
 	import luaalchemy.lua_wrapper;
 	
 	import net.digitalprimates.fluint.tests.TestCase;
@@ -11,6 +13,15 @@ package wrapperSuite.tests
 			super();
 		}
 		
+		private var luaCtx:uint;
+		override protected function setUp():void {
+			luaCtx = lua_wrapper.luaCreateContext();
+		}
+		
+		override protected function tearDown():void {
+			lua_wrapper.luaClose(luaCtx);
+		}
+		
 		public function testCreateCloseContext():void
 		{
 			var luaCtx:uint = lua_wrapper.luaCreateContext();
@@ -20,23 +31,32 @@ package wrapperSuite.tests
 		
 		public function testDoScriptAdd():void
 		{
-			var luaCtx:uint = lua_wrapper.luaCreateContext();
-			
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, "return 1+5");
 			assertEquals(1, stack.length);
-			assertEquals(stack[0], "6");
-			
-			lua_wrapper.luaClose(luaCtx);
+			assertEquals(6, stack[0]);
 		}
 
+		public function testAS3NewArray():void 
+		{
+			var script:String = "v = as3.new(\"Array\")\nreturn v"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertTrue(stack[0] is Array);
+		}
+
+		public function testAS3NewByteArray():void 
+		{
+			var script:String = "v = as3.new(\"flash.utils.ByteArray\")\nreturn v"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			assertEquals(1, stack.length);
+			assertTrue(stack[0] is ByteArray);
+		}
+
+/*
 		public function testAS3Class():void
 		{
 		}
 		
-		public function testAS3New():void 
-		{
-		}
-		 		
 		public function testAS3Release():void
 		{
 		}
@@ -60,6 +80,6 @@ package wrapperSuite.tests
 		public function testAS3Stage():void
 		{
 		}
-		
+*/
 	}
 }
