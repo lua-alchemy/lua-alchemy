@@ -22,7 +22,7 @@ package wrapperSuite.tests
 			lua_wrapper.luaClose(luaCtx);
 		}
 
-/*		
+		
 		public function testCreateCloseContext():void
 		{
 			var luaCtx:uint = lua_wrapper.luaCreateContext();
@@ -85,7 +85,7 @@ package wrapperSuite.tests
 			assertTrue(stack[0] is int);
 			assertEquals(0, stack[0]);
 		}
-*/
+
 		
 		// TODO test getting every possible type defined in push_as3_to_lua_stack(), also check type on lua end
 
@@ -117,8 +117,33 @@ package wrapperSuite.tests
 			assertEquals("hello", stack[1]);
 		}
 		
+		public function testAS3CallSetNameAge():void
+		{
+			var script:String = ( <![CDATA[
+				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				as3.call(v, "setNameAge", "Robert", 38)
+				return as3.get(v, "nameAge")
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			
+			assertEquals(1, stack.length);
+			assertEquals("Name: Robert age: 38", stack[0]);
+		}
+		
+		public function testAS3CallStaticNameAge():void
+		{
+			var script:String = ( <![CDATA[
+				v = as3.class("wrapperSuite.tests.TestWrapperHelper")
+				return as3.call(v, "staticNameAge", "Jessie James", 127)
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+			
+			assertEquals(1, stack.length);
+			assertEquals("Name: Jessie James age: 127", stack[0]);
+		}
+		
 /*		
-		public function testAS3Call():void
+		public function testAS3Equals():void
 		{
 		}
 		

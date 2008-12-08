@@ -277,6 +277,21 @@ static int as3_set(lua_State *L)
   return 0;
 }
 
+static int as3_equals(lua_State *L)
+{
+  sztrace("as3_set()");
+
+  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
+  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  
+  AS3_Val value = get_as3_value_from_lua_stack(L, 2);
+  luaL_argcheck(L, value != AS3_Undefined(), 2, "'value' expected");
+   
+  /* TODO how to assign the value of a String, Number, int, etc? var s:String; s = "hello"; */
+
+  return 0;
+}
+
 static int as3_call(lua_State *L)
 {
   sztrace("as3_call()");
@@ -284,7 +299,18 @@ static int as3_call(lua_State *L)
   AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
   luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
 
-  return 0;
+  const char *function_name = lua_tostring(L, 2);
+  luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
+
+  AS3_Val params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
+
+  AS3_Val result;
+  result = AS3_CallS(function_name, userdata->value, params);
+  /* TODO check for function call failure */
+  
+  push_as3_to_lua_stack(L, result);
+
+  return 1;
 }
 
 static int as3_yield(lua_State *L)
@@ -307,6 +333,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "toluatype", as3_toluatype },
   { "get", as3_get },
   { "set", as3_set },
+  { "equals", as3_equals },
   { "call", as3_call },
   { "yield", as3_yield },
   { "stage", as3_stage },
