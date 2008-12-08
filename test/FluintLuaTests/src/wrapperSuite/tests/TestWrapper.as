@@ -21,7 +21,8 @@ package wrapperSuite.tests
 		override protected function tearDown():void {
 			lua_wrapper.luaClose(luaCtx);
 		}
-		
+
+/*		
 		public function testCreateCloseContext():void
 		{
 			var luaCtx:uint = lua_wrapper.luaCreateContext();
@@ -84,13 +85,39 @@ package wrapperSuite.tests
 			assertTrue(stack[0] is int);
 			assertEquals(0, stack[0]);
 		}
+*/
 		
 		// TODO test getting every possible type defined in push_as3_to_lua_stack(), also check type on lua end
-/*		
-		public function testAS3Set():void
+
+		public function testAS3SetPublicString():void
 		{
+			var script:String = "v = as3.new(\"wrapperSuite.tests.TestWrapperHelper\")\nas3.set(v, \"string1\", \"hello\")\nreturn v, as3.get(v, \"string1\")"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+
+			assertEquals(2, stack.length);
+
+			assertTrue(stack[0] is TestWrapperHelper);			
+			var helper:TestWrapperHelper = stack[0] as TestWrapperHelper;
+			assertEquals("hello", helper.string1);
+			
+			assertEquals("hello", stack[1]);
 		}
 		
+		public function testAS3StringGetterSetter():void
+		{
+			var script:String = "v = as3.new(\"wrapperSuite.tests.TestWrapperHelper\")\nas3.set(v, \"string2\", \"hello\")\nreturn v, as3.get(v, \"string2\")"
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+
+			assertEquals(2, stack.length);
+
+			assertTrue(stack[0] is TestWrapperHelper);			
+			var helper:TestWrapperHelper = stack[0] as TestWrapperHelper;
+			assertEquals("hello", helper.string2);
+			
+			assertEquals("hello", stack[1]);
+		}
+		
+/*		
 		public function testAS3Call():void
 		{
 		}

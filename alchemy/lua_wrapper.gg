@@ -67,6 +67,47 @@ static AS3_Val get_class(const char *as_class_path)
 	return ret;
 }
 
+static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
+{
+  AS3_Val value = AS3_Undefined();
+  AS3LuaUserData *userdata;
+  
+  int t = lua_type(L, i);
+  switch (t)
+  {
+    case LUA_TSTRING:  /* strings */
+      value = AS3_String(lua_tostring(L, i));
+      break;
+
+    case LUA_TBOOLEAN:  /* booleans */
+      value = lua_toboolean(L, i) ? AS3_True() : AS3_False();
+      break;
+  
+    case LUA_TNUMBER:  /* numbers */
+      value = AS3_Number(lua_tonumber(L, i));
+      break;
+
+    case LUA_TNIL:  /* nil */
+      value = AS3_Null();
+      break;
+
+    case LUA_TUSERDATA:  /* userdata should only be AS3LuaUserData */
+      userdata = (AS3LuaUserData *) lua_touserdata(L, i);
+      value = userdata->value;
+      break;
+  
+    case LUA_TLIGHTUSERDATA: /* not used */
+    case LUA_TTABLE: /* TODO deal with this type */
+    case LUA_TFUNCTION: /* TODO deal with this type */
+    case LUA_TTHREAD: /* TODO deal with this type */
+    default:  /* other values */
+      value = AS3_String(lua_typename(L, t));
+      break;
+  }
+  
+  return value;
+}
+
 /* Create an ActionScript array from the lua stack values */
 static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
 {
@@ -76,42 +117,10 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
   
   AS3_Val array = AS3_Array("");
   AS3_Val value;
-  AS3LuaUserData *userdata;
   int i;
   for (i = start; i <= end; i++)
   {
-    int t = lua_type(L, i);
-    switch (t)
-    {
-      case LUA_TSTRING:  /* strings */
-        value = AS3_String(lua_tostring(L, i));
-        break;
-
-      case LUA_TBOOLEAN:  /* booleans */
-        value = lua_toboolean(L, i) ? AS3_True() : AS3_False();
-        break;
-      
-      case LUA_TNUMBER:  /* numbers */
-        value = AS3_Number(lua_tonumber(L, i));
-        break;
-
-      case LUA_TNIL:  /* nil */
-        value = AS3_Null();
-        break;
-
-      case LUA_TUSERDATA:  /* userdata should only be AS3LuaUserData */
-        userdata = (AS3LuaUserData *) lua_touserdata(L, i);
-        value = userdata->value;
-        break;
-      
-      case LUA_TLIGHTUSERDATA: /* not used */
-      case LUA_TTABLE: /* TODO deal with this type */
-      case LUA_TFUNCTION: /* TODO deal with this type */
-      case LUA_TTHREAD: /* TODO deal with this type */
-      default:  /* other values */
-        value = AS3_String(lua_typename(L, t));
-        break;
-    }
+    value = get_as3_value_from_lua_stack(L, i);
     AS3_Trace(value);
     AS3_CallS("push", array, AS3_Array("AS3ValType", value));    
   }
@@ -255,6 +264,15 @@ static int as3_set(lua_State *L)
 
   AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
   luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  
+  const char *property = lua_tostring(L, 2);
+  luaL_argcheck(L, property != NULL, 2, "'property' expected");
+  
+  AS3_Val value = get_as3_value_from_lua_stack(L, 3);
+  luaL_argcheck(L, value != AS3_Undefined(), 3, "'value' expected");
+   
+  AS3_SetS(userdata->value, property, value);
+  /* TODO check if AS3_SetS sucessful */
 
   return 0;
 }
