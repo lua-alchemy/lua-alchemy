@@ -1,6 +1,7 @@
 all:
 	(cd lua;  make generic)
 	(cd alchemy; make)
+	(cd test/FluintLuaTests; ant)
 
 clean:
 	(cd lua;  make clean)
@@ -8,3 +9,4 @@ clean:
 	rm lua/*achacks*
 	rm -r lua/_sb_*
 	(cd alchemy; make clean)
+	(cd test/FluintLuaTests; ant clear)
