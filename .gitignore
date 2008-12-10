@@ -10,6 +10,9 @@
 *.achacks.*
 
 test/FluintLuaTests/bin-*
+test/FluintLuaTests/build
+test/FluintLuaTests/libs/lua_wrapper.swc
+test/FluintLuaTests/src/luaalchemy
 
 alchemy/glue.*
 alchemy/bin
