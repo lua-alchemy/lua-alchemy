@@ -1,20 +1,18 @@
 <?xml version="1.0"?>
 <project name="FluintLuaTests" default="build" basedir=".">
 	
-	<property file="local.properties"/>
+  <property environment="env"/>
+	<property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
 
 	<fail>
 		<condition>
 			<not>
-				<isset property="FLEX_HOME" />
+				<isset property="env.FLEX_HOME" />
 			</not>
 		</condition>
 		Error!
-		You need to set FLEX_HOME prperty (path to Flex SDK) 
-		in local.properties file 
-		located in the same dir as build.xml!
-		For example:
-		FLEX_HOME = /Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
+		You need to set FLEX_HOME environement variable (path to Flex SDK) 
+		export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
 	</fail>	
 
   <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
