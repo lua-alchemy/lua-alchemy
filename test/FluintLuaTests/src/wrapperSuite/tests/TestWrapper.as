@@ -33,14 +33,20 @@ package wrapperSuite.tests
 
 		public function testDoScriptAdd():void
 		{
-			var stack:Array = lua_wrapper.luaDoString(luaCtx, "return 1+5");
+			var script:String = ( <![CDATA[
+				return 1+5
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertEquals(6, stack[0]);
 		}
 
 		public function testAS3NewArray():void
 		{
-			var script:String = "v = as3.new(\"Array\")\nreturn v"
+			var script:String = ( <![CDATA[
+				v = as3.new("Array")
+				return v
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertTrue(stack[0] is Array);
@@ -48,7 +54,10 @@ package wrapperSuite.tests
 
 		public function testAS3NewByteArray():void
 		{
-			var script:String = "v = as3.new(\"flash.utils.ByteArray\")\nreturn v"
+			var script:String = ( <![CDATA[
+				v = as3.new("flash.utils.ByteArray")
+				return v
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertTrue(stack[0] is ByteArray);
@@ -56,7 +65,11 @@ package wrapperSuite.tests
 
 		public function testAS3Release():void
 		{
-			var script:String = "v = as3.new(\"flash.utils.ByteArray\")\nas3.release(v)\nreturn v"
+			var script:String = ( <![CDATA[
+				v = as3.new("flash.utils.ByteArray")
+				as3.release(v)
+				return v
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertNull(stack[0]);
@@ -64,7 +77,11 @@ package wrapperSuite.tests
 
 		public function testAS3ToLuaTypeNumber():void
 		{
-			var script:String = "n1 = as3.new(\"int\", 7)\nn2 = as3.new(\"Number\", 6)\nreturn as3.toluatype(n1) + as3.toluatype(n2)"
+			var script:String = ( <![CDATA[
+				n1 = as3.new("int", 7)
+				n2 = as3.new("Number", 6)
+				return as3.toluatype(n1) + as3.toluatype(n2)
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertEquals(13, stack[0]);
@@ -86,11 +103,14 @@ package wrapperSuite.tests
 			assertEquals(false, stack[3]);
 		}
 
-		// TODO test all Lua to boolean cast
+		// TODO test all Lua to AS3 cast
 
 		public function testAS3Class():void
 		{
-			var script:String = "v = as3.class(\"String\")\nreturn v"
+			var script:String = ( <![CDATA[
+				v = as3.class("String")
+				return v
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertTrue(stack[0] is Class);
@@ -98,7 +118,10 @@ package wrapperSuite.tests
 
 		public function testAS3Get():void
 		{
-			var script:String = "v = as3.new(\"Array\")\nreturn as3.get(v, \"length\")"
+			var script:String = ( <![CDATA[
+				v = as3.new("Array")
+				return as3.get(v, "length")
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 			assertEquals(1, stack.length);
 			assertTrue(stack[0] is int);
@@ -110,7 +133,11 @@ package wrapperSuite.tests
 
 		public function testAS3SetPublicString():void
 		{
-			var script:String = "v = as3.new(\"wrapperSuite.tests.TestWrapperHelper\")\nas3.set(v, \"string1\", \"hello\")\nreturn v, as3.get(v, \"string1\")"
+			var script:String = ( <![CDATA[
+				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				as3.set(v, "string1", "hello")
+				return v, as3.get(v, "string1")
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 
 			assertEquals(2, stack.length);
@@ -124,7 +151,11 @@ package wrapperSuite.tests
 
 		public function testAS3StringGetterSetter():void
 		{
-			var script:String = "v = as3.new(\"wrapperSuite.tests.TestWrapperHelper\")\nas3.set(v, \"string2\", \"hello\")\nreturn v, as3.get(v, \"string2\")"
+			var script:String = ( <![CDATA[
+				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				as3.set(v, "string2", "hello")
+				return v, as3.get(v, "string2")
+				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
 
 			assertEquals(2, stack.length);
