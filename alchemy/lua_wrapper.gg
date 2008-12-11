@@ -390,9 +390,11 @@ static lua_State * create_context()
   luaL_openlibs(L);
 
   luaL_newmetatable(L, "LuaAlchemy.as3");
-  luaL_register(L, "as3", AS3_LUA_LIB);
+  lua_pop(L, 1); /* pop as3 metatable created by above call */
 
-  lua_settop(L, 0); /* clear lua stack of initialization residue */
+  luaL_register(L, "as3", AS3_LUA_LIB);
+  lua_pop(L, 1); /* pop as3 library table created by above call */
+  
   return L;
 }
 
