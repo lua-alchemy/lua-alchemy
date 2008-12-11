@@ -38,10 +38,13 @@ typedef struct AS3LuaUserData
   (AS3LuaUserData*)luaL_checkudata(L, 1, "LuaAlchemy.as3")
 
 /************************************************************
-* Helper Functions
+* AS3.h Helper Functions
 ************************************************************/
 
-/* Helper function get an actionscript class with the given namespace and class name */
+/* 
+* Get an actionscript class with the given namespace and class name
+* in the format: package.ClassName
+*/
 static AS3_Val get_class(const char *as_class_path)
 {
   AS3_Val as_namespace;
@@ -73,6 +76,14 @@ static AS3_Val get_class(const char *as_class_path)
 	return ret;
 }
 
+/************************************************************
+* Lua Helper Functions
+************************************************************/
+
+/*
+* Take the Lua stack item at index i and convert it into an
+* ActionScript value.
+*/
 static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
 {
   AS3_Val value;
@@ -117,7 +128,10 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
   return value;
 }
 
-/* Create an ActionScript array from the lua stack values */
+/*
+* Create an ActionScript array from the lua stack values starting
+* at index start and ending at index end.
+*/
 static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
 {
   AS3_Val array;
@@ -135,6 +149,10 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
   return array;
 }
 
+/*
+* Take the given ActionScript value and push it onto the 
+* stack with the correct metatable.
+*/
 static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 {
   AS3LuaUserData *userdata;
@@ -146,6 +164,11 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
   lua_setmetatable(L, -2);
 }
 
+/*
+* Given an ActionScript object, push it onto the Lua stack as a Lua native
+* type if a primitive class (String, Number, Boolean, int, null)
+* or push as userdata
+*/
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 {
   AS3_Malloced_Str str;
@@ -182,12 +205,20 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 * AS3 functions exported to Lua
 ************************************************************/
 
+/*
+* Release control to Flash and return to this point on the next timer tick
+* Lua example: as3.yield()
+*/
 static int as3_yield(lua_State *L)
 {
   flyield();
   return 0;
 }
 
+/*
+* Return the Flash stage
+* Lua example: as3.stage()
+*/
 static int as3_stage(lua_State *L)
 {
   sztrace("as3_stage()");
@@ -196,6 +227,11 @@ static int as3_stage(lua_State *L)
   return 1;
 }
 
+/*
+* Return the requested class in package.ClassName form.
+* Can be used to call static class functions
+* Lua example: v = as3.class("flash.utils.ByteArray")
+*/
 static int as3_class(lua_State *L)
 {
   const char *classname;
@@ -214,6 +250,10 @@ static int as3_class(lua_State *L)
   return 1;
 }
 
+/*
+* Create a new instance of the given class in package.ClassName form.
+* Lua example: v = as3.new("flash.utils.ByteArray")
+*/
 static int as3_new(lua_State *L)
 {
   const char *classname;
@@ -239,6 +279,10 @@ static int as3_new(lua_State *L)
   return 1;
 }
 
+/*
+* Release the given ActionScript object so Flash will do garbage collection.
+* Lua example: as3.release(v)
+*/
 static int as3_release(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -253,6 +297,11 @@ static int as3_release(lua_State *L)
   return 0;
 }
 
+/*
+* Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
+* If conversion is not possible, this will return the original AS object
+* Lua example: as3.toluatype(v)
+*/
 static int as3_toluatype(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -263,6 +312,11 @@ static int as3_toluatype(lua_State *L)
   return 1;
 }
 
+/*
+* Return the requested property of a given ActionScript object.  The value
+* is returned as a Lua type if possible (see push_as3_to_lua_stack)
+* Lua example: as3.get(v, "text")
+*/
 static int as3_get(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -282,6 +336,10 @@ static int as3_get(lua_State *L)
   return 1;
 }
 
+/*
+* Set the requested property of a given ActionScript object.
+* Lua example: as3.set(v, "text", "hello from Lua")
+*/
 static int as3_set(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -302,6 +360,10 @@ static int as3_set(lua_State *L)
   return 0;
 }
 
+/*
+* Set a primitive ActionScript value (like String, Number, etc)
+* Lua example: as3.assign(v, 5)
+*/
 static int as3_assign(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -317,6 +379,10 @@ static int as3_assign(lua_State *L)
   return 0;
 }
 
+/*
+* Call a function on a given ActionScript object
+* Lua example: as3.call(v, "myFunction", "param1", param2, ...)
+*/
 static int as3_call(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -341,6 +407,10 @@ static int as3_call(lua_State *L)
   return 1;
 }
 
+/*
+* Return the Lua type of the ActionScript object as a string
+* Lua example: as3.type(v)
+*/
 static int as3_type(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -353,6 +423,10 @@ static int as3_type(lua_State *L)
   return 1;
 }
 
+/*
+* Return the ActionScript qualified name of the given object as a string
+* Lua example: as3.classname(v)
+*/
 static int as3_classname(lua_State *L)
 {
   AS3LuaUserData *userdata;
@@ -371,10 +445,14 @@ static int as3_classname(lua_State *L)
   return 1;
 }
 
+/*
+* AS function registry for Lua
+*/
 static const luaL_reg AS3_LUA_LIB[] =
 {
   { "yield", as3_yield },
   { "stage", as3_stage },
+  /* TODO consider ability to get and call package functions like */
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
@@ -386,10 +464,10 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "type", as3_type },
   { "classname", as3_classname },
   { NULL, NULL } /* The end */
-};
+};	
 
 /* 
-  Creates the lua_state, opens the standard libs, and registers functions
+* Creates the lua_state, opens the standard libs, and registers functions
 */
 static lua_State * lua_initialize_state()
 {
@@ -406,7 +484,10 @@ static lua_State * lua_initialize_state()
   return L;
 }
 
-/* This function will be called at the top of the generated main(). The GGINIT_DEFINED macro is required. */
+/*
+* This function will be called at the top of the generated main().
+* The GGINIT_DEFINED macro is required.
+*/
 #define GGINIT_DEFINED true
 static void ggInit()
 {
@@ -419,8 +500,6 @@ static void ggInit()
   Boolean_class = get_class("Boolean");
 	flash_utils_namespace = AS3_String("flash.utils");
 	getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
-	
-	/* TODO consider ability to get and call package functions */
 }
 
 
