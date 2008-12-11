@@ -189,6 +189,14 @@ package wrapperSuite.tests
 		public function testAS3Stage():void
 		{
 		}
+
+		public function testAS3Type():void
+		{
+		}
+
+		public function testAS3Classname():void
+		{
+		}
 */
 	}
 }

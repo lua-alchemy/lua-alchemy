@@ -180,6 +180,19 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 * AS3 functions exported to Lua
 ************************************************************/
 
+static int as3_yield(lua_State *L)
+{
+  flyield();
+  return 0;
+}
+
+static int as3_stage(lua_State *L)
+{
+  sztrace("as3_stage()");
+  /* TODO implement */
+  return 0;
+}
+
 static int as3_class(lua_State *L)
 {
   const char *classname;
@@ -325,21 +338,34 @@ static int as3_call(lua_State *L)
   return 1;
 }
 
-static int as3_yield(lua_State *L)
+static int as3_type(lua_State *L)
 {
-  flyield();
+  AS3LuaUserData *userdata;
+  AS3_Val value;
+  
+  userdata = checkas3(L);
+  
+  /* TODO return string name of type of given as3.new() result (see type(), io.type()) */
+
   return 0;
 }
 
-static int as3_stage(lua_State *L)
+static int as3_classname(lua_State *L)
 {
-  sztrace("as3_stage()");
-  /* TODO implement */
+  AS3LuaUserData *userdata;
+  AS3_Val value;
+  
+  userdata = checkas3(L);
+  
+  /* TODO Also we probably would need some as3.classname() to distinguish between classes. */
+
   return 0;
 }
 
 static const luaL_reg AS3_LUA_LIB[] =
 {
+  { "yield", as3_yield },
+  { "stage", as3_stage },
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
@@ -348,8 +374,8 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "set", as3_set },
   { "assign", as3_assign },
   { "call", as3_call },
-  { "yield", as3_yield },
-  { "stage", as3_stage },
+  { "type", as3_type },
+  { "classname", as3_classname },
   { NULL, NULL } /* The end */
 };
 
