@@ -164,9 +164,7 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
   }
   else if (AS3_InstanceOf(val, Boolean_class))
   {
-    str = AS3_StringValue(val);
-    lua_pushboolean(L, strcmp(str, "true") == 0);
-    free(str);
+    lua_pushboolean(L, AS3_IntValue(val));
   }
   else if (val == AS3_Undefined() || val == AS3_Null())
   {

@@ -69,6 +69,24 @@ package wrapperSuite.tests
 			assertEquals(13, stack[0]);
 		}
 
+		public function testBooleanToLuaType():void
+		{
+			var script:String = ( <![CDATA[
+				bt = as3.new("Boolean", true)
+				bf = as3.new("Boolean", false)
+				return as3.toluatype(bt) == true, as3.toluatype(bf) == false, as3.toluatype(bt), as3.toluatype(bf)
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+
+			assertEquals(4, stack.length);
+			assertEquals(true, stack[0]);
+			assertEquals(true, stack[1]);
+			assertEquals(true, stack[2]);
+			assertEquals(false, stack[3]);
+		}
+
+		// TODO test all Lua to boolean cast
+
 		public function testAS3Class():void
 		{
 			var script:String = "v = as3.class(\"String\")\nreturn v"
