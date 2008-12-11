@@ -1,5 +1,6 @@
 package wrapperSuite.tests
 {
+	import flash.display.Stage;
 	import flash.utils.ByteArray;
 
 	import luaalchemy.lua_wrapper;
@@ -182,11 +183,19 @@ package wrapperSuite.tests
 		}
 
 /*
-		public function testAS3Assign():void
+		// TODO the stage isn't crossing the C/Lua or Alchemy bindings intact
+		public function testAS3Stage():void
 		{
+			var script:String = ( <![CDATA[
+				return as3.stage()
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+
+			assertEquals(1, stack.length);
+			assertTrue(stack[0] is Stage);
 		}
 
-		public function testAS3Stage():void
+		public function testAS3Assign():void
 		{
 		}
 
