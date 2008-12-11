@@ -430,13 +430,49 @@ static int as3_type(lua_State *L)
 }
 
 /*
+* Call a namespace function
+* Can be used to call namespace functions
+* Lua example: v = as3.package("flash.utils", "getQualifiedClassName")
+*/
+static int as3_namespacecall(lua_State *L)
+{
+  const char *namespace;
+  const char *function_name;
+  AS3_Val as_namespace;
+  AS3_Val as_method;
+  AS3_Val params;
+  AS3_Val result;
+  
+  namespace = lua_tostring(L, 1);
+  luaL_argcheck(L, namespace != NULL, 1, "'namespace' expected");
+
+  function_name = lua_tostring(L, 2);
+  luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
+
+	as_namespace = AS3_String(namespace);
+	as_method = AS3_NSGetS(as_namespace, function_name);
+	
+	params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
+  
+  result = AS3_Call(as_method, NULL, params);
+  /* TODO check for function call failure, make sure to release as_namespace, as_method, params */
+  
+  push_as3_lua_userdata(L, result);
+  
+  AS3_Release(as_namespace);
+  AS3_Release(as_method);
+  AS3_Release(params);
+
+  return 1;
+}
+
+/*
 * AS function registry for Lua
 */
 static const luaL_reg AS3_LUA_LIB[] =
 {
   { "yield", as3_yield },
   { "stage", as3_stage },
-  /* TODO consider ability to get and call package functions like getQualifiedClassName_method */
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
@@ -446,6 +482,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "assign", as3_assign },
   { "call", as3_call },
   { "type", as3_type },
+  { "namespacecall", as3_namespacecall },
   { NULL, NULL } /* The end */
 };	
 

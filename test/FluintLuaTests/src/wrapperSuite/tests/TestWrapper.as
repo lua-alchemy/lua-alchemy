@@ -236,6 +236,17 @@ package wrapperSuite.tests
 			assertEquals("[string \"...\"]:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got number)", stack[0]);
 		}
 
+		public function testAS3NamespaceCall():void
+		{
+			var script:String = ( <![CDATA[
+			  v = as3.new("wrapperSuite.tests::TestWrapperHelper")
+				return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaState, script);
+			assertEquals(1, stack.length);
+			assertEquals("wrapperSuite.tests::TestWrapperHelper", stack[0]);
+		}
+
 /*
 		// TODO the stage isn't crossing the C/Lua or Alchemy bindings intact
 		public function testAS3Stage():void
