@@ -213,19 +213,6 @@ package wrapperSuite.tests
 			assertEquals("[string \"...\"]:2: bad argument #1 to 'get' (LuaAlchemy.as3 expected, got userdata)", stack[0]);
 		}
 
-		public function testAS3Classname():void
-		{
-			var script:String = ( <![CDATA[
-				ba = as3.new("flash.utils.ByteArray")
-				s = as3.new("String")
-				return as3.classname(ba), as3.classname(s)
-				]]> ).toString();
-			var stack:Array = lua_wrapper.luaDoString(luaState, script);
-			assertEquals(2, stack.length);
-			assertEquals("flash.utils::ByteArray", stack[0]); // TODO consider as3.new("flash.utils::ByteArray")
-			assertEquals("String", stack[1]);
-		}
-
 		public function testAS3Type():void
 		{
 			var script:String = ( <![CDATA[
@@ -235,8 +222,8 @@ package wrapperSuite.tests
 				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaState, script);
 			assertEquals(2, stack.length);
-			assertEquals("LuaAlchemy.as3", stack[0]);
-			assertEquals("LuaAlchemy.as3", stack[1]);
+			assertEquals("flash.utils::ByteArray", stack[0]); // TODO consider as3.new("flash.utils::ByteArray")
+			assertEquals("String", stack[1]);
 		}
 
 /*

@@ -288,10 +288,10 @@ static int as3_release(lua_State *L)
   AS3LuaUserData *userdata;
 
   userdata = checkas3(L);
-  if (userdata->value != AS3_Null())
+  if (userdata->value != AS3_Undefined())
   {
     AS3_Release(userdata->value);
-    userdata->value = AS3_Null();
+    userdata->value = AS3_Undefined();
   }
   
   return 0;
@@ -408,38 +408,22 @@ static int as3_call(lua_State *L)
 }
 
 /*
-* Return the Lua type of the ActionScript object as a string
+* Return the ActionScript qualified name of the given object as a string
 * Lua example: as3.type(v)
 */
 static int as3_type(lua_State *L)
 {
   AS3LuaUserData *userdata;
-  AS3_Val value;
-  
-  userdata = checkas3(L);
-  
-  lua_pushstring(L, "LuaAlchemy.as3");
-
-  return 1;
-}
-
-/*
-* Return the ActionScript qualified name of the given object as a string
-* Lua example: as3.classname(v)
-*/
-static int as3_classname(lua_State *L)
-{
-  AS3LuaUserData *userdata;
   AS3_Val result;
   AS3_Val params;
-  
+
   userdata = checkas3(L);
 
   params = AS3_Array("AS3ValType", userdata->value);
-  
+
   result = AS3_Call(getQualifiedClassName_method, NULL, params);
   /* TODO check for failure */
-  
+
   push_as3_to_lua_stack(L, result);
   AS3_Release(params);
   return 1;
@@ -462,7 +446,6 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "assign", as3_assign },
   { "call", as3_call },
   { "type", as3_type },
-  { "classname", as3_classname },
   { NULL, NULL } /* The end */
 };	
 
