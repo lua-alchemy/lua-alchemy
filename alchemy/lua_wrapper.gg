@@ -372,15 +372,15 @@ static const luaL_reg AS3_LUA_LIB[] =
 */
 static lua_State * create_context()
 {
-  lua_State *lua_ctx;
-	lua_ctx = lua_open();
-  luaL_openlibs(lua_ctx);
+  lua_State *L;
+	L = lua_open();
+  luaL_openlibs(L);
 
-  luaL_newmetatable(lua_ctx, "LuaAlchemy.as3");
-  luaL_register(lua_ctx, "as3", AS3_LUA_LIB);
+  luaL_newmetatable(L, "LuaAlchemy.as3");
+  luaL_register(L, "as3", AS3_LUA_LIB);
 
-  clear_lua_stack(lua_ctx); /* TODO the call above put something on the stack */
-  return lua_ctx;
+  clear_lua_stack(L); /* TODO the call above put something on the stack */
+  return L;
 }
 
 /* This function will be called at the top of the generated main(). The GGINIT_DEFINED macro is required. */
@@ -407,15 +407,15 @@ public function luaCreateContext():(lua_State *)uint
   return create_context();
 }
 
-public function luaClose(lua_ctx:(lua_State *)uint):void
+public function luaClose(luaState:(lua_State *)uint):void
 {
-  lua_close(lua_ctx);
+  lua_close(luaState);
 }
 
-public function luaDoString(lua_ctx:(lua_State *)uint, str:String):(AS3_Val)Array
+public function luaDoString(luaState:(lua_State *)uint, str:String):(AS3_Val)Array
 {
   int status;
-  status = luaL_dostring(lua_ctx, str);
+  status = luaL_dostring(luaState, str);
   /* TODO handle status */
-  return create_as3_array_from_lua_stack(lua_ctx, 1, lua_gettop(lua_ctx));
+  return create_as3_array_from_lua_stack(luaState, 1, lua_gettop(luaState));
 }
