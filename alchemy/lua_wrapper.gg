@@ -120,8 +120,11 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
     case LUA_TTABLE: /* TODO deal with this type */
     case LUA_TFUNCTION: /* TODO deal with this type */
     case LUA_TTHREAD: /* TODO deal with this type */
-    default:  /* other values */
       value = AS3_String(lua_typename(L, t));
+      break;
+
+    default:  /* unreachable */
+      luaL_error(L, "unknown Lua type %d", t);
       break;
   }
   
