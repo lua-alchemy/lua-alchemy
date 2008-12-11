@@ -222,8 +222,18 @@ package wrapperSuite.tests
 				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaState, script);
 			assertEquals(2, stack.length);
-			assertEquals("flash.utils::ByteArray", stack[0]); // TODO consider as3.new("flash.utils::ByteArray")
+			assertEquals("flash.utils::ByteArray", stack[0]);
 			assertEquals("String", stack[1]);
+		}
+
+		public function testAS3TypeInvalid():void
+		{
+			var script:String = ( <![CDATA[
+				return as3.type(5)
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaState, script);
+			assertEquals(1, stack.length);
+			assertEquals("[string \"...\"]:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got number)", stack[0]);
 		}
 
 /*
