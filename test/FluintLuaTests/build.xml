@@ -150,7 +150,7 @@
   	<mkdir dir="${build.dir}"/>
   	<mkdir dir="${release.build.dir}"/>
   	<mkdir dir="${debug.build.dir}"/>
-  	<mkdir dir="${src.dir}/lua_alchemy"/>
+  	<mkdir dir="${src.dir}/luaalchemy"/>
   	<copy file="${alchemy.dir}/lua_wrapper.swc" todir="${lib.dir}"/>
   	<copy file="${alchemy.dir}/lua_wrapper.as" todir="${src.dir}/luaalchemy"/>
   </target>
