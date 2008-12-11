@@ -226,6 +226,19 @@ package wrapperSuite.tests
 			assertEquals("String", stack[1]);
 		}
 
+		public function testAS3Type():void
+		{
+			var script:String = ( <![CDATA[
+				ba = as3.new("flash.utils.ByteArray")
+				s = as3.new("String")
+				return as3.type(ba), as3.type(s)
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaState, script);
+			assertEquals(2, stack.length);
+			assertEquals("LuaAlchemy.as3", stack[0]);
+			assertEquals("LuaAlchemy.as3", stack[1]);
+		}
+
 /*
 		// TODO the stage isn't crossing the C/Lua or Alchemy bindings intact
 		public function testAS3Stage():void

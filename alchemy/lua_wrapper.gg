@@ -348,9 +348,9 @@ static int as3_type(lua_State *L)
   
   userdata = checkas3(L);
   
-  /* TODO return string name of type of given as3.new() result (see type(), io.type()) */
+  lua_pushstring(L, "LuaAlchemy.as3");
 
-  return 0;
+  return 1;
 }
 
 static int as3_classname(lua_State *L)
