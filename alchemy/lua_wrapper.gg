@@ -26,6 +26,8 @@ AS3_Val Number_class = NULL;
 AS3_Val int_class = NULL;
 AS3_Val String_class = NULL;
 AS3_Val Boolean_class = NULL;
+AS3_Val flash_utils_namespace = NULL;
+AS3_Val getQualifiedClassName_method = NULL;
 
 typedef struct AS3LuaUserData
 {
@@ -354,13 +356,19 @@ static int as3_type(lua_State *L)
 static int as3_classname(lua_State *L)
 {
   AS3LuaUserData *userdata;
-  AS3_Val value;
+  AS3_Val result;
+  AS3_Val params;
   
   userdata = checkas3(L);
-  
-  /* TODO Also we probably would need some as3.classname() to distinguish between classes. */
 
-  return 0;
+  params = AS3_Array("AS3ValType", userdata->value);
+  
+  result = AS3_Call(getQualifiedClassName_method, NULL, params);
+  /* TODO check for failure */
+  
+  push_as3_to_lua_stack(L, result);
+  AS3_Release(params);
+  return 1;
 }
 
 static const luaL_reg AS3_LUA_LIB[] =
@@ -409,6 +417,8 @@ static void ggInit()
   int_class = get_class("int");
   String_class = get_class("String");
   Boolean_class = get_class("Boolean");
+	flash_utils_namespace = AS3_String("flash.utils");
+	getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
 }
 
 
