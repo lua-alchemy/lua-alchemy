@@ -381,9 +381,9 @@ static const luaL_reg AS3_LUA_LIB[] =
 };
 
 /* 
-  Creates the lua context, opens the standard libs, and registers functions
+  Creates the lua_state, opens the standard libs, and registers functions
 */
-static lua_State * create_context()
+static lua_State * lua_initialize_state()
 {
   lua_State *L;
 	L = lua_open();
@@ -415,9 +415,9 @@ static void ggInit()
 /* end of passthru C section */
 }
 
-public function luaCreateContext():(lua_State *)uint
+public function luaInitilizeState():(lua_State *)uint
 {
-  return create_context();
+  return lua_initialize_state();
 }
 
 public function luaClose(luaState:(lua_State *)uint):void
