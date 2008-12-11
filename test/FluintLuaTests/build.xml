@@ -39,8 +39,8 @@
 	<property name="output.debug.html" location="${debug.build.dir}/${output.html.name}"/>
 	<property name="output.release.html" location="${release.build.dir}/${output.html.name}"/>
 
-	<property name="swf.width" value="800"/>
-	<property name="swf.height" value="600"/>
+	<property name="swf.width" value="100%"/>
+	<property name="swf.height" value="100%"/>
 	<property name="swf.debug.title" value="FluintLuaTests App"/>
 	<property name="swf.release.title" value="FluintLuaTests App"/>
 	<property name="swf.version.major" value="10"/>

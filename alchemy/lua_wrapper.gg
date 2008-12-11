@@ -277,7 +277,7 @@ static int as3_set(lua_State *L)
   return 0;
 }
 
-static int as3_equals(lua_State *L)
+static int as3_assign(lua_State *L)
 {
   sztrace("as3_set()");
 
@@ -315,7 +315,8 @@ static int as3_call(lua_State *L)
 
 static int as3_yield(lua_State *L)
 {
-  sztrace("as3_new()");
+  sztrace("as3_yield()");
+  flyield();
   return 0;
 }
 
@@ -333,7 +334,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "toluatype", as3_toluatype },
   { "get", as3_get },
   { "set", as3_set },
-  { "equals", as3_equals },
+  { "assign", as3_assign },
   { "call", as3_call },
   { "yield", as3_yield },
   { "stage", as3_stage },
