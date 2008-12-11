@@ -152,6 +152,17 @@ package wrapperSuite.tests
 			assertEquals(0, stack.length);
 		}
 
+		public function testAS3Metatable():void
+		{
+			var script:String = ( <![CDATA[
+				as3.get(io.stdin, "bad")
+				]]> ).toString();
+			var stack:Array = lua_wrapper.luaDoString(luaCtx, script);
+
+			assertEquals(1, stack.length);
+			assertEquals("[string \"...\"]:2: bad argument #1 to 'get' (LuaAlchemy.as3 expected, got userdata)", stack[0]);
+		}
+
 /*
 		public function testAS3Assign():void
 		{

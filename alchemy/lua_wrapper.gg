@@ -32,6 +32,9 @@ typedef struct AS3LuaUserData
   AS3_Val value;
 } AS3LuaUserData;
 
+#define checkas3(L) \
+  (AS3LuaUserData*)luaL_checkudata(L, 1, "LuaAlchemy.as3")
+
 /* Helper function get an actionscript class with the given namespace and class name */
 static AS3_Val get_class(const char *as_class_path)
 {
@@ -132,6 +135,8 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 {
   AS3LuaUserData *userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
   userdata->value = val;
+  luaL_getmetatable(L, "LuaAlchemy.as3");
+  lua_setmetatable(L, -2);
 }
 
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
@@ -216,8 +221,7 @@ static int as3_release(lua_State *L)
 {
   sztrace("as3_release()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
 
   if (userdata->value != AS3_Null())
   {
@@ -232,8 +236,7 @@ static int as3_toluatype(lua_State *L)
 {
   sztrace("as3_toluatype()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
   
   push_as3_to_lua_stack(L, userdata->value);
   
@@ -244,8 +247,7 @@ static int as3_get(lua_State *L)
 {
   sztrace("as3_get()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
   
   const char *property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
@@ -262,8 +264,7 @@ static int as3_set(lua_State *L)
 {
   sztrace("as3_set()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
   
   const char *property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
@@ -281,8 +282,7 @@ static int as3_assign(lua_State *L)
 {
   sztrace("as3_set()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
   
   AS3_Val value = get_as3_value_from_lua_stack(L, 2);
   luaL_argcheck(L, value != AS3_Undefined(), 2, "'value' expected");
@@ -296,8 +296,7 @@ static int as3_call(lua_State *L)
 {
   sztrace("as3_call()");
 
-  AS3LuaUserData *userdata = (AS3LuaUserData *)lua_touserdata(L, 1);
-  luaL_argcheck(L, userdata != NULL, 1, "'as3' expected");
+  AS3LuaUserData *userdata = checkas3(L);
 
   const char *function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
@@ -349,7 +348,10 @@ static lua_State * create_context()
   lua_State *lua_ctx;
 	lua_ctx = lua_open();
   luaL_openlibs(lua_ctx);
+
+  luaL_newmetatable(lua_ctx, "LuaAlchemy.as3");
   luaL_register(lua_ctx, "as3", AS3_LUA_LIB);
+
   clear_lua_stack(lua_ctx); /* TODO the call above put something on the stack */
   return lua_ctx;
 }
