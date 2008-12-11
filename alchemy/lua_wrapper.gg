@@ -60,8 +60,6 @@ static AS3_Val get_class(const char *as_class_path)
     as_namespace = AS3_String("");
     as_class = AS3_String(as_class_path);
   }
-  AS3_Trace(as_namespace);
-  AS3_Trace(as_class);
   
   AS3_Val ret = AS3_NSGet(as_namespace, as_class);
   
@@ -129,7 +127,6 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
   for (i = start; i <= end; i++)
   {
     value = get_as3_value_from_lua_stack(L, i);
-    AS3_Trace(value);
     AS3_CallS("push", array, AS3_Array("AS3ValType", value));    
   }
 
@@ -216,7 +213,6 @@ static int as3_new(lua_State *L)
   as_class = get_class(classname);
   /* TODO error if as_class == null */
   
-  sztrace("as3_new() params");
   params = create_as3_array_from_lua_stack(L, 2, lua_gettop(L));
   
   as_object = AS3_New(as_class, params);
@@ -379,8 +375,6 @@ static lua_State * create_context()
 #define GGINIT_DEFINED true
 static void ggInit()
 {
-	sztrace("setting up lua_wrapper library");
-
 	/* setup some useful constants */
 	no_params = AS3_Array("");
 	zero_param = AS3_Int(0);
