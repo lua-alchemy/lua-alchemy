@@ -55,7 +55,7 @@ package wrapperSuite.tests
 		public function testAS3NewByteArray():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.new("flash.utils.ByteArray")
+				v = as3.new("flash.utils::ByteArray")
 				return v
 				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -66,7 +66,7 @@ package wrapperSuite.tests
 		public function testAS3Release():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.new("flash.utils.ByteArray")
+				v = as3.new("flash.utils::ByteArray")
 				as3.release(v)
 				return v
 				]]> ).toString();
@@ -134,7 +134,7 @@ package wrapperSuite.tests
 		public function testAS3SetPublicString():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				v = as3.new("wrapperSuite.tests::TestWrapperHelper")
 				as3.set(v, "string1", "hello")
 				return v, as3.get(v, "string1")
 				]]> ).toString();
@@ -152,7 +152,7 @@ package wrapperSuite.tests
 		public function testAS3StringGetterSetter():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				v = as3.new("wrapperSuite.tests::TestWrapperHelper")
 				as3.set(v, "string2", "hello")
 				return v, as3.get(v, "string2")
 				]]> ).toString();
@@ -170,7 +170,7 @@ package wrapperSuite.tests
 		public function testAS3CallSetNameAge():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.new("wrapperSuite.tests.TestWrapperHelper")
+				v = as3.new("wrapperSuite.tests::TestWrapperHelper")
 				as3.call(v, "setNameAge", "Robert", 38)
 				return as3.get(v, "nameAge")
 				]]> ).toString();
@@ -183,7 +183,7 @@ package wrapperSuite.tests
 		public function testAS3CallStaticNameAge():void
 		{
 			var script:String = ( <![CDATA[
-				v = as3.class("wrapperSuite.tests.TestWrapperHelper")
+				v = as3.class("wrapperSuite.tests::TestWrapperHelper")
 				return as3.call(v, "staticNameAge", "Jessie James", 127)
 				]]> ).toString();
 			var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -216,7 +216,7 @@ package wrapperSuite.tests
 		public function testAS3Type():void
 		{
 			var script:String = ( <![CDATA[
-				ba = as3.new("flash.utils.ByteArray")
+				ba = as3.new("flash.utils::ByteArray")
 				s = as3.new("String")
 				return as3.type(ba), as3.type(s)
 				]]> ).toString();

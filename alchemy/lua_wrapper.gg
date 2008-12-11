@@ -43,7 +43,7 @@ typedef struct AS3LuaUserData
 
 /* 
 * Get an actionscript class with the given namespace and class name
-* in the format: package.ClassName
+* in the format: package::ClassName
 */
 static AS3_Val get_class(const char *as_class_path)
 {
@@ -53,12 +53,12 @@ static AS3_Val get_class(const char *as_class_path)
 
   /* TODO might want to store classes in a table to save loading again */
 
-  class_ptr = strrchr(as_class_path, '.');
+  class_ptr = strstr(as_class_path, "::");
   
   if (class_ptr > as_class_path)
   {
     as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
-    as_class = AS3_String(class_ptr+1);
+    as_class = AS3_String(class_ptr+2);
   }
   else
   {
@@ -228,7 +228,7 @@ static int as3_stage(lua_State *L)
 }
 
 /*
-* Return the requested class in package.ClassName form.
+* Return the requested class in package::ClassName form.
 * Can be used to call static class functions
 * Lua example: v = as3.class("flash.utils.ByteArray")
 */
@@ -238,10 +238,10 @@ static int as3_class(lua_State *L)
   AS3_Val as_class;
   
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, "'package.ClassName' expected");
+  luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
   
   as_class = get_class(classname);
-  luaL_argcheck(L, as_class != NULL, 1, "'package.ClassName' must be valid");
+  luaL_argcheck(L, as_class != NULL, 1, "'package::ClassName' must be valid");
   
   /* TODO check if get_class failed */
   
@@ -251,7 +251,7 @@ static int as3_class(lua_State *L)
 }
 
 /*
-* Create a new instance of the given class in package.ClassName form.
+* Create a new instance of the given class in package::ClassName form.
 * Lua example: v = as3.new("flash.utils.ByteArray")
 */
 static int as3_new(lua_State *L)
@@ -262,7 +262,7 @@ static int as3_new(lua_State *L)
   AS3_Val as_object;
   
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, "'package.ClassName' expected");
+  luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
   
   as_class = get_class(classname);
   /* TODO error if as_class == null */
@@ -436,7 +436,7 @@ static const luaL_reg AS3_LUA_LIB[] =
 {
   { "yield", as3_yield },
   { "stage", as3_stage },
-  /* TODO consider ability to get and call package functions like */
+  /* TODO consider ability to get and call package functions like getQualifiedClassName_method */
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
