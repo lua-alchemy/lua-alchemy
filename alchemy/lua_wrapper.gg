@@ -419,6 +419,8 @@ static void ggInit()
   Boolean_class = get_class("Boolean");
 	flash_utils_namespace = AS3_String("flash.utils");
 	getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
+	
+	/* TODO consider ability to get and call package functions */
 }
 
 
