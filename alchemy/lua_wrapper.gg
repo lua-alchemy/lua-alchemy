@@ -70,10 +70,10 @@ static AS3_Val get_class(const char *as_class_path)
   
   /* TODO check for failure getting class */
 
-	AS3_Release(as_namespace);
-	AS3_Release(as_class);
+  AS3_Release(as_namespace);
+  AS3_Release(as_class);
 
-	return ret;
+  return ret;
 }
 
 /************************************************************
@@ -449,10 +449,10 @@ static int as3_namespacecall(lua_State *L)
   function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
 
-	as_namespace = AS3_String(namespace);
-	as_method = AS3_NSGetS(as_namespace, function_name);
-	
-	params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
+  as_namespace = AS3_String(namespace);
+  as_method = AS3_NSGetS(as_namespace, function_name);
+  
+  params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
   
   result = AS3_Call(as_method, NULL, params);
   /* TODO check for function call failure, make sure to release as_namespace, as_method, params */
@@ -484,7 +484,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
   { NULL, NULL } /* The end */
-};	
+};  
 
 /* 
 * Creates the lua_state, opens the standard libs, and registers functions
@@ -492,7 +492,7 @@ static const luaL_reg AS3_LUA_LIB[] =
 static lua_State * lua_initialize_state()
 {
   lua_State *L;
-	L = lua_open();
+  L = lua_open();
   luaL_openlibs(L);
 
   luaL_newmetatable(L, "LuaAlchemy.as3");
@@ -511,15 +511,15 @@ static lua_State * lua_initialize_state()
 #define GGINIT_DEFINED true
 static void ggInit()
 {
-	/* setup some useful constants */
-	no_params = AS3_Array("");
-	zero_param = AS3_Int(0);
+  /* setup some useful constants */
+  no_params = AS3_Array("");
+  zero_param = AS3_Int(0);
   Number_class = get_class("Number");
   int_class = get_class("int");
   String_class = get_class("String");
   Boolean_class = get_class("Boolean");
-	flash_utils_namespace = AS3_String("flash.utils");
-	getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
+  flash_utils_namespace = AS3_String("flash.utils");
+  getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
 }
 
 
