@@ -181,14 +181,6 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
   }
 }
 
-static void clear_lua_stack(lua_State *L)
-{
-  int i;
-  i = lua_gettop(L);
-  for (i = lua_gettop(L); i > 0; i--)
-    lua_remove(L, i);
-}
-
 /************************************************************
 * AS3 functions exported to Lua
 ************************************************************/
@@ -379,7 +371,7 @@ static lua_State * create_context()
   luaL_newmetatable(L, "LuaAlchemy.as3");
   luaL_register(L, "as3", AS3_LUA_LIB);
 
-  clear_lua_stack(L); /* TODO the call above put something on the stack */
+  lua_settop(L, 0); /* clear lua stack of initialization residue */
   return L;
 }
 
