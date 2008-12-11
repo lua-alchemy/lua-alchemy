@@ -3,7 +3,7 @@ package wrapperSuite.tests
 	import flash.display.Stage;
 	import flash.utils.ByteArray;
 
-	import luaalchemy.lua_wrapper;
+	import luaAlchemy.lua_wrapper;
 
 	import net.digitalprimates.fluint.tests.TestCase;
 

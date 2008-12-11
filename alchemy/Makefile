@@ -3,9 +3,9 @@
 NAME=lua_wrapper
 PATH:=${ALCHEMY_HOME}/achacks:${PATH}
 LUA_SRC=../lua/src
-WRAPPER_AS_DIR=./bin/src/luaalchemy
+PACKAGE_NAME=luaAlchemy
+WRAPPER_AS_DIR=./bin/src/${PACKAGE_NAME}
 WRAPPER_SWC_DIR=./bin/swc
-PACKAGE_NAME=luaalchemy
 GG = gluegen
 INC = -I $(LUA_SRC)
 CC = gcc

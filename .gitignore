@@ -12,7 +12,7 @@
 test/FluintLuaTests/bin-*
 test/FluintLuaTests/build
 test/FluintLuaTests/libs/lua_wrapper.swc
-test/FluintLuaTests/src/luaalchemy
+test/FluintLuaTests/src/luaAlchemy
 
 alchemy/glue.*
 alchemy/bin

@@ -9,7 +9,6 @@
 	<mx:Script>
 		<![CDATA[
 			import wrapperSuite.WrapperSuite;
-			import luaalchemy.lua_wrapper;
 			
 			protected function startTestProcess( event:Event ) : void
 			{
