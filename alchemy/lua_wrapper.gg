@@ -81,6 +81,16 @@ static AS3_Val get_class(const char *as_class_path)
 ************************************************************/
 
 /*
+* Function used as a callback for all Lua functions passed throuhg
+* get_as3_value_from_lua_stack()
+*/
+AS3_Val as3_lua_callback(void *data, AS3_Val args)
+{
+  sztrace("*****as3_lua_callback()");
+  return AS3_Undefined();
+}
+
+/*
 * Take the Lua stack item at index i and convert it into an
 * ActionScript value.
 */
@@ -115,10 +125,14 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
       userdata = (AS3LuaUserData *) lua_touserdata(L, i);
       value = userdata->value;
       break;
+
+    case LUA_TFUNCTION: /* function */
+      /* TODO pass in some data rather than null so as3_lua_callback() knows what funciton to call. luaL_ref? */
+      value = AS3_Function(NULL, as3_lua_callback);
+      break;
   
     case LUA_TLIGHTUSERDATA: /* not used */
     case LUA_TTABLE: /* TODO deal with this type */
-    case LUA_TFUNCTION: /* TODO deal with this type */
     case LUA_TTHREAD: /* TODO deal with this type */
       value = AS3_String(lua_typename(L, t));
       break;
@@ -127,6 +141,8 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
       luaL_error(L, "unknown Lua type %d", t);
       break;
   }
+
+  /* AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value))); */
   
   return value;
 }

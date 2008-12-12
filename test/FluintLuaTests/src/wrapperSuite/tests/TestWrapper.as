@@ -1,5 +1,6 @@
 package wrapperSuite.tests
 {
+  import flash.events.Event;
 	import flash.utils.ByteArray;
 
 	import luaAlchemy.lua_wrapper;
@@ -286,6 +287,28 @@ package wrapperSuite.tests
 			assertEquals(0, stack.length);
 			assertEquals("Name: Bubba Joe Bob Brain age: 13", myHelper.nameAge);
 		}
+
+    public function testLuaAddEventListener():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+
+      var script:String = ( <![CDATA[
+       as3.call(testHelper,
+							  "addEventListener",
+								"TestWrapperHelperEvent",
+								function () as3.call(testHelper, "setNameAge", "Timmy", 99) end)
+      ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      myHelper.sendEvent();
+
+      assertEquals(0, stack.length);
+
+      /* TODO implement calling lua function then this should work
+      assertEquals("Name: Timmy: 99", myHelper.nameAge);
+      */
+    }
 
 /*
     // TODO: as3.stage() currently returns AS3 void. Fix this
