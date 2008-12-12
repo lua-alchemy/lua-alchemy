@@ -8,6 +8,7 @@
 .actionScriptProperties
 .flexProperties
 *.achacks.*
+swfbridge.log
 
 test/FluintLuaTests/bin-*
 test/FluintLuaTests/build
