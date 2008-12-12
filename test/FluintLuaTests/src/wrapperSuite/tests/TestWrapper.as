@@ -273,10 +273,10 @@ package wrapperSuite.tests
 			assertEquals("wrapperSuite.tests::TestWrapperHelper", stack[0]);
 		}
 
-		public function testAS3ExportObject():void
+		public function testAS3SetGlobal():void
 		{
 		  var myHelper:TestWrapperHelper = new TestWrapperHelper();
-		  lua_wrapper.exportObject(luaState, myHelper, "testHelper");
+		  lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
 
 			var script:String = ( <![CDATA[
 				as3.call(testHelper, "setNameAge", "Bubba Joe Bob Brain", 13)

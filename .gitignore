@@ -15,6 +15,11 @@ test/FluintLuaTests/build
 test/FluintLuaTests/libs/lua_wrapper.swc
 test/FluintLuaTests/src/luaAlchemy
 
+demo/LuaAlchemyDemo/bin-*
+demo/LuaAlchemyDemo/build
+demo/LuaAlchemyDemo/libs/lua_wrapper.swc
+demo/LuaAlchemyDemo/src/luaAlchemy
+
 alchemy/glue.*
 alchemy/bin
 alchemy/lua_wrapper.as

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import luaAlchemy.lua_wrapper;
+			import cmodule.lua_wrapper.CLibInit;
+			import flash.net.FileReference;
+			import flash.net.FileFilter;
+
+			import flash.events.IOErrorEvent;
+			import flash.events.Event;
+
+			import flash.utils.ByteArray;
+
+			private var luaState:uint;
+
+			//FileReference Class well will use to load data
+			private var fr:FileReference;
+
+			//File types which we want the user to open
+			private static const FILE_TYPES:Array = [new FileFilter("All Files", "*.*")];
+
+			private function onCreationComplete():void
+			{
+				resetLuaState();
+			}
+
+			private function resetLuaState():void
+			{
+				if (luaState)
+					lua_wrapper.luaClose(luaState);
+
+				luaState = lua_wrapper.luaInitilizeState();
+				lua_wrapper.setGlobal(luaState, luaCanvas, "canvas");
+			}
+
+			private function onRunClicked(event:MouseEvent):void
+			{
+				if (clearBeforeRunCB.selected)
+					luaStackTA.text = "";
+
+				var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
+				luaStackTA.text = stack.join("\n") + "\n" + luaStackTA.text;
+
+				if (resetAfterRunCB.selected)
+				{
+					resetLuaState();
+				}
+			}
+
+			private function onLoadClicked(event:MouseEvent):void
+			{
+				fr = new FileReference();
+				fr.addEventListener(Event.SELECT, onFileSelect);
+				fr.addEventListener(Event.CANCEL,onCancel);
+				fr.browse(FILE_TYPES);
+			}
+
+			private function onFileSelect(e:Event):void
+			{
+				fr.addEventListener(Event.COMPLETE, onLoadComplete);
+				fr.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+				fr.load();
+			}
+
+			private function onLoadComplete(e:Event):void
+			{
+				var data:ByteArray = fr.data;
+				luaCodeTA.text = data.readUTFBytes(data.bytesAvailable);
+				fr = null;
+			}
+
+			private function onLoadError(e:IOErrorEvent):void
+			{
+				trace("Error loading file : " + e.text);
+			}
+
+			private function onCancel(e:Event):void
+			{
+				trace("File Browse Canceled");
+				fr = null;
+			}
+
+			private function onSaveClicked(event:MouseEvent):void
+			{
+				fr = new FileReference();
+				fr.addEventListener(Event.COMPLETE, onFileSave);
+				fr.addEventListener(Event.CANCEL,onCancel);
+				fr.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+				fr.save(luaCodeTA.text, "LuaAlchemy.lua");
+			}
+
+			private function onFileSave(e:Event):void
+			{
+				trace("File Saved");
+				fr = null;
+			}
+
+			private function onSaveError(e:IOErrorEvent):void
+			{
+				trace("Error Saving File : " + e.text);
+				fr = null;
+			}
+		]]>
+	</mx:Script>
+	<mx:Panel title="Lua 5.1 Code" width="100%" height="100%" layout="vertical">
+		<mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"/>
+		<mx:HBox horizontalAlign="center">
+			<mx:Button label="Run" click="onRunClicked(event)" toolTip="Run the Lua code"/>
+			<mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"/>
+			<mx:Button label="Load" click="onLoadClicked(event)" toolTip="Load Lua code from file"/>
+			<mx:Button label="Save" click="onSaveClicked(event)" toolTip="Save Lua code to file"/>
+			<mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"/>
+			<mx:Button label="Default" click="luaCodeTA.text = defaultLua" toolTip="Set Lua code to default"/>
+		</mx:HBox>
+		<mx:CheckBox id="resetAfterRunCB" label="Reset Lua after Run" selected="true" toolTip="If this is unchecked, code will accumulate in Lua and be rerun."/>
+	</mx:Panel>
+	<mx:Panel title="Lua Output" layout="vertical" width="100%" height="100%">
+		<mx:VDividedBox width="100%" height="100%">
+			<mx:Panel title="Lua Canvas" width="100%" height="100%" layout="vertical">
+				<mx:Canvas id="luaCanvas" width="100%" height="100%"/>
+			</mx:Panel>
+			<mx:Panel title="Lua Return Stack" width="100%" height="100%" layout="vertical">
+				<mx:TextArea id="luaStackTA" editable="false" width="100%" height="100%"/>
+				<mx:HBox width="100%">
+					<mx:Button label="Clear" click="luaStackTA.text = ''" toolTip="Clear the displayed Lua return stack"/>
+					<mx:CheckBox id="clearBeforeRunCB" label="Clear Stack before Run" selected="true" toolTip="If checked, the stack result will be cleared before running"/>
+				</mx:HBox>
+			</mx:Panel>
+		</mx:VDividedBox>
+		<!-- TODO would like to redirect stdout,stderr here
+		<mx:Panel title="Lua stdout, stderr, stdin" width="100%" height="100%" includeInLayout="false" visible="false">
+			<mx:UIComponent id="luaStdioTA" width="100%" height="100%"/>
+		</mx:Panel>
+		-->
+	</mx:Panel>
+
+	<mx:String id="defaultLua">
+<![CDATA[
+function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
+as3.call(canvas, "setStyle", "backgroundColor", "blue")
+
+return round(1.3339, 3)
+]]>
+	</mx:String>
+
+</mx:HDividedBox>
