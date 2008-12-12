@@ -3,6 +3,10 @@
 	creationComplete="onCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Label;
+			import mx.controls.Button;
+			import mx.controls.TextInput;
+			import mx.containers.VBox;
 			import luaAlchemy.lua_wrapper;
 			import cmodule.lua_wrapper.CLibInit;
 			import flash.net.FileReference;
@@ -24,6 +28,7 @@
 			private function onCreationComplete():void
 			{
 				resetLuaState();
+				importClassesForLua();
 			}
 
 			private function resetLuaState():void
@@ -102,6 +107,15 @@
 				trace("Error Saving File : " + e.text);
 				fr = null;
 			}
+
+			private function importClassesForLua():void
+			{
+				var vbox:VBox;
+				var label:Label;
+				var textInput:TextInput;
+				var button:Button;
+				var canvas:Canvas;
+			}
 		]]>
 	</mx:Script>
 	<mx:Panel title="Lua 5.1 Code" width="100%" height="100%" layout="vertical">
@@ -143,7 +157,25 @@ function round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
-as3.call(canvas, "setStyle", "backgroundColor", "blue")
+
+vbox = as3.new("mx.containers::VBox")
+label = as3.new("mx.controls::Label")
+input = as3.new("mx.controls::TextInput")
+button = as3.new("mx.controls::Button")
+box = as3.new("mx.containers::Canvas")
+
+as3.set(label, "text", "Name:");
+as3.set(button, "label", "Say Hello");
+
+as3.set(box, "width", 20)
+as3.set(box, "height", 20)
+as3.call(box, "setStyle", "backgroundColor", "blue")
+
+as3.call(vbox, "addChild", label);
+as3.call(vbox, "addChild", input);
+as3.call(vbox, "addChild", button);
+as3.call(vbox, "addChild", box);
+as3.call(canvas, "addChild", vbox);
 
 return round(1.3339, 3)
 ]]>
