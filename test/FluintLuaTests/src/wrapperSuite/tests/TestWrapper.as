@@ -1,6 +1,5 @@
 package wrapperSuite.tests
 {
-  import flash.events.Event;
   import flash.utils.ByteArray;
 
   import luaAlchemy.lua_wrapper;
@@ -306,6 +305,25 @@ package wrapperSuite.tests
       assertEquals(0, stack.length);
 
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
+    }
+
+    public function testCallLuaFunctionWithParameters():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+
+      var script:String = ( <![CDATA[
+       return function (name, age) as3.call(testHelper, "setNameAge", name, age) end
+      ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertTrue(stack[0] is Function);
+
+      var func:Function = stack[0] as Function;
+      func("Neo", 40);
+
+      assertEquals("Name: Neo age: 40", myHelper.nameAge);
     }
 
 /*
