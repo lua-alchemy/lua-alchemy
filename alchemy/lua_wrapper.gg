@@ -122,8 +122,8 @@ static AS3_Val as3_lua_callback(void *data, AS3_Val args)
   /* call function (error checking omitted) */
   lua_pcall(func_data->L, nargs,  LUA_MULTRET, 0);
 
-  /* Process results */  
-  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, 1, lua_gettop(func_data->L));
+  /* Process results, return stack except for function on the top */  
+  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, 2, lua_gettop(func_data->L));
 
   return ret;
 }

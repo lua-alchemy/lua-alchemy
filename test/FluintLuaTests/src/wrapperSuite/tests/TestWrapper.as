@@ -321,9 +321,34 @@ package wrapperSuite.tests
       assertTrue(stack[0] is Function);
 
       var func:Function = stack[0] as Function;
-      func("Neo", 40);
+      var ret:Array = func("Neo", 40);
+      
+      assertEquals(0, ret.length);
 
       assertEquals("Name: Neo age: 40", myHelper.nameAge);
+   }
+
+   public function testCallLuaFunctionWithReturn():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+
+      var script:String = ( <![CDATA[
+       return function ()
+            return 1 + 12, "hello there"
+        end
+      ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertTrue(stack[0] is Function);
+
+      var func:Function = stack[0] as Function;
+      var ret:Array = func();
+
+      assertEquals(2, ret.length);
+      assertEquals(13, ret[0]);
+      assertEquals("hello there", ret[1]);
     }
 
 /*
