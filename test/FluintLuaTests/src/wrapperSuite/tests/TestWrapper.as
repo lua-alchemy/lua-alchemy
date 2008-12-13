@@ -23,7 +23,6 @@ package wrapperSuite.tests
       lua_wrapper.luaClose(luaState);
     }
 
-
     public function testCreateCloseContext():void
     {
       var luaState:uint = lua_wrapper.luaInitilizeState();
@@ -129,7 +128,8 @@ package wrapperSuite.tests
     }
 
 
-    // TODO test getting every possible type defined in push_as3_to_lua_stack(), also check type on lua end
+    // TODO test getting every possible type defined in push_as3_to_lua_stack(), 
+    // also check type on Lua end
 
     public function testAS3SetPublicString():void
     {
@@ -215,6 +215,7 @@ package wrapperSuite.tests
 
     public function testAS3Type():void
     {
+      // TODO: FIXME: Test all available AS3 types (including ones that wouldn't work)
       var script:String = ( <![CDATA[
         ba = as3.new("flash.utils::ByteArray")
         s = as3.new("String")
@@ -233,7 +234,33 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertEquals(1, stack.length);
+      // TODO: This should not crash, but should return nil!
       assertEquals("[string \"...\"]:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got number)", stack[0]);
+    }
+
+    public function testAS3TypeInvalidUserdata():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.type(newproxy())
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertEquals(1, stack.length);
+      // TODO: This should not crash, but should return nil!
+      assertEquals("[string \"...\"]:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got userdata)", stack[0]);
+    }
+
+    public function testAS3TypeInvalidUserdataMt():void
+    {
+      // Have to use debug library since common setmetatable works on tables only
+      var script:String = ( <![CDATA[
+        local value = newproxy()
+        debug.setmetatable(value, {})
+        return as3.type(value)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertEquals(1, stack.length);
+      // TODO: This should not crash, but should return nil!
+      assertEquals("[string \"...\"]:4: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got userdata)", stack[0]);
     }
 
     public function testAS3NamespaceCall():void
@@ -248,7 +275,7 @@ package wrapperSuite.tests
     }
 
 /*
-    // TODO the stage isn't crossing the C/Lua or Alchemy bindings intact
+    // TODO: as3.stage() currently returns AS3 void. Fix this
     public function testAS3Stage():void
     {
       var script:String = ( <![CDATA[
@@ -259,16 +286,195 @@ package wrapperSuite.tests
       assertEquals(1, stack.length);
       assertTrue(stack[0] is Stage);
     }
+*/    
 
+    /* TODO: Move type conversion tests to a separate suite */
+
+    public function testAS3StringEmpty():void
+    {
+      var script:String = ( <![CDATA[
+        return ""
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("", stack[0]);
+    }
+
+    public function testAS3StringCommon():void
+    {
+      var script:String = ( <![CDATA[
+        return "Lua Alchemy"
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("Lua Alchemy", stack[0]);
+    }
+
+/*
+    // TODO: We should try to handle embedded zeroes somehow!
+    public function testAS3StringEmbeddedZero():void
+    {
+      var script:String = ( <![CDATA[
+        return "Embedded\0Zero"
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("Embedded\0Zero", stack[0]);
+    }
+*/
+
+    public function testAS3True():void
+    {
+      var script:String = ( <![CDATA[
+        return true
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(true, stack[0]);
+    }
+
+    public function testAS3False():void
+    {
+      var script:String = ( <![CDATA[
+        return false
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(false, stack[0]);
+    }
+
+    public function testAS3NumberInteger():void
+    {
+      var script:String = ( <![CDATA[
+        return 42
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(42, stack[0]);
+    }
+
+    public function testAS3NumberPI():void
+    {
+      var script:String = ( <![CDATA[
+        return math.pi
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(Math.PI, stack[0]);
+    }
+
+    public function testAS3NumberPosInf():void
+    {
+      var script:String = ( <![CDATA[
+        return 1/0
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(1/0, stack[0]);
+    }
+
+    public function testAS3NumberNegInf():void
+    {
+      var script:String = ( <![CDATA[
+        return -1/0
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(-1/0, stack[0]);
+    }
+
+    public function testAS3NumberNaN():void
+    {
+      var script:String = ( <![CDATA[
+        return 0/0
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertTrue(isNaN(stack[0])); // Note NaN != NaN
+    }
+
+    public function testAS3Nil():void
+    {
+      var script:String = ( <![CDATA[
+        return nil
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(null, stack[0]);
+    }
+
+/*
+    // TODO: This should work!
+    public function testAS3UserdataForeign():void
+    {
+      var script:String = ( <![CDATA[
+        return newproxy()
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertEquals("userdata", stack[0]); // TODO: Should return black-box object, not string.
+    }
+*/
+
+    public function testAS3UserdataAS3():void
+    {
+      // TODO: Test as much as possible of AS3 types
+      var script:String = ( <![CDATA[
+        return as3.new("Number")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals(0, stack[0]);
+    }
+
+    public function testAS3Table():void
+    {
+      var script:String = ( <![CDATA[
+        return {1}
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("table", stack[0]); // TODO: Should return black-box object, not string.
+    }
+
+    public function testAS3Function():void
+    {
+      var script:String = ( <![CDATA[
+        return function() end
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("function", stack[0]); // TODO: Should return black-box object, not string.
+    }
+
+    public function testAS3Thread():void
+    {
+      var script:String = ( <![CDATA[
+        return coroutine.create(function() end)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+        
+      assertEquals(1, stack.length);
+      assertEquals("thread", stack[0]); // TODO: Should return black-box object, not string.
+    }
+
+/*
     public function testAS3Assign():void
-    {
-    }
-
-    public function testAS3Type():void
-    {
-    }
-
-    public function testAS3Classname():void
     {
     }
 */
