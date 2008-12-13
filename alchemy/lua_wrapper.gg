@@ -225,8 +225,8 @@ static int as3_yield(lua_State *L)
 static int as3_stage(lua_State *L)
 {
   sztrace("as3_stage()");
-  /* TODO the stage isn't crossing the C/Lua or Alchemy bindings intact */
-  push_as3_to_lua_stack(L, AS3_Stage());
+  /* TODO: This is currently void, call setSprite() before init() to fix */
+  push_as3_lua_userdata(L, AS3_Stage());
   return 1;
 }
 
