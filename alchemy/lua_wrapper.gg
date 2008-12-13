@@ -34,6 +34,12 @@ typedef struct AS3LuaUserData
   AS3_Val value;
 } AS3LuaUserData;
 
+typedef struct LuaFunctionCallbackData
+{
+  lua_State *L;
+  int ref;
+} LuaFunctionCallbackData;
+
 #define checkas3(L) \
   (AS3LuaUserData*)luaL_checkudata(L, 1, "LuaAlchemy.as3")
 
@@ -79,15 +85,36 @@ static AS3_Val get_class(const char *as_class_path)
 /************************************************************
 * Lua Helper Functions
 ************************************************************/
+static AS3_Val as3_lua_callback(void *data, AS3_Val args);
+static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end);
+
+static int push_as3_array_to_lua_stack(AS3_Val val)
+{
+  return 0;
+}
 
 /*
 * Function used as a callback for all Lua functions passed throuhg
 * get_as3_value_from_lua_stack()
 */
-AS3_Val as3_lua_callback(void *data, AS3_Val args)
+static AS3_Val as3_lua_callback(void *data, AS3_Val args)
 {
-  sztrace("*****as3_lua_callback()");
-  return AS3_Undefined();
+  LuaFunctionCallbackData *func_data = (LuaFunctionCallbackData*)data;
+  
+  char msg[1024];
+  sprintf(msg, "L %d Ref %d", func_data->L, func_data->ref);
+  sztrace(msg);
+  
+  lua_rawgeti(func_data->L, LUA_REGISTRYINDEX, func_data->ref); /* push stored function */
+  int nargs = push_as3_array_to_lua_stack(args); /* push arguments */
+  
+  /* call function (error checking omitted) */
+  lua_pcall(func_data->L, nargs,  LUA_MULTRET, 0);
+
+  /* Process results */  
+  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, 1, lua_gettop(func_data->L));
+
+  return ret;
 }
 
 /*
@@ -99,6 +126,7 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
   AS3_Val value;
   AS3LuaUserData *userdata;
   int t;
+  LuaFunctionCallbackData *func_data;
 
   value = AS3_Undefined();
   t = lua_type(L, i);
@@ -127,8 +155,18 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
       break;
 
     case LUA_TFUNCTION: /* function */
-      /* TODO pass in some data rather than null so as3_lua_callback() knows what funciton to call. luaL_ref? */
-      value = AS3_Function(NULL, as3_lua_callback);
+      func_data = malloc(sizeof(LuaFunctionCallbackData)); /* TODO cleanup this when function dies */
+
+      lua_pushvalue(L, i);
+
+      func_data->L = L;
+      func_data->ref = luaL_ref(L, LUA_REGISTRYINDEX);
+
+      char msg[1024];
+      sprintf(msg, "L %d Ref %d", func_data->L, func_data->ref);
+      sztrace(msg);
+
+      value = AS3_Function(func_data, as3_lua_callback);
       break;
   
     case LUA_TLIGHTUSERDATA: /* not used */
