@@ -27,6 +27,10 @@ programming language for ActionScript using
 <ul>
   <li>Memory Leaks - Objects created on the canvas aren't properly cleaned up.</li>
   <li>No stdio - Lua calls to io.write() and print() don't have anywhere to go.</li>
+  <li>Callback Cleanup - Event listeners made in Lua aren't cleaned up properly.
+    If you click on run like crazy, the callbacks aren't properly
+    cleaned up and the timer can call again causing an error. Also previous timers are
+    still going if you run the default code twice </li>
 </ul>
 <br><h1>Lua AS3 Interface</h1>
 <p>The lua script has a "canvas" variable exported from the Flex application.  This canvas is in the upper right of the demo application. You can manipulate this canvas just like any object using the as3 interface described below.<p>
