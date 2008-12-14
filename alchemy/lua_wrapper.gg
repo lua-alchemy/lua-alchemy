@@ -115,15 +115,18 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
 static AS3_Val as3_lua_callback(void *data, AS3_Val args)
 {
   LuaFunctionCallbackData *func_data = (LuaFunctionCallbackData*)data;
-  
+
+  int base = lua_gettop(func_data->L);
+
   lua_rawgeti(func_data->L, LUA_REGISTRYINDEX, func_data->ref); /* push stored function */
   int nargs = push_as3_array_to_lua_stack(func_data->L, args); /* push arguments */
-  
+
   /* call function (error checking omitted) */
+  /* TODO: call do_pcall_with_traceback; see luaDoString() */
   lua_pcall(func_data->L, nargs,  LUA_MULTRET, 0);
 
-  /* Process results, return stack except for function on the top */  
-  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, 2, lua_gettop(func_data->L));
+  /* Process results, return stack except for function on the top */
+  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, base + 1, lua_gettop(func_data->L));
 
   return ret;
 }
