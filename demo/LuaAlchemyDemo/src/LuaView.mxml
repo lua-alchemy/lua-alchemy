@@ -3,6 +3,7 @@
   creationComplete="onCreationComplete()">
   <mx:Script>
     <![CDATA[
+      import mx.controls.Alert;
       import mx.controls.Label;
       import mx.controls.Button;
       import mx.controls.TextInput;
@@ -44,14 +45,14 @@
       {
         if (clearBeforeRunCB.selected)
           luaStackTA.text = "";
+        if (resetBeforeRunCB.selected)
+        {
+          luaCanvas.removeAllChildren();
+          resetLuaState();
+        }
 
         var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
         luaStackTA.text = stack.join("\n") + "\n" + luaStackTA.text;
-
-        if (resetAfterRunCB.selected)
-        {
-          resetLuaState();
-        }
       }
 
       private function onLoadClicked(event:MouseEvent):void
@@ -115,6 +116,7 @@
         var textInput:TextInput;
         var button:Button;
         var canvas:Canvas;
+        var alert:Alert;
       }
     ]]>
   </mx:Script>
@@ -128,7 +130,7 @@
       <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"/>
       <mx:Button label="Default" click="luaCodeTA.text = defaultLua" toolTip="Set Lua code to default"/>
     </mx:HBox>
-    <mx:CheckBox id="resetAfterRunCB" label="Reset Lua after Run" selected="true" toolTip="If this is unchecked, code will accumulate in Lua and be rerun."/>
+    <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true" toolTip="If this is unchecked, code will accumulate in Lua and be rerun."/>
   </mx:Panel>
   <mx:Panel title="Lua Output" layout="vertical" width="100%" height="100%">
     <mx:VDividedBox width="100%" height="100%">
@@ -157,6 +159,7 @@ function round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
+alertClass = as3.class("mx.controls::Alert")
 
 vbox = as3.new("mx.containers::VBox")
 label = as3.new("mx.controls::Label")
@@ -164,18 +167,23 @@ input = as3.new("mx.controls::TextInput")
 button = as3.new("mx.controls::Button")
 box = as3.new("mx.containers::Canvas")
 
-as3.set(label, "text", "Name:");
+as3.set(label, "text", "Name:")
+
 as3.set(button, "label", "Say Hello");
+as3.call(button, "addEventListener", "click",
+    function (e)
+        as3.call(alertClass, "show", "Hello " .. as3.get(input, "text"), "Hello")
+    end)
 
 as3.set(box, "width", 20)
 as3.set(box, "height", 20)
 as3.call(box, "setStyle", "backgroundColor", "blue")
 
-as3.call(vbox, "addChild", label);
-as3.call(vbox, "addChild", input);
-as3.call(vbox, "addChild", button);
-as3.call(vbox, "addChild", box);
-as3.call(canvas, "addChild", vbox);
+as3.call(vbox, "addChild", label)
+as3.call(vbox, "addChild", input)
+as3.call(vbox, "addChild", button)
+as3.call(vbox, "addChild", box)
+as3.call(canvas, "addChild", vbox)
 
 return round(1.3339, 3)
 ]]>
