@@ -623,8 +623,8 @@ public function luaDoString(luaState:(lua_State *)uint, str:String):(AS3_Val)Arr
   return create_as3_array_from_lua_stack(luaState, 1, lua_gettop(luaState));
 }
 
-public function setGlobal(luaState:(lua_State *)uint, obj:(AS3_Val)*, name:String):void
+public function setGlobal(luaState:(lua_State *)uint, key:String, value:(AS3_Val)*):void
 {
-  push_as3_to_lua_stack(luaState, obj);
-  lua_setglobal(luaState, name);
+  push_as3_to_lua_stack(luaState, value);
+  lua_setglobal(luaState, key);
 }

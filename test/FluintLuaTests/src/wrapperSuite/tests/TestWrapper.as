@@ -276,7 +276,7 @@ package wrapperSuite.tests
     public function testAS3SetGlobal():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
-      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+      lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
         as3.call(testHelper, "setNameAge", "Bubba Joe Bob Brain", 13)
@@ -290,7 +290,7 @@ package wrapperSuite.tests
     public function testLuaAddEventListener():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
-      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+      lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
        as3.call(testHelper,
@@ -310,7 +310,7 @@ package wrapperSuite.tests
     public function testCallLuaFunctionWithParameters():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
-      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+      lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
        return function (name, age) as3.call(testHelper, "setNameAge", name, age) end
@@ -331,7 +331,7 @@ package wrapperSuite.tests
    public function testCallLuaFunctionWithReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
-      lua_wrapper.setGlobal(luaState, myHelper, "testHelper");
+      lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
        return function ()

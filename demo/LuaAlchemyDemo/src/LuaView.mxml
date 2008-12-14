@@ -36,7 +36,7 @@
           lua_wrapper.luaClose(luaState);
 
         luaState = lua_wrapper.luaInitilizeState();
-        lua_wrapper.setGlobal(luaState, luaCanvas, "canvas");
+        lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
       }
 
       private function onRunClicked(event:MouseEvent):void
