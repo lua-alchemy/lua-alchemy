@@ -3,7 +3,7 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	layout="vertical" xmlns:local="*">
 	<mx:TabNavigator width="100%" height="100%">
-		<local:LuaView label="Lua" width="100%" height="100%"/>
+		<local:LuaView label="Code" width="100%" height="100%"/>
 		<local:HelpView label="Help" width="100%" height="100%"/>
 	</mx:TabNavigator>
 </mx:Application>
