@@ -14,7 +14,11 @@
     </mx:String>
    <mx:TextArea id="helpText" editable="false" width="100%" height="100%" condenseWhite="true">
     <mx:htmlText>
-<![CDATA[<h1>Introduction</h1>
+<![CDATA[<h1>Lua Alchemy</h1>
+<br><p>Project Home: <a target="_blank" href="http://code.google.com/p/lua-alchemy/">http://code.google.com/p/lua-alchemy/</a>
+<br>Version: v.1a</p>
+
+<br><h1>Introduction</h1>
 <p><a target="_blank" href="http://code.google.com/p/lua-alchemy/"/>Lua Alchemy</a> is a port of the <a target="_blank" href="http://www.lua.org/">Lua 5.1.4</a>
 programming language for ActionScript using
 <a target="_blank" href="http://labs.adobe.com/wiki/index.php/Alchemy">Alchemy</a>.</p>
@@ -25,10 +29,15 @@ programming language for ActionScript using
   <li>No stdio - Lua calls to io.write() and print() don't have anywhere to go.</li>
 </ul>
 <br><h1>Lua AS3 Interface</h1>
-<p>The lua script has a "canvas" variable exported from the Flex application.  You can manipulate this canvas just like any object using the as3 interface described below.<p>
+<p>The lua script has a "canvas" variable exported from the Flex application.  This canvas is in the upper right of the demo application. You can manipulate this canvas just like any object using the as3 interface described below.<p>
 <br><b>Example</b><br>
 <pre>
 as3.call(canvas, "setStyle", "backgroundColor", "red")
+</pre><br>
+
+<br><p>There is also an "output" variable exported from the Flex application.  This is the TextArea in the lower right part of the demo and could be used to override the Lua print() funciton like this:<p>
+<br><pre>
+  print = function(...) as3.set(output, "text", as3.get(output, "text") .. table.concat({...}, "\t") .. "\n") end
 </pre><br>
 
 <br><h2>as3.yield()</h2>
@@ -82,7 +91,7 @@ v = as3.new("String", "some string")
 is returned as a Lua type if possible (see as3.toluatype())</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("Array")  
+v = as3.new("Array")
 <br>return as3.get(v, "length")
 </pre><br>
 
