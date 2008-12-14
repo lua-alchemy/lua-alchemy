@@ -274,7 +274,7 @@ timer = as3.new("flash.utils::Timer", 5000)
 as3.call(timer, "addEventListener", "timer", movebox)
 as3.call(timer, "start")
 
-return as3.type(input), as3.type(timer), as3.type(move)
+return as3.type(input), as3.type(timer), as3.type(move), "Hello from Lua", 5.6 + 13
 ]]>
   </mx:String>
 
