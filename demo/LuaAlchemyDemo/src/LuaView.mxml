@@ -40,13 +40,13 @@
 
         luaState = lua_wrapper.luaInitilizeState();
         lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
-        lua_wrapper.setGlobal(luaState, "output", luaStackTA);
+        lua_wrapper.setGlobal(luaState, "output", outputTA);
       }
 
       private function onRunClicked(event:MouseEvent):void
       {
         if (clearBeforeRunCB.selected)
-          luaStackTA.text = "";
+          outputTA.text = "";
         if (resetBeforeRunCB.selected)
         {
           luaCanvas.removeAllChildren();
@@ -54,7 +54,7 @@
         }
 
         var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
-        luaStackTA.text = luaStackTA.text + "\n" + stack.join("\n");
+        outputTA.text = outputTA.text + "\n" + stack.join("\n");
       }
 
       private function onLoadClicked(event:MouseEvent):void
@@ -223,11 +223,11 @@
       <mx:Panel title="Script 'canvas'" width="100%" height="100%" layout="vertical">
         <mx:Canvas id="luaCanvas" width="100%" height="100%"/>
       </mx:Panel>
-      <mx:Panel title="Return Values" width="100%" height="100%" layout="vertical">
-        <mx:TextArea id="luaStackTA" editable="false" width="100%" height="100%"
+      <mx:Panel title="Output" width="100%" height="100%" layout="vertical">
+        <mx:TextArea id="outputTA" editable="false" width="100%" height="100%"
           paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5"/>
         <mx:HBox width="100%" visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}">
-          <mx:Button label="Clear" click="luaStackTA.text = ''" toolTip="Clear the displayed Lua return stack"
+          <mx:Button label="Clear" click="outputTA.text = ''" toolTip="Clear the displayed Lua return stack"
             visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
           <mx:CheckBox id="clearBeforeRunCB" label="Clear Stack before Run" selected="true"
             toolTip="If checked, the stack result will be cleared before running"
