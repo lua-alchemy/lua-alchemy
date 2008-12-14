@@ -1,9 +1,9 @@
 package wrapperSuite.tests
 {
   import flash.utils.ByteArray;
-
+  
   import luaAlchemy.lua_wrapper;
-
+  
   import net.digitalprimates.fluint.tests.TestCase;
 
   public class TestWrapper extends TestCase
@@ -536,7 +536,7 @@ package wrapperSuite.tests
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
         
       assertEquals(1, stack.length);
-      assertEquals("function", stack[0]); // TODO: Should return black-box object, not string.
+      assertTrue(stack[0] is Function);
     }
 
     public function testAS3Thread():void
