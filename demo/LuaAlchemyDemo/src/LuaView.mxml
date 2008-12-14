@@ -40,6 +40,7 @@
 
         luaState = lua_wrapper.luaInitilizeState();
         lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
+        lua_wrapper.setGlobal(luaState, "output", luaStackTA);
       }
 
       private function onRunClicked(event:MouseEvent):void
@@ -53,7 +54,7 @@
         }
 
         var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
-        luaStackTA.text = stack.join("\n") + "\n" + luaStackTA.text;
+        luaStackTA.text = luaStackTA.text + "\n" + stack.join("\n");
       }
 
       private function onLoadClicked(event:MouseEvent):void
@@ -242,8 +243,10 @@
   </mx:Panel>
 
   <mx:String id="defaultLua">
-<![CDATA[alertClass = as3.class("mx.controls::Alert")
+<![CDATA[print = function(...) as3.set(output, "text", as3.get(output, "text") .. table.concat({...}, "\t") .. "\n") end
+print("hello from lua")
 
+alertClass = as3.class("mx.controls::Alert")
 vbox = as3.new("mx.containers::VBox")
 label = as3.new("mx.controls::Label")
 input = as3.new("mx.controls::TextInput")
