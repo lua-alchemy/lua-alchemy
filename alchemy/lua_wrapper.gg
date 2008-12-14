@@ -567,10 +567,11 @@ static const luaL_reg AS3_LUA_LIB[] =
 /*
 * Creates the lua_state, opens the standard libs, and registers functions
 */
-static lua_State * lua_initialize_state()
+static lua_State * initialize_state()
 {
   lua_State *L;
   L = lua_open();
+
   luaL_openlibs(L);
 
   luaL_newmetatable(L, "LuaAlchemy.as3");
@@ -578,7 +579,7 @@ static lua_State * lua_initialize_state()
 
   luaL_register(L, "as3", AS3_LUA_LIB);
   lua_pop(L, 1); /* pop as3 library table created by above call */
-    
+
   return L;
 }
 
@@ -606,7 +607,7 @@ static void ggInit()
 
 public function luaInitilizeState():(lua_State *)uint
 {
-  return lua_initialize_state();
+  return initialize_state();
 }
 
 public function luaClose(luaState:(lua_State *)uint):void
