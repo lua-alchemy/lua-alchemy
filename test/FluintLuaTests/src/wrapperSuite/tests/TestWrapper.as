@@ -402,6 +402,18 @@ package wrapperSuite.tests
       // Note this does crazy things with test suite error output
       assertEquals("Embedded\u0000Zero", stack[0]);
     }
+
+    public function testAS3StringEmbeddedZeroAS3():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.new("String", "Embedded\0Zero")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      // Note this does crazy things with test suite error output
+      assertEquals("Embedded\u0000Zero", stack[0]);
+    }
 */
 
     public function testAS3True():void
