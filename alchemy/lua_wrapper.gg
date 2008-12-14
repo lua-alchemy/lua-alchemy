@@ -95,7 +95,7 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
   if (!AS3_InstanceOf(array, Array_class))
     return 0;
 
-  int len = AS3_GetS(array, "length");
+  int len = AS3_IntValue(AS3_GetS(array, "length"));
   int i;
   AS3_Val cur;
   for (i = 0; i < len; i++)
