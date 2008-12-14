@@ -145,8 +145,18 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
   switch (t)
   {
     case LUA_TSTRING:  /* strings */
-      value = AS3_String(lua_tostring(L, i));
-      break;
+    {
+      size_t length = 0;
+      const char * str = lua_tolstring(L, i, &length);
+      if (str == NULL)  /* NOTE: This is unreachable. Assert instead */
+      {
+        length = 6;
+        str = "(null)";
+      }
+      /* NOTE: Alchemy .5a truncates embedded zeroes in string regardless to the passed length */
+      value = AS3_StringN(str, length); 
+    }
+    break;
 
     case LUA_TBOOLEAN:  /* booleans */
       value = lua_toboolean(L, i) ? AS3_True() : AS3_False();
@@ -237,8 +247,6 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 */
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 {
-  AS3_Malloced_Str str;
-  
   if (AS3_InstanceOf(val, Number_class))
   {
     lua_pushnumber(L, AS3_NumberValue(val));
@@ -248,9 +256,13 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
     lua_pushnumber(L, AS3_IntValue(val));
   }
   else if (AS3_InstanceOf(val, String_class))
-  {
-    str = AS3_StringValue(val);
-    lua_pushstring(L, str);
+  {  
+    /* TODO: Release?! */
+    AS3_Val lengthVal = AS3_GetS(val, "length");
+    size_t length = AS3_IntValue(lengthVal);
+    AS3_Malloced_Str str = AS3_StringValue(val);
+
+    lua_pushlstring(L, str, length);
     free(str);
   }
   else if (AS3_InstanceOf(val, Boolean_class))
