@@ -248,12 +248,12 @@
 <![CDATA[print = function(...) as3.set(output, "text", as3.get(output, "text") .. table.concat({...}, "\t") .. "\n") end
 print("hello from Lua")
 
-alertClass = as3.class("mx.controls::Alert")
-vbox = as3.new("mx.containers::VBox")
-label = as3.new("mx.controls::Label")
-input = as3.new("mx.controls::TextInput")
-button = as3.new("mx.controls::Button")
-box = as3.new("mx.containers::Canvas")
+local alertClass = as3.class("mx.controls::Alert")
+local vbox = as3.new("mx.containers::VBox")
+local label = as3.new("mx.controls::Label")
+local input = as3.new("mx.controls::TextInput")
+local button = as3.new("mx.controls::Button")
+local box = as3.new("mx.containers::Canvas")
 
 as3.set(label, "text", "Name:")
 
@@ -276,7 +276,7 @@ as3.call(vbox, "addChild", button)
 as3.call(canvas, "addChild", box)
 as3.call(canvas, "addChild", vbox)
 
-move = as3.new("mx.effects::Move")
+local move = as3.new("mx.effects::Move")
 as3.set(move, "target", box)
 as3.set(move, "duration", 5000)
 
@@ -289,7 +289,7 @@ end
 
 movebox()
 
-timer = as3.new("flash.utils::Timer", 5000)
+local timer = as3.new("flash.utils::Timer", 5000)
 as3.call(timer, "addEventListener", "timer", movebox)
 as3.call(timer, "start")
 
