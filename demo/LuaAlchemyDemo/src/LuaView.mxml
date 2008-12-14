@@ -197,8 +197,10 @@
       }
     ]]>
   </mx:Script>
-  <mx:Panel title="Lua" width="100%" height="100%" layout="vertical">
-    <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"/>
+  <mx:Panel title="Lua" width="100%" height="100%" layout="vertical"
+    paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+    <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"
+      paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5"/>
     <mx:HBox horizontalAlign="center">
       <mx:Button id="runBtn" label="Run!" click="onRunClicked(event)" toolTip="Run the Lua code"/>
       <mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"
@@ -212,15 +214,17 @@
     </mx:HBox>
     <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true"
       toolTip="If this is unchecked, code will accumulate in Lua and be rerun."
-      visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>     
+      visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
   </mx:Panel>
-  <mx:Panel title="Alchemy" layout="vertical" width="100%" height="100%">
+  <mx:Panel title="Alchemy" layout="vertical" width="100%" height="100%"
+    paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
     <mx:VDividedBox width="100%" height="100%">
       <mx:Panel title="Script 'canvas'" width="100%" height="100%" layout="vertical">
         <mx:Canvas id="luaCanvas" width="100%" height="100%"/>
       </mx:Panel>
       <mx:Panel title="Return Values" width="100%" height="100%" layout="vertical">
-        <mx:TextArea id="luaStackTA" editable="false" width="100%" height="100%"/>
+        <mx:TextArea id="luaStackTA" editable="false" width="100%" height="100%"
+          paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5"/>
         <mx:HBox width="100%" visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}">
           <mx:Button label="Clear" click="luaStackTA.text = ''" toolTip="Clear the displayed Lua return stack"
             visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
