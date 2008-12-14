@@ -48,7 +48,7 @@ typedef struct LuaFunctionCallbackData
 * AS3.h Helper Functions
 ************************************************************/
 
-/* 
+/*
 * Get an actionscript class with the given namespace and class name
 * in the format: package::ClassName
 */
@@ -61,7 +61,7 @@ static AS3_Val get_class(const char *as_class_path)
   /* TODO might want to store classes in a table to save loading again */
 
   class_ptr = strstr(as_class_path, "::");
-  
+
   if (class_ptr > as_class_path)
   {
     as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
@@ -72,9 +72,9 @@ static AS3_Val get_class(const char *as_class_path)
     as_namespace = AS3_String("");
     as_class = AS3_String(as_class_path);
   }
-  
+
   AS3_Val ret = AS3_NSGet(as_namespace, as_class);
-  
+
   /* TODO check for failure getting class */
 
   AS3_Release(as_namespace);
@@ -94,7 +94,7 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
 {
   if (!AS3_InstanceOf(array, Array_class))
     return 0;
-    
+
   int len = AS3_GetS(array, "length");
   int i;
   AS3_Val cur;
@@ -104,7 +104,7 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
     push_as3_lua_userdata(L, cur);
     AS3_Release(cur);
   }
-  
+
   return len;
 }
 
@@ -146,12 +146,12 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
   {
     case LUA_TSTRING:  /* strings */
       value = AS3_String(lua_tostring(L, i));
-      break;
+    break;
 
     case LUA_TBOOLEAN:  /* booleans */
       value = lua_toboolean(L, i) ? AS3_True() : AS3_False();
       break;
-  
+
     case LUA_TNUMBER:  /* numbers */
       value = AS3_Number(lua_tonumber(L, i));
       break;
@@ -175,7 +175,7 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
 
       value = AS3_Function(func_data, as3_lua_callback);
       break;
-  
+
     case LUA_TLIGHTUSERDATA: /* not used */
     case LUA_TTABLE: /* TODO deal with this type */
     case LUA_TTHREAD: /* TODO deal with this type */
@@ -188,7 +188,7 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
   }
 
   /* AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value))); */
-  
+
   return value;
 }
 
@@ -201,26 +201,26 @@ static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
   AS3_Val array;
   AS3_Val value;
   int i;
-  
+
   array = AS3_Array("");
 
   for (i = start; i <= end; i++)
   {
     value = get_as3_value_from_lua_stack(L, i);
-    AS3_CallS("push", array, AS3_Array("AS3ValType", value));    
+    AS3_CallS("push", array, AS3_Array("AS3ValType", value));
   }
 
   return array;
 }
 
 /*
-* Take the given ActionScript value and push it onto the 
+* Take the given ActionScript value and push it onto the
 * stack with the correct metatable.
 */
 static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 {
   AS3LuaUserData *userdata;
-  
+
   AS3_Acquire(val);
 
   userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
@@ -238,7 +238,7 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 {
   AS3_Malloced_Str str;
-  
+
   if (AS3_InstanceOf(val, Number_class))
   {
     lua_pushnumber(L, AS3_NumberValue(val));
@@ -302,15 +302,15 @@ static int as3_class(lua_State *L)
 {
   const char *classname;
   AS3_Val as_class;
-  
+
   classname = lua_tostring(L, 1);
   luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
-  
+
   as_class = get_class(classname);
   luaL_argcheck(L, as_class != NULL, 1, "'package::ClassName' must be valid");
-  
+
   /* TODO check if get_class failed */
-  
+
   push_as3_lua_userdata(L, as_class);
 
   AS3_Release(as_class);
@@ -328,24 +328,24 @@ static int as3_new(lua_State *L)
   AS3_Val as_class;
   AS3_Val params;
   AS3_Val as_object;
-  
+
   classname = lua_tostring(L, 1);
   luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
-  
+
   as_class = get_class(classname);
   /* TODO error if as_class == null */
-  
+
   params = create_as3_array_from_lua_stack(L, 2, lua_gettop(L));
-  
+
   as_object = AS3_New(as_class, params);
   /* TODO error if as_object == null, make sure you free the class and params */
 
   push_as3_lua_userdata(L, as_object);
-  
+
   AS3_Release(as_object);
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
-  
+
   return 1;
 }
 
@@ -363,7 +363,7 @@ static int as3_release(lua_State *L)
     AS3_Release(userdata->value);
     userdata->value = AS3_Undefined();
   }
-  
+
   return 0;
 }
 
@@ -378,7 +378,7 @@ static int as3_toluatype(lua_State *L)
 
   userdata = checkas3(L);
   push_as3_to_lua_stack(L, userdata->value);
-  
+
   return 1;
 }
 
@@ -392,19 +392,19 @@ static int as3_get(lua_State *L)
   AS3LuaUserData *userdata;
   const char *property;
   AS3_Val val;
-  
+
   userdata = checkas3(L);
-  
+
   property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
-  
+
   val = AS3_GetS(userdata->value, property);
   /* TODO check for AS3_GetS successful */
 
   push_as3_to_lua_stack(L, val);
 
   AS3_Release(val);
-  
+
   return 1;
 }
 
@@ -417,15 +417,15 @@ static int as3_set(lua_State *L)
   AS3LuaUserData *userdata;
   const char *property;
   AS3_Val value;
-  
+
   userdata = checkas3(L);
-  
+
   property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
-  
+
   value = get_as3_value_from_lua_stack(L, 3);
   luaL_argcheck(L, value != AS3_Undefined(), 3, "'value' expected");
-   
+
   AS3_SetS(userdata->value, property, value);
   /* TODO check if AS3_SetS sucessful */
 
@@ -440,12 +440,12 @@ static int as3_assign(lua_State *L)
 {
   AS3LuaUserData *userdata;
   AS3_Val value;
-  
+
   userdata = checkas3(L);
-  
+
   value = get_as3_value_from_lua_stack(L, 2);
   luaL_argcheck(L, value != AS3_Undefined(), 2, "'value' expected");
-   
+
   /* TODO how to assign the value of a String, Number, int, etc? var s:String; s = "hello"; and do we care? */
 
   return 0;
@@ -461,7 +461,7 @@ static int as3_call(lua_State *L)
   AS3_Val params;
   const char *function_name;
   AS3_Val result;
-  
+
   userdata = checkas3(L);
 
   function_name = lua_tostring(L, 2);
@@ -471,9 +471,9 @@ static int as3_call(lua_State *L)
 
   result = AS3_CallS(function_name, userdata->value, params);
   /* TODO check for function call failure, make sure to relase params */
-  
+
   AS3_Release(params);
-  
+
   push_as3_to_lua_stack(L, result);
 
   AS3_Release(result);
@@ -519,7 +519,7 @@ static int as3_namespacecall(lua_State *L)
   AS3_Val as_method;
   AS3_Val params;
   AS3_Val result;
-  
+
   namespace = lua_tostring(L, 1);
   luaL_argcheck(L, namespace != NULL, 1, "'namespace' expected");
 
@@ -528,14 +528,14 @@ static int as3_namespacecall(lua_State *L)
 
   as_namespace = AS3_String(namespace);
   as_method = AS3_NSGetS(as_namespace, function_name);
-  
+
   params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
-  
+
   result = AS3_Call(as_method, NULL, params);
   /* TODO check for function call failure, make sure to release as_namespace, as_method, params */
-  
+
   push_as3_lua_userdata(L, result);
-  
+
   AS3_Release(result);
   AS3_Release(as_namespace);
   AS3_Release(as_method);
@@ -562,9 +562,9 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
   { NULL, NULL } /* The end */
-};  
+};
 
-/* 
+/*
 * Creates the lua_state, opens the standard libs, and registers functions
 */
 static lua_State * lua_initialize_state()
@@ -600,7 +600,6 @@ static void ggInit()
   getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
   Array_class = get_class("Array");
 }
-
 
 /* end of passthru C section */
 }

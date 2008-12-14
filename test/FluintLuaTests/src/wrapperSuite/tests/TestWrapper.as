@@ -1,9 +1,9 @@
 package wrapperSuite.tests
 {
   import flash.utils.ByteArray;
-  
+
   import luaAlchemy.lua_wrapper;
-  
+
   import net.digitalprimates.fluint.tests.TestCase;
 
   public class TestWrapper extends TestCase
