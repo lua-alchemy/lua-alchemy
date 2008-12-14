@@ -509,12 +509,12 @@ package wrapperSuite.tests
     {
       // TODO: Test as much as possible of AS3 types
       var script:String = ( <![CDATA[
-        return as3.new("Number")
+        return as3.new("Number", 42)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
       assertEquals(1, stack.length);
-      assertEquals(0, stack[0]);
+      assertEquals(42, stack[0]);
     }
 
     public function testAS3Table():void
