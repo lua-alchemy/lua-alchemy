@@ -572,6 +572,8 @@ static lua_State * initialize_state()
   lua_State *L;
   L = lua_open();
 
+  lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+
   luaL_openlibs(L);
 
   luaL_newmetatable(L, "LuaAlchemy.as3");
@@ -579,6 +581,8 @@ static lua_State * initialize_state()
 
   luaL_register(L, "as3", AS3_LUA_LIB);
   lua_pop(L, 1); /* pop as3 library table created by above call */
+
+  lua_gc(L, LUA_GCRESTART, 0); /* restart collector */
 
   return L;
 }
