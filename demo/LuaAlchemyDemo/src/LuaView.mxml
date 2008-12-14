@@ -3,6 +3,7 @@
   creationComplete="onCreationComplete()">
   <mx:Script>
     <![CDATA[
+      import mx.effects.Move;
       import mx.containers.*;
       import mx.controls.*;
       import luaAlchemy.lua_wrapper;
@@ -190,6 +191,9 @@
         var vRule:VRule
         var vScrollBar:VScrollBar
         var vSlider:VSlider
+
+        var timer:Timer
+        var move:Move
       }
     ]]>
   </mx:Script>
@@ -227,11 +231,6 @@
 
   <mx:String id="defaultLua">
 <![CDATA[
-function round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
-end
-
 alertClass = as3.class("mx.controls::Alert")
 
 vbox = as3.new("mx.containers::VBox")
@@ -244,21 +243,41 @@ as3.set(label, "text", "Name:")
 
 as3.set(button, "label", "Say Hello");
 as3.call(button, "addEventListener", "click",
-    function (e)
-        as3.call(alertClass, "show", "Hello " .. as3.get(input, "text"), "Hello")
-    end)
+  function (e)
+      as3.call(alertClass, "show", "Hello " .. as3.get(input, "text"), as3.type(e))
+  end)
 
 as3.set(box, "width", 20)
 as3.set(box, "height", 20)
+as3.set(box, "x", as3.get(canvas, "width") - 20)
+as3.set(box, "y", as3.get(canvas, "height") - 20)
 as3.call(box, "setStyle", "backgroundColor", "blue")
 
 as3.call(vbox, "addChild", label)
 as3.call(vbox, "addChild", input)
 as3.call(vbox, "addChild", button)
-as3.call(vbox, "addChild", box)
+
+as3.call(canvas, "addChild", box)
 as3.call(canvas, "addChild", vbox)
 
-return round(1.3339, 3)
+move = as3.new("mx.effects::Move")
+as3.set(move, "target", box)
+as3.set(move, "duration", 5000)
+
+function movebox()
+  as3.call(move, "end")
+  as3.set(move, "xTo", math.random(0, as3.get(canvas, "width") - 20))
+  as3.set(move, "yTo", math.random(0, as3.get(canvas, "height") - 20))
+  as3.call(move, "play")
+end
+
+movebox()
+
+timer = as3.new("flash.utils::Timer", 5000)
+as3.call(timer, "addEventListener", "timer", movebox)
+as3.call(timer, "start")
+
+return as3.type(input), as3.type(timer), as3.type(move)
 ]]>
   </mx:String>
 
