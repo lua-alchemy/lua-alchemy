@@ -15,7 +15,7 @@
    <mx:TextArea id="helpText" editable="false" width="100%" height="100%" condenseWhite="true">
     <mx:htmlText>
 <![CDATA[<h1>Introduction</h1>
-<p>Lua Alchemy is a port of the <a target="_blank" href="http://www.lua.org/">Lua 5.1.4</a>
+<p><a target="_blank" href="http://code.google.com/p/lua-alchemy/"/>Lua Alchemy</a> is a port of the <a target="_blank" href="http://www.lua.org/">Lua 5.1.4</a>
 programming language for ActionScript using
 <a target="_blank" href="http://labs.adobe.com/wiki/index.php/Alchemy">Alchemy</a>.</p>
 
