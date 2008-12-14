@@ -1,9 +1,9 @@
 package wrapperSuite.tests
 {
   import flash.utils.ByteArray;
-  
+
   import luaAlchemy.lua_wrapper;
-  
+
   import net.digitalprimates.fluint.tests.TestCase;
 
   public class TestWrapper extends TestCase
@@ -322,7 +322,7 @@ package wrapperSuite.tests
 
       var func:Function = stack[0] as Function;
       var ret:Array = func("Neo", 40);
-      
+
       assertEquals(0, ret.length);
 
       assertEquals("Name: Neo age: 40", myHelper.nameAge);
@@ -564,7 +564,7 @@ package wrapperSuite.tests
     }
 
     // TODO: Test all supported AS3 types in that manner!
-    //       Note this does not replace separate testing of AS3 value 
+    //       Note this does not replace separate testing of AS3 value
     //       creation in the Lua.
     public function testAS3PassThroughStringEmpty():void
     {
