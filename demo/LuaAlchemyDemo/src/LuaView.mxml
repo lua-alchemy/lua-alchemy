@@ -237,8 +237,7 @@
   </mx:Panel>
 
   <mx:String id="defaultLua">
-<![CDATA[
-alertClass = as3.class("mx.controls::Alert")
+<![CDATA[alertClass = as3.class("mx.controls::Alert")
 
 vbox = as3.new("mx.containers::VBox")
 label = as3.new("mx.controls::Label")
@@ -284,8 +283,7 @@ timer = as3.new("flash.utils::Timer", 5000)
 as3.call(timer, "addEventListener", "timer", movebox)
 as3.call(timer, "start")
 
-return as3.type(input), as3.type(timer), as3.type(move), "Hello from Lua", 5.6 + 13
-]]>
+return as3.type(input), as3.type(timer), as3.type(move), "Hello from Lua", 5.6 + 13]]>
   </mx:String>
 
 </mx:HDividedBox>
