@@ -18,6 +18,9 @@
 
       private var luaState:uint;
 
+      [Bindable]
+      private var showClearStackLuaState:Boolean = false;
+
       //FileReference Class well will use to load data
       private var fr:FileReference;
 
@@ -198,13 +201,17 @@
     <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"/>
     <mx:HBox horizontalAlign="center">
       <mx:Button label="Run" click="onRunClicked(event)" toolTip="Run the Lua code"/>
-      <mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"/>
+      <mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"
+        visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
       <mx:Button label="Load" click="onLoadClicked(event)" toolTip="Load Lua code from file"/>
       <mx:Button label="Save" click="onSaveClicked(event)" toolTip="Save Lua code to file"/>
-      <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"/>
+      <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"
+        visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
       <mx:Button label="Default" click="luaCodeTA.text = defaultLua" toolTip="Set Lua code to default"/>
     </mx:HBox>
-    <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true" toolTip="If this is unchecked, code will accumulate in Lua and be rerun."/>
+    <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true" 
+      toolTip="If this is unchecked, code will accumulate in Lua and be rerun."
+      visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
   </mx:Panel>
   <mx:Panel title="Lua Output" layout="vertical" width="100%" height="100%">
     <mx:VDividedBox width="100%" height="100%">
@@ -214,8 +221,11 @@
       <mx:Panel title="Lua Return Values" width="100%" height="100%" layout="vertical">
         <mx:TextArea id="luaStackTA" editable="false" width="100%" height="100%"/>
         <mx:HBox width="100%">
-          <mx:Button label="Clear" click="luaStackTA.text = ''" toolTip="Clear the displayed Lua return stack"/>
-          <mx:CheckBox id="clearBeforeRunCB" label="Clear Stack before Run" selected="true" toolTip="If checked, the stack result will be cleared before running"/>
+          <mx:Button label="Clear" click="luaStackTA.text = ''" toolTip="Clear the displayed Lua return stack"
+            visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
+          <mx:CheckBox id="clearBeforeRunCB" label="Clear Stack before Run" selected="true"
+            toolTip="If checked, the stack result will be cleared before running"
+            visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
         </mx:HBox>
       </mx:Panel>
     </mx:VDividedBox>
