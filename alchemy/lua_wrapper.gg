@@ -86,6 +86,103 @@ static AS3_Val get_class(const char *as_class_path)
 /************************************************************
 * Lua Helper Functions
 ************************************************************/
+
+/*
+ * BEGIN COPY-PASTE FROM Lua 5.1.4 ldblib.c
+ */
+
+static lua_State *getthread (lua_State *L, int *arg) {
+  if (lua_isthread(L, 1)) {
+    *arg = 1;
+    return lua_tothread(L, 1);
+  }
+  else {
+    *arg = 0;
+    return L;
+  }
+}
+
+#define LEVELS1	12	/* size of the first part of the stack */
+#define LEVELS2	10	/* size of the second part of the stack */
+
+static int db_errorfb (lua_State *L) {
+  int level;
+  int firstpart = 1;  /* still before eventual `...' */
+  int arg;
+  lua_State *L1 = getthread(L, &arg);
+  lua_Debug ar;
+  if (lua_isnumber(L, arg+2)) {
+    level = (int)lua_tointeger(L, arg+2);
+    lua_pop(L, 1);
+  }
+  else
+    level = (L == L1) ? 1 : 0;  /* level 0 may be this own function */
+  if (lua_gettop(L) == arg)
+    lua_pushliteral(L, "");
+  else if (!lua_isstring(L, arg+1)) return 1;  /* message is not a string */
+  else lua_pushliteral(L, "\n");
+  lua_pushliteral(L, "stack traceback:");
+  while (lua_getstack(L1, level++, &ar)) {
+    if (level > LEVELS1 && firstpart) {
+      /* no more than `LEVELS2' more levels? */
+      if (!lua_getstack(L1, level+LEVELS2, &ar))
+        level--;  /* keep going */
+      else {
+        lua_pushliteral(L, "\n\t...");  /* too many levels */
+        while (lua_getstack(L1, level+LEVELS2, &ar))  /* find last levels */
+          level++;
+      }
+      firstpart = 0;
+      continue;
+    }
+    lua_pushliteral(L, "\n\t");
+    lua_getinfo(L1, "Snl", &ar);
+    lua_pushfstring(L, "%s:", ar.short_src);
+    if (ar.currentline > 0)
+      lua_pushfstring(L, "%d:", ar.currentline);
+    if (*ar.namewhat != '\0')  /* is there a name? */
+        lua_pushfstring(L, " in function " LUA_QS, ar.name);
+    else {
+      if (*ar.what == 'm')  /* main? */
+        lua_pushfstring(L, " in main chunk");
+      else if (*ar.what == 'C' || *ar.what == 't')
+        lua_pushliteral(L, " ?");  /* C function or tail call */
+      else
+        lua_pushfstring(L, " in function <%s:%d>",
+                           ar.short_src, ar.linedefined);
+    }
+    lua_concat(L, lua_gettop(L) - arg);
+  }
+  lua_concat(L, lua_gettop(L) - arg);
+  return 1;
+}
+
+/*
+ * END COPY-PASTE FROM Lua 5.1.4 ldblib.c
+ */
+
+#undef LEVELS1
+#undef LEVELS2
+
+static int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
+{
+  int status = 0;
+  int base = lua_gettop(L) - narg;  /* function index */
+
+  lua_pushcfunction(L, db_errorfb);  /* push traceback function */
+  lua_insert(L, base);  /* put it under chunk and args */
+  status = lua_pcall(L, narg, nresults, base);
+  lua_remove(L, base);  /* remove traceback function */
+
+  /* force a complete garbage collection in case of errors */
+  if (status != 0)
+  {
+    lua_gc(L, LUA_GCCOLLECT, 0);
+  }
+
+  return status;
+}
+
 static AS3_Val as3_lua_callback(void *data, AS3_Val args);
 static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end);
 static void push_as3_lua_userdata(lua_State *L, AS3_Val val);
@@ -622,13 +719,41 @@ public function luaClose(luaState:(lua_State *)uint):void
   lua_close(luaState);
 }
 
-public function luaDoString(luaState:(lua_State *)uint, str:String):(AS3_Val)Array
+public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS3_Val)Array
 {
-  int status;
-  status = luaL_dostring(luaState, str);
-  /* TODO handle status */
-  return create_as3_array_from_lua_stack(luaState, 1, lua_gettop(luaState));
+  int base = 0;
+  int status = 0;
+  AS3_Malloced_Str str = AS3_StringValue(strValue);
+
+  lua_pushboolean(luaState, 1); /* Placeholder for execution status */
+  base = lua_gettop(luaState);
+
+  status = luaL_loadbuffer(
+      luaState,
+      str,
+      AS3_IntValue(AS3_GetS(strValue, "length")),
+      "=luaDoString"
+    );
+
+  free(str);
+
+  if (!status)
+  {
+    status = do_pcall_with_traceback(luaState, 0, LUA_MULTRET);
+  }
+
+  if (status)
+  {
+    lua_pushboolean(luaState, 0); /* ERROR */
+    lua_replace(luaState, base);
+    /* Error message is on stack */
+    /* NOTE: It is not necessary string! */
+  }
+
+  return create_as3_array_from_lua_stack(luaState, base, lua_gettop(luaState));
 }
+
+// TODO: Add luaDoStringThrow()?
 
 public function setGlobal(luaState:(lua_State *)uint, obj:(AS3_Val)*, name:String):void
 {
