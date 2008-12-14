@@ -127,7 +127,7 @@ package wrapperSuite.tests
     }
 
 
-    // TODO test getting every possible type defined in push_as3_to_lua_stack(), 
+    // TODO test getting every possible type defined in push_as3_to_lua_stack(),
     // also check type on Lua end
 
     public function testAS3SetPublicString():void
@@ -363,7 +363,7 @@ package wrapperSuite.tests
       assertEquals(1, stack.length);
       assertTrue(stack[0] is Stage);
     }
-*/    
+*/
 
     /* TODO: Move type conversion tests to a separate suite */
 
@@ -373,7 +373,7 @@ package wrapperSuite.tests
         return ""
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("", stack[0]);
     }
@@ -384,7 +384,7 @@ package wrapperSuite.tests
         return "Lua Alchemy"
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("Lua Alchemy", stack[0]);
     }
@@ -397,7 +397,7 @@ package wrapperSuite.tests
         return "Embedded\0Zero"
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("Embedded\0Zero", stack[0]);
     }
@@ -409,7 +409,7 @@ package wrapperSuite.tests
         return true
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(true, stack[0]);
     }
@@ -420,7 +420,7 @@ package wrapperSuite.tests
         return false
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(false, stack[0]);
     }
@@ -431,7 +431,7 @@ package wrapperSuite.tests
         return 42
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(42, stack[0]);
     }
@@ -442,7 +442,7 @@ package wrapperSuite.tests
         return math.pi
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(Math.PI, stack[0]);
     }
@@ -453,7 +453,7 @@ package wrapperSuite.tests
         return 1/0
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(1/0, stack[0]);
     }
@@ -486,7 +486,7 @@ package wrapperSuite.tests
         return nil
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(null, stack[0]);
     }
@@ -512,7 +512,7 @@ package wrapperSuite.tests
         return as3.new("Number")
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(0, stack[0]);
     }
@@ -523,7 +523,7 @@ package wrapperSuite.tests
         return {1}
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("table", stack[0]); // TODO: Should return black-box object, not string.
     }
@@ -534,7 +534,7 @@ package wrapperSuite.tests
         return function() end
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertTrue(stack[0] is Function);
     }
@@ -545,7 +545,7 @@ package wrapperSuite.tests
         return coroutine.create(function() end)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("thread", stack[0]); // TODO: Should return black-box object, not string.
     }
