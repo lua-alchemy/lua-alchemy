@@ -3,11 +3,8 @@
   creationComplete="onCreationComplete()">
   <mx:Script>
     <![CDATA[
-      import mx.controls.Alert;
-      import mx.controls.Label;
-      import mx.controls.Button;
-      import mx.controls.TextInput;
-      import mx.containers.VBox;
+      import mx.containers.*;
+      import mx.controls.*;
       import luaAlchemy.lua_wrapper;
       import cmodule.lua_wrapper.CLibInit;
       import flash.net.FileReference;
@@ -109,14 +106,90 @@
         fr = null;
       }
 
+      /**
+      * When you compile in the Flex library statically, the linker only includes
+      * classes you are actually using.  Only the classes used would be available
+      * for the Lua script to create.  So to ensure the script has access to the
+      * classes I wanted to create, I declared one of them so it would be included.
+      */
       private function importClassesForLua():void
       {
-        var vbox:VBox;
-        var label:Label;
-        var textInput:TextInput;
-        var button:Button;
-        var canvas:Canvas;
-        var alert:Alert;
+        var accordion:Accordion
+        var applicationControlBar:ApplicationControlBar
+        var box:Box
+        var boxDirection:BoxDirection
+        var canvas:Canvas
+        var controlBar:ControlBar
+        var dividedBox:DividedBox
+        var form:Form
+        var formHeading:FormHeading
+        var formItem:FormItem
+        var formItemDirection:FormItemDirection
+        var grid:Grid
+        var gridItem:GridItem
+        var gridRow:GridRow
+        var hBox:HBox
+        var hDividedBox:HDividedBox
+        var panel:Panel
+        var tabNavigator:TabNavigator
+        var tile:Tile
+        var tileDirection:TileDirection
+        var titleWindow:TitleWindow
+        var vBox:VBox
+        var vDividedBox:VDividedBox
+        var viewStack:ViewStack
+
+        var advancedDataGrid:AdvancedDataGrid
+        var advancedDataGridBaseEx:AdvancedDataGridBaseEx
+        var alert:Alert
+        var button:Button
+        var buttonBar:ButtonBar
+        var buttonLabelPlacement:ButtonLabelPlacement
+        var checkBox:CheckBox
+        var colorPicker:ColorPicker
+        var comboBase:ComboBase
+        var comboBox:ComboBox
+        var dataGrid:DataGrid
+        var dateChooser:DateChooser
+        var dateField:DateField
+        var formItemLabel:FormItemLabel
+        var horizontalList:HorizontalList
+        var hRule:HRule
+        var hScrollBar:HScrollBar
+        var hSlider:HSlider
+        var image:Image
+        var label:Label
+        var linkBar:LinkBar
+        var linkButton:LinkButton
+        var list:List
+        var menu:Menu
+        var menuBar:MenuBar
+        var navBar:NavBar
+        var numericStepper:NumericStepper
+        var oLAPDataGrid:OLAPDataGrid
+        var popUpButton:PopUpButton
+        var popUpMenuButton:PopUpMenuButton
+        var progressBar:ProgressBar
+        var progressBarDirection:ProgressBarDirection
+        var progressBarLabelPlacement:ProgressBarLabelPlacement
+        var progressBarMode:ProgressBarMode
+        var radioButton:RadioButton
+        var radioButtonGroup:RadioButtonGroup
+        var richTextEditor:RichTextEditor
+        var spacer:Spacer
+        var sWFLoader:SWFLoader
+        var tabBar:TabBar
+        var text:Text
+        var textArea:TextArea
+        var textInput:TextInput
+        var tileList:TileList
+        var toggleButtonBar:ToggleButtonBar
+        var toolTip:ToolTip
+        var tree:Tree
+        var videoDisplay:VideoDisplay
+        var vRule:VRule
+        var vScrollBar:VScrollBar
+        var vSlider:VSlider
       }
     ]]>
   </mx:Script>
