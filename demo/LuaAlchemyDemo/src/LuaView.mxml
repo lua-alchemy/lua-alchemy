@@ -47,6 +47,7 @@
       {
         if (clearBeforeRunCB.selected)
           outputTA.text = "";
+
         if (resetBeforeRunCB.selected)
         {
           luaCanvas.removeAllChildren();
@@ -54,7 +55,8 @@
         }
 
         var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
-        outputTA.text = outputTA.text + "\n" + stack.join("\n");
+        if (stack.length > 0)
+            outputTA.text = outputTA.text + "\n=== Return values ===\n" + stack.join("\n");
       }
 
       private function onLoadClicked(event:MouseEvent):void
@@ -220,7 +222,7 @@
   <mx:Panel title="Alchemy" layout="vertical" width="100%" height="100%"
     paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
     <mx:VDividedBox width="100%" height="100%">
-      <mx:Panel title="Script 'canvas'" width="100%" height="100%" layout="vertical">
+      <mx:Panel title="Canvas" width="100%" height="100%" layout="vertical">
         <mx:Canvas id="luaCanvas" width="100%" height="100%"/>
       </mx:Panel>
       <mx:Panel title="Output" width="100%" height="100%" layout="vertical">
