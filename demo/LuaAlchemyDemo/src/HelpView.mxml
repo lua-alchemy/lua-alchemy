@@ -1,4 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
-  <mx:TextArea editable="false" width="100%" height="100%"/>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="onCreationComplete()">
+    <mx:Script>
+      <![CDATA[
+        private function onCreationComplete():void
+        {
+          var stylesheet:StyleSheet = new StyleSheet();
+          stylesheet.parseCSS(helpStyle);
+          helpText.styleSheet = stylesheet;
+        }
+      ]]>
+    </mx:Script>
+    <mx:String>
+    </mx:String>
+   <mx:TextArea id="helpText" editable="false" width="100%" height="100%" condenseWhite="true">
+    <mx:htmlText>
+<![CDATA[<h1>Introduction</h1>
+<p>Lua Alchemy is a port of the <a target="_blank" href="http://www.lua.org/">Lua 5.1.4</a>
+programming language for ActionScript using
+<a target="_blank" href="http://labs.adobe.com/wiki/index.php/Alchemy">Alchemy</a>.</p>
+
+<br><h1>Lua AS3 Interface</h1>
+
+<br><h2>as3.yield()</h2>
+<p>Release control to Flash and return to this point on the next timer tick</p>
+<br><b>Example</b><br>
+<pre>
+as3.yield()
+</pre><br>
+
+<br><h2>as3.class("[package::]ClassName")</h2>
+<p>Return the requested class in package::ClassName form.
+The return can be used to call static class functions or get/set static properties</p>
+<br><b>Example</b><br>
+<pre>
+v = as3.class("flash.utils:ByteArray")
+</pre><br>
+
+<br><h2>as3.new("[package::]ClassName[, param1,... paramN]")</h2>
+<p>Create a new instance of the given class in package::ClassName form.</p>
+<br><b>Example</b><br>
+<pre>
+v = as3.new("flash.utils:ByteArray")
+<br>s = as3.new("String", "some string")
+</pre><br>
+
+<br><h2>as3.release(this)</h2>
+<p>Release the given ActionScript object so Flash will do garbage collection.</p>
+<br><b>Example</b><br>
+v = as3.new("String")
+<br>as3.release(v)
+<pre>
+</pre><br>
+
+<br><h2>as3.toluatype(this)</h2>
+<p>Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
+If conversion is not possible, this will return the original AS object</p>
+<br><b>Example</b><br>
+v = as3.new("String", "some string")
+<br>s = as3.toluatype(v) -- s is a Lua string with value "some string"
+<pre>
+</pre><br>
+
+<br><h2>as3.get(this, "property")</h2>
+<p>Return the requested property of a given ActionScript object.  The value
+is returned as a Lua type if possible (see as3.toluatype())</p>
+<br><b>Example</b><br>
+<pre>
+v = as3.new("Array")  
+<br>return as3.get(v, "length")
+</pre><br>
+
+<br><h2>as3.set(this, "property", value)</h2>
+<p>Set the requested property of a given ActionScript object.</p>
+<br><b>Example</b><br>
+<pre>
+v = as3.new("mx.components::TextArea")
+<br>as3.set(v, "text", "hello")
+</pre><br>
+
+<br><h2>as3.call(this, "function"[, param1, ... paramN])</h2>
+<p>Call a function on a given ActionScript object</p>
+<br><b>Example</b><br>
+<pre>
+box = as3.new("mx.containers::Canvas")
+<br>as3.call(box, "setStyle", "backgroundColor", "blue")
+</pre><br>
+
+<br><h2>as3.type(this)</h2>
+<p>Returns the ActionScript getQualifiedClassName() for the given value</p>
+<br><b>Example</b><br>
+<pre>
+box = as3.new("mx.containers::Canvas")
+<br>type = as3.type(box) -- "mx.containers::Canvas"
+</pre><br>
+
+<br><h2>as3.namespacecall("package", "function"[, param1, ... paramN])</h2>
+<p>Call a namespace level function</p>
+<br><b>Example</b><br>
+<pre>
+v = as3.new("wrapperSuite.tests::TestWrapperHelper")
+<br>return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
+</pre><br>
+]]>
+    </mx:htmlText>
+  </mx:TextArea>
+  <mx:String id="helpStyle">
+<![CDATA[
+h1 {
+    font-size: 24;
+    text-decoration: bold;
+}
+h2 {
+    font-size: 16;
+    text-decoration: bold;
+}
+
+p {
+    font-size: 12;
+    text-align: justify;
+}
+
+a {
+    text-decoration: underline;
+    color: #0000FF;
+}
+
+a:hover {
+    color: #FF0000;
+}
+]]>
+  </mx:String>
 </mx:VBox>
