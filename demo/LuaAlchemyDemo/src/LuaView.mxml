@@ -200,18 +200,19 @@
   <mx:Panel title="Lua" width="100%" height="100%" layout="vertical">
     <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"/>
     <mx:HBox horizontalAlign="center">
-      <mx:Button label="Run" click="onRunClicked(event)" toolTip="Run the Lua code"/>
+      <mx:Button id="runBtn" label="Run!" click="onRunClicked(event)" toolTip="Run the Lua code"/>
       <mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"
         visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
+      <mx:Spacer width="25"/>
       <mx:Button label="Load" click="onLoadClicked(event)" toolTip="Load Lua code from file"/>
       <mx:Button label="Save" click="onSaveClicked(event)" toolTip="Save Lua code to file"/>
-      <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"
-        visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
+      <mx:Spacer width="25"/>
+      <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"/>
       <mx:Button label="Default" click="luaCodeTA.text = defaultLua" toolTip="Set Lua code to default"/>
     </mx:HBox>
     <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true"
       toolTip="If this is unchecked, code will accumulate in Lua and be rerun."
-      visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>
+      visible="{showClearStackLuaState}" includeInLayout="{showClearStackLuaState}"/>     
   </mx:Panel>
   <mx:Panel title="Alchemy" layout="vertical" width="100%" height="100%">
     <mx:VDividedBox width="100%" height="100%">
