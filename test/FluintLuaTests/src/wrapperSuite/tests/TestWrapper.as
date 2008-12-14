@@ -390,7 +390,7 @@ package wrapperSuite.tests
     }
 
 /*
-    // TODO: We should try to handle embedded zeroes somehow!
+    // TODO: Looks like there is a bug in Alchemy .5a AS3_StringN().
     public function testAS3StringEmbeddedZero():void
     {
       var script:String = ( <![CDATA[
@@ -399,7 +399,8 @@ package wrapperSuite.tests
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
       assertEquals(1, stack.length);
-      assertEquals("Embedded\0Zero", stack[0]);
+      // Note this does crazy things with test suite error output
+      assertEquals("Embedded\u0000Zero", stack[0]);
     }
 */
 
