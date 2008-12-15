@@ -54,7 +54,7 @@
           resetLuaState();
         }
 
-        var stack:Array = lua_wrapper.luaDoString(luaState, luaCodeTA.text);
+        var stack:Array = lua_wrapper.luaDoString(luaState, getCode());
         if (stack.length > 0)
             outputTA.text = outputTA.text + "\n=== Return values ===\n" + stack.join("\n");
       }
@@ -98,7 +98,7 @@
         fr.addEventListener(Event.COMPLETE, onFileSave);
         fr.addEventListener(Event.CANCEL,onCancel);
         fr.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-        fr.save(luaCodeTA.text, "LuaAlchemy.lua");
+        fr.save(getCode(), "LuaAlchemy.lua");
       }
 
       private function onFileSave(e:Event):void
@@ -197,6 +197,17 @@
 
         var timer:Timer
         var move:Move
+      }
+
+      private function getCode():String
+      {
+        var ret:String = "";
+        var xml:XML = new XML("<code>" + luaCodeTA.htmlText + "</code>");
+        var text:XML;
+        for each (text in xml..FONT)
+         ret = ret + "\n" + text.text();
+
+        return ret == "" ? luaCodeTA.text : ret;
       }
     ]]>
   </mx:Script>
