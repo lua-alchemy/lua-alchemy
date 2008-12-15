@@ -1,9 +1,9 @@
 package wrapperSuite.tests
 {
   import flash.utils.ByteArray;
-  
+
   import luaAlchemy.lua_wrapper;
-  
+
   import net.digitalprimates.fluint.tests.TestCase;
 
   public class TestWrapper extends TestCase
@@ -127,7 +127,7 @@ package wrapperSuite.tests
     }
 
 
-    // TODO test getting every possible type defined in push_as3_to_lua_stack(), 
+    // TODO test getting every possible type defined in push_as3_to_lua_stack(),
     // also check type on Lua end
 
     public function testAS3SetPublicString():void
@@ -322,7 +322,7 @@ package wrapperSuite.tests
 
       var func:Function = stack[0] as Function;
       var ret:Array = func("Neo", 40);
-      
+
       assertEquals(0, ret.length);
 
       assertEquals("Name: Neo age: 40", myHelper.nameAge);
@@ -363,7 +363,7 @@ package wrapperSuite.tests
       assertEquals(1, stack.length);
       assertTrue(stack[0] is Stage);
     }
-*/    
+*/
 
     /* TODO: Move type conversion tests to a separate suite */
 
@@ -373,7 +373,7 @@ package wrapperSuite.tests
         return ""
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("", stack[0]);
     }
@@ -384,22 +384,35 @@ package wrapperSuite.tests
         return "Lua Alchemy"
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("Lua Alchemy", stack[0]);
     }
 
 /*
-    // TODO: We should try to handle embedded zeroes somehow!
+    // TODO: Looks like there is a bug in Alchemy .5a AS3_StringN().
     public function testAS3StringEmbeddedZero():void
     {
       var script:String = ( <![CDATA[
         return "Embedded\0Zero"
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
-      assertEquals("Embedded\0Zero", stack[0]);
+      // Note this does crazy things with test suite error output
+      assertEquals("Embedded\u0000Zero", stack[0]);
+    }
+
+    public function testAS3StringEmbeddedZeroAS3():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.new("String", "Embedded\0Zero")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      // Note this does crazy things with test suite error output
+      assertEquals("Embedded\u0000Zero", stack[0]);
     }
 */
 
@@ -409,7 +422,7 @@ package wrapperSuite.tests
         return true
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(true, stack[0]);
     }
@@ -420,7 +433,7 @@ package wrapperSuite.tests
         return false
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(false, stack[0]);
     }
@@ -431,7 +444,7 @@ package wrapperSuite.tests
         return 42
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(42, stack[0]);
     }
@@ -442,7 +455,7 @@ package wrapperSuite.tests
         return math.pi
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(Math.PI, stack[0]);
     }
@@ -453,7 +466,7 @@ package wrapperSuite.tests
         return 1/0
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(1/0, stack[0]);
     }
@@ -486,7 +499,7 @@ package wrapperSuite.tests
         return nil
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals(null, stack[0]);
     }
@@ -509,12 +522,12 @@ package wrapperSuite.tests
     {
       // TODO: Test as much as possible of AS3 types
       var script:String = ( <![CDATA[
-        return as3.new("Number")
+        return as3.new("Number", 42)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
-      assertEquals(0, stack[0]);
+      assertEquals(42, stack[0]);
     }
 
     public function testAS3Table():void
@@ -523,7 +536,7 @@ package wrapperSuite.tests
         return {1}
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("table", stack[0]); // TODO: Should return black-box object, not string.
     }
@@ -534,7 +547,7 @@ package wrapperSuite.tests
         return function() end
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertTrue(stack[0] is Function);
     }
@@ -545,10 +558,58 @@ package wrapperSuite.tests
         return coroutine.create(function() end)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        
+
       assertEquals(1, stack.length);
       assertEquals("thread", stack[0]); // TODO: Should return black-box object, not string.
     }
+
+    // TODO: Test all supported AS3 types in that manner!
+    //       Note this does not replace separate testing of AS3 value
+    //       creation in the Lua.
+    public function testAS3PassThroughStringEmpty():void
+    {
+      lua_wrapper.setGlobal(luaState, "", "myValue");
+
+      var script:String = ( <![CDATA[
+        assert(myValue == "")
+        return myValue
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertEquals("", stack[0]);
+    }
+
+    public function testAS3PassThroughStringCommon():void
+    {
+      lua_wrapper.setGlobal(luaState, "Lua Alchemy", "myValue");
+
+      var script:String = ( <![CDATA[
+        assert(myValue == "Lua Alchemy")
+        return myValue
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertEquals("Lua Alchemy", stack[0]);
+    }
+
+/*
+    // TODO: Looks like there is a bug in Alchemy .5a AS3_StringN().
+    public function testAS3PassThroughStringEmbeddedZero():void
+    {
+      lua_wrapper.setGlobal(luaState, "Embedded\u0000Zero", "myValue");
+
+      var script:String = ( <![CDATA[
+        assert(myValue == "Embedded\0Zero")
+        return myValue
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(1, stack.length);
+      assertEquals("Embedded\u0000Zero", stack[0]);
+    }
+*/
 
 /*
     public function testAS3Assign():void
