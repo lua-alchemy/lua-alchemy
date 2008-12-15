@@ -214,7 +214,7 @@
   <mx:Panel title="Lua" width="100%" height="100%" layout="vertical"
     paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
     <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{defaultLua}"
-      paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5"/>
+      paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" wordWrap="false"/>
     <mx:HBox horizontalAlign="center">
       <mx:Button id="runBtn" label="Run!" click="onRunClicked(event)" toolTip="Run the Lua code"/>
       <mx:Button label="Reset" click="resetLuaState()" toolTip="Reset the Lua Context"
