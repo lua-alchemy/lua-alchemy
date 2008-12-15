@@ -294,9 +294,9 @@ package wrapperSuite.tests
 
       var script:String = ( <![CDATA[
        as3.call(testHelper,
-							  "addEventListener",
-								"TestWrapperHelperEvent",
-								function () as3.call(testHelper, "setNameAge", "Timmy", 99) end)
+                "addEventListener",
+                "TestWrapperHelperEvent",
+                function () as3.call(testHelper, "setNameAge", "Timmy", 99) end)
       ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
@@ -568,7 +568,7 @@ package wrapperSuite.tests
     //       creation in the Lua.
     public function testAS3PassThroughStringEmpty():void
     {
-      lua_wrapper.setGlobal(luaState, "", "myValue");
+      lua_wrapper.setGlobal(luaState, "myValue", "");
 
       var script:String = ( <![CDATA[
         assert(myValue == "")
@@ -582,7 +582,7 @@ package wrapperSuite.tests
 
     public function testAS3PassThroughStringCommon():void
     {
-      lua_wrapper.setGlobal(luaState, "Lua Alchemy", "myValue");
+      lua_wrapper.setGlobal(luaState, "myValue", "Lua Alchemy");
 
       var script:String = ( <![CDATA[
         assert(myValue == "Lua Alchemy")
