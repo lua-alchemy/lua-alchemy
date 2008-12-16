@@ -688,7 +688,10 @@ static lua_State * initialize_state()
   luaL_openlibs(L);
 
   luaL_newmetatable(L, AS3LUA_METATABLE);
-  lua_pop(L, 1); /* pop as3 metatable created by above call */
+  lua_pushcfunction(L, as3_release);
+  lua_setfield(L, -2, "__gc");
+
+  lua_pop(L, 1); /* pop as3 metatable created above */
 
   luaL_register(L, "as3", AS3_LUA_LIB);
   lua_pop(L, 1); /* pop as3 library table created by above call */
