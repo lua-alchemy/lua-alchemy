@@ -41,8 +41,10 @@ typedef struct LuaFunctionCallbackData
   int ref;
 } LuaFunctionCallbackData;
 
+#define AS3LUA_METATABLE "LuaAlchemy.as3"
+
+  (AS3LuaUserData*)luaL_checkudata(L, index, AS3LUA_METATABLE)
 #define checkas3(L) \
-  (AS3LuaUserData*)luaL_checkudata(L, 1, "LuaAlchemy.as3")
 
 /************************************************************
 * AS3.h Helper Functions
@@ -336,7 +338,7 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
   userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
   userdata->value = val;
 
-  luaL_getmetatable(L, "LuaAlchemy.as3");
+  luaL_getmetatable(L, AS3LUA_METATABLE);
   lua_setmetatable(L, -2);
 }
 
@@ -688,7 +690,7 @@ static lua_State * initialize_state()
 
   luaL_openlibs(L);
 
-  luaL_newmetatable(L, "LuaAlchemy.as3");
+  luaL_newmetatable(L, AS3LUA_METATABLE);
   lua_pop(L, 1); /* pop as3 metatable created by above call */
 
   luaL_register(L, "as3", AS3_LUA_LIB);
