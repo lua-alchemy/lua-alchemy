@@ -43,8 +43,8 @@ typedef struct LuaFunctionCallbackData
 
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
 
+#define check_as3userdata(L, index) \
   (AS3LuaUserData*)luaL_checkudata(L, index, AS3LUA_METATABLE)
-#define checkas3(L) \
 
 /************************************************************
 * AS3.h Helper Functions
@@ -469,9 +469,8 @@ static int as3_new(lua_State *L)
 */
 static int as3_release(lua_State *L)
 {
-  AS3LuaUserData *userdata;
+  AS3LuaUserData * userdata = check_as3userdata(L, 1);
 
-  userdata = checkas3(L);
   if (userdata->value != AS3_Undefined())
   {
     AS3_Release(userdata->value);
@@ -488,9 +487,7 @@ static int as3_release(lua_State *L)
 */
 static int as3_toluatype(lua_State *L)
 {
-  AS3LuaUserData *userdata;
-
-  userdata = checkas3(L);
+  AS3LuaUserData * userdata = check_as3userdata(L, 1);
   push_as3_to_lua_stack(L, userdata->value);
 
   return 1;
@@ -507,7 +504,7 @@ static int as3_get(lua_State *L)
   const char *property;
   AS3_Val val;
 
-  userdata = checkas3(L);
+  userdata = check_as3userdata(L, 1);
 
   property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
@@ -532,7 +529,7 @@ static int as3_set(lua_State *L)
   const char *property;
   AS3_Val value;
 
-  userdata = checkas3(L);
+  userdata = check_as3userdata(L, 1);
 
   property = lua_tostring(L, 2);
   luaL_argcheck(L, property != NULL, 2, "'property' expected");
@@ -555,7 +552,7 @@ static int as3_assign(lua_State *L)
   AS3LuaUserData *userdata;
   AS3_Val value;
 
-  userdata = checkas3(L);
+  userdata = check_as3userdata(L, 1);
 
   value = get_as3_value_from_lua_stack(L, 2);
   luaL_argcheck(L, value != AS3_Undefined(), 2, "'value' expected");
@@ -576,7 +573,7 @@ static int as3_call(lua_State *L)
   const char *function_name;
   AS3_Val result;
 
-  userdata = checkas3(L);
+  userdata = check_as3userdata(L, 1);
 
   function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
@@ -605,7 +602,7 @@ static int as3_type(lua_State *L)
   AS3_Val result;
   AS3_Val params;
 
-  userdata = checkas3(L);
+  userdata = check_as3userdata(L, 1);
 
   params = AS3_Array("AS3ValType", userdata->value);
 
