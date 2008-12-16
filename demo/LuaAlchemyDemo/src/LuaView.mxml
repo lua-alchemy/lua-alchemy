@@ -201,13 +201,32 @@
 
       private function getCode():String
       {
+        var rawText:String = luaCodeTA.htmlText.replace(/[<]\/P[>]/g, "\n"); // change all </P> to line returns
+        rawText = rawText.replace(/<[a-zA-Z\/][^>]*>/g, ""); // strip all html
+        
+        var space:RegExp = /[ \t]/;
+        
+        // for each line
         var ret:String = "";
-        var xml:XML = new XML("<code>" + luaCodeTA.htmlText + "</code>");
-        var text:XML;
-        for each (text in xml..FONT)
-         ret = ret + "\n" + text.text();
-
-        return ret == "" ? luaCodeTA.text : ret;
+        var line:String;
+        for each (line in rawText.split("\n"))
+        {
+        	if (ret != "") // add line return if not first line
+        	   ret = ret + "\n"
+        	   
+        	// preserve beginning spaces
+        	for (var i:int = 0; i < line.length; i++)
+        	{
+        		if (space.test(line.charAt(i)))
+        		  ret = ret + line.charAt(i)
+        		else
+        		  break;
+        	}
+        	// use XML to transform any &quot; type escapes to raw text
+        	ret = ret + XML("<line>" + line + "</line>").text();
+        }
+        
+        return ret;
       }
     ]]>
   </mx:Script>
