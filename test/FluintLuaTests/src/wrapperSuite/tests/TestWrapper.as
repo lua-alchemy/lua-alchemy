@@ -351,7 +351,7 @@ package wrapperSuite.tests
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
     }
 
-    public function testCallLuaFunctionWithParameters():void
+    public function testCallLuaFunctionWithParametersNilReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
       lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
@@ -366,14 +366,35 @@ package wrapperSuite.tests
       assertTrue(stack[1] is Function);
 
       var func:Function = stack[1] as Function;
-      var ret:Array = func("Neo", 40);
-
-      assertEquals(0, ret.length);
+      var ret:* = func("Neo", 40);
+      assertEquals(null, ret);
 
       assertEquals("Name: Neo age: 40", myHelper.nameAge);
    }
 
-   public function testCallLuaFunctionWithReturn():void
+   public function testCallLuaFunctionWithSingleReturn():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
+
+      var script:String = ( <![CDATA[
+       return function ()
+            return 1 + 12
+        end
+      ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(2, stack.length);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Function);
+
+      var func:Function = stack[1] as Function;
+      var ret:* = func();
+      assertTrue(ret is Number);
+      assertEquals(13, ret);
+    }
+
+   public function testCallLuaFunctionWithMultiReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
       lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
@@ -390,8 +411,9 @@ package wrapperSuite.tests
       assertTrue(stack[1] is Function);
 
       var func:Function = stack[1] as Function;
-      var ret:Array = func();
+      var ret:* = func();
 
+      assertTrue(ret is Array);
       assertEquals(2, ret.length);
       assertEquals(13, ret[0]);
       assertEquals("hello there", ret[1]);

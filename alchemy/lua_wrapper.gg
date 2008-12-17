@@ -186,7 +186,7 @@ static int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
 }
 
 static AS3_Val as3_lua_callback(void *data, AS3_Val args);
-static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end);
+static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end, int collapse_array);
 static void push_as3_lua_userdata(lua_State *L, AS3_Val val);
 
 static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
@@ -225,8 +225,8 @@ static AS3_Val as3_lua_callback(void *data, AS3_Val args)
   lua_pcall(func_data->L, nargs,  LUA_MULTRET, 0);
 
   /* Process results, return stack except for function on the top */
-  AS3_Val ret = create_as3_array_from_lua_stack(func_data->L, base + 1, lua_gettop(func_data->L));
-
+  AS3_Val ret = create_as3_value_from_lua_stack(func_data->L, base + 1, lua_gettop(func_data->L), 1);
+  
   return ret;
 }
 
@@ -299,30 +299,55 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
       break;
   }
 
-  /* AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value))); */
+  /*
+  sztrace("get_as3_value_from_lua_stack()");
+  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value)));
+  */
 
   return value;
 }
 
 /*
-* Create an ActionScript array from the lua stack values starting
-* at index start and ending at index end.
+* Create an ActionScript value from the lua stack starting
+* at index start and ending at index end.  If collapse_array == 1,
+* an empty return will be transformed into AS3_Undefined() and a
+* return of length 1 will just return the specific value.
+* Otherwise an array is returned.
 */
-static AS3_Val create_as3_array_from_lua_stack(lua_State *L, int start, int end)
+static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end, int collapse_array)
 {
-  AS3_Val array;
+  AS3_Val ret;
   AS3_Val value;
   int i;
-
-  array = AS3_Array("");
-
-  for (i = start; i <= end; i++)
+  
+  /* sztrace("****START create_as3_value_from_lua_stack()"); */
+  
+  if (collapse_array == 1 && start > end)
   {
-    value = get_as3_value_from_lua_stack(L, i);
-    AS3_CallS("push", array, AS3_Array("AS3ValType", value));
+    ret = AS3_Null();
+  }
+  else if (collapse_array == 1 && start == end)
+  {
+    ret = get_as3_value_from_lua_stack(L, start);
+  }
+  else
+  {
+    ret = AS3_Array("");
+
+    for (i = start; i <= end; i++)
+    {
+      value = get_as3_value_from_lua_stack(L, i);
+      AS3_CallS("push", ret, AS3_Array("AS3ValType", value));
+    }
   }
 
-  return array;
+  /*
+  sztrace("ret type =");
+  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", ret)));
+  sztrace("****END create_as3_value_from_lua_stack()");
+  */
+
+  return ret;
 }
 
 /*
@@ -401,7 +426,6 @@ static int as3_yield(lua_State *L)
 */
 static int as3_stage(lua_State *L)
 {
-  sztrace("as3_stage()");
   /* TODO: This is currently void, call setSprite() before init() to fix */
   push_as3_lua_userdata(L, AS3_Stage());
   return 1;
@@ -449,7 +473,7 @@ static int as3_new(lua_State *L)
   as_class = get_class(classname);
   /* TODO error if as_class == null */
 
-  params = create_as3_array_from_lua_stack(L, 2, lua_gettop(L));
+  params = create_as3_value_from_lua_stack(L, 2, lua_gettop(L), 0);
 
   as_object = AS3_New(as_class, params);
   /* TODO error if as_object == null, make sure you free the class and params */
@@ -578,7 +602,7 @@ static int as3_call(lua_State *L)
   function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
 
-  params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
+  params = create_as3_value_from_lua_stack(L, 3, lua_gettop(L), 0);
 
   result = AS3_CallS(function_name, userdata->value, params);
   /* TODO check for function call failure, make sure to relase params */
@@ -640,7 +664,7 @@ static int as3_namespacecall(lua_State *L)
   as_namespace = AS3_String(namespace);
   as_method = AS3_NSGetS(as_namespace, function_name);
 
-  params = create_as3_array_from_lua_stack(L, 3, lua_gettop(L));
+  params = create_as3_value_from_lua_stack(L, 3, lua_gettop(L), 0);
 
   result = AS3_Call(as_method, NULL, params);
   /* TODO check for function call failure, make sure to release as_namespace, as_method, params */
@@ -764,7 +788,7 @@ public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS
     /* NOTE: It is not necessary string! */
   }
 
-  return create_as3_array_from_lua_stack(luaState, base, lua_gettop(luaState));
+  return create_as3_value_from_lua_stack(luaState, base, lua_gettop(luaState), 0);
 }
 
 // TODO: Add luaDoStringThrow()?

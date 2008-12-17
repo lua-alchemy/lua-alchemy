@@ -49,5 +49,4 @@ as3.call(as_counter2, "inc", 100)
 
 print ("t1:", t1:get(), "t2:", t2:get())
 
--- TODO fix return of get
-print ("as_counter1:",as3.type(as3.call(as_counter1, "get")))
+print ("as_counter1:", as3.call(as_counter1, "get"), "as_counter2:", as3.call(as_counter2, "get"))
