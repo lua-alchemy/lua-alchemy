@@ -17,10 +17,14 @@ package
 	  [Embed(source="../assets/print.lua", mimeType="application/octet-stream")]
 	  private static var _printLuaClass:Class;
 
+	  [Embed(source="../assets/movebox.lua", mimeType="application/octet-stream")]
+	  private static var _moveBoxLuaClass:Class;
+
     private static var _embeddedLuaFiles:Array = [
         {label:"Hello World", asset:_helloLuaClass},
         {label:"Return Values", asset:_returnLuaClass},
         {label:"print()", asset:_printLuaClass},
+        {label:"Moving Box", asset:_moveBoxLuaClass},
         {label:"Demo", asset:_defaultLuaClass}
     ];
 
