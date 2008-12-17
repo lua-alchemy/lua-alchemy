@@ -31,6 +31,10 @@
       {
         resetLuaState();
         importClassesForLua();
+
+        LuaSampleCode.init();
+        sampleCodeCB.selectedIndex = 1;
+        luaCodeTA.text = sampleCodeCB.selectedItem.code
       }
 
       private function resetLuaState():void
@@ -203,36 +207,43 @@
       {
         var rawText:String = luaCodeTA.htmlText.replace(/[<]\/P[>]/g, "\n"); // change all </P> to line returns
         rawText = rawText.replace(/<[a-zA-Z\/][^>]*>/g, ""); // strip all html
-        
+
         var space:RegExp = /[ \t]/;
-        
+
         // for each line
         var ret:String = "";
         var line:String;
         for each (line in rawText.split("\n"))
         {
-        	if (ret != "") // add line return if not first line
-        	   ret = ret + "\n"
-        	   
-        	// preserve beginning spaces
-        	for (var i:int = 0; i < line.length; i++)
-        	{
-        		if (space.test(line.charAt(i)))
-        		  ret = ret + line.charAt(i)
-        		else
-        		  break;
-        	}
-        	// use XML to transform any &quot; type escapes to raw text
-        	ret = ret + XML("<line>" + line + "</line>").text();
+          if (ret != "") // add line return if not first line
+             ret = ret + "\n"
+
+          // preserve beginning spaces
+          for (var i:int = 0; i < line.length; i++)
+          {
+            if (space.test(line.charAt(i)))
+              ret = ret + line.charAt(i)
+            else
+              break;
+          }
+          // use XML to transform any &quot; type escapes to raw text
+          ret = ret + XML("<line>" + line + "</line>").text();
         }
-        
+
         return ret;
       }
     ]]>
   </mx:Script>
   <mx:Panel title="Lua" width="100%" height="100%" layout="vertical"
     paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
-    <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false" text="{LuaSampleCode.defaultLuaText}"
+    <mx:HBox>
+      <mx:Label text="Sample Code:"/>
+        <mx:ComboBox id="sampleCodeCB"
+          dataProvider="{LuaSampleCode.sampleCode}"
+          labelField="label"
+          change="luaCodeTA.text = sampleCodeCB.selectedItem.code"/>
+    </mx:HBox>
+    <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false"
       paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" wordWrap="false"/>
     <mx:HBox horizontalAlign="center">
       <mx:Button id="runBtn" label="Run!" click="onRunClicked(event)" toolTip="Run the Lua code"/>
@@ -243,7 +254,6 @@
       <mx:Button label="Save" click="onSaveClicked(event)" toolTip="Save Lua code to file"/>
       <mx:Spacer width="25"/>
       <mx:Button label="Clear" click="luaCodeTA.text = ''" toolTip="Clear the Lua code"/>
-      <mx:Button label="Default" click="luaCodeTA.text = LuaSampleCode.defaultLuaText" toolTip="Set Lua code to default"/>
     </mx:HBox>
     <mx:CheckBox id="resetBeforeRunCB" label="Reset Lua before Run" selected="true"
       toolTip="If this is unchecked, code will accumulate in Lua and be rerun."
