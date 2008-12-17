@@ -14,9 +14,13 @@ package
 	  [Embed(source="../assets/return.lua", mimeType="application/octet-stream")]
 	  private static var _returnLuaClass:Class;
 
+	  [Embed(source="../assets/print.lua", mimeType="application/octet-stream")]
+	  private static var _printLuaClass:Class;
+
     private static var _embeddedLuaFiles:Array = [
         {label:"Hello World", asset:_helloLuaClass},
         {label:"Return Values", asset:_returnLuaClass},
+        {label:"print()", asset:_printLuaClass},
         {label:"Demo", asset:_defaultLuaClass}
     ];
 
