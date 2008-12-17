@@ -1,4 +1,11 @@
-print = function(...) as3.set(output, "text", as3.get(output, "text") .. table.concat({...}, "\t") .. "\n") end
+print = function(...)
+ local t = {...}
+ for k,v in pairs(t) do
+   t[k] = tostring(v)
+ end
+ as3.set(output, "text", as3.get(output, "text") .. table.concat(t,"\t") .. "\n")
+end
+
 print("hello from Lua")
 
 local alertClass = as3.class("mx.controls::Alert")
