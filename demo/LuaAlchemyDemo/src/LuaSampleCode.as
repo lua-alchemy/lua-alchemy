@@ -5,9 +5,6 @@ package
 
   public class LuaSampleCode
   {
-    [Embed(source="../assets/demo.lua", mimeType="application/octet-stream")]
-    private static var _defaultLuaClass:Class;
-
     [Embed(source="../assets/hello.lua", mimeType="application/octet-stream")]
     private static var _helloLuaClass:Class;
 
@@ -29,7 +26,6 @@ package
         {label:"print()", asset:_printLuaClass},
         {label:"Moving Box", asset:_moveBoxLuaClass},
         {label:"Button Click", asset:_buttonClickLuaClass},
-        {label:"Demo", asset:_defaultLuaClass}
     ];
 
     [Bindable]
@@ -39,7 +35,6 @@ package
     {
         var luaFile:Object;
         sampleCode.removeAll();
-        sampleCode.addItem({label:"", code:""})
         for each (luaFile in _embeddedLuaFiles)
         {
             var luaAsset:ByteArrayAsset = ByteArrayAsset(new luaFile.asset());
