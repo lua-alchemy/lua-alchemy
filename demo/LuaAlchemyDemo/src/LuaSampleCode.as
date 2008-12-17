@@ -11,8 +11,12 @@ package
     [Embed(source="../assets/hello.lua", mimeType="application/octet-stream")]
     private static var _helloLuaClass:Class;
 
+	  [Embed(source="../assets/return.lua", mimeType="application/octet-stream")]
+	  private static var _returnLuaClass:Class;
+
     private static var _embeddedLuaFiles:Array = [
         {label:"Hello World", asset:_helloLuaClass},
+        {label:"Return Values", asset:_returnLuaClass},
         {label:"Demo", asset:_defaultLuaClass}
     ];
 
