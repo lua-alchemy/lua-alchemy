@@ -23,6 +23,9 @@ package
 	  [Embed(source="../assets/createasobject.lua", mimeType="application/octet-stream")]
 	  private static var _createASObjectLuaClass:Class;
 
+	  [Embed(source="../assets/pausecount.lua", mimeType="application/octet-stream")]
+	  private static var _pauseCountLuaClass:Class;
+
     private static var _embeddedLuaFiles:Array = [
         {label:"Hello World", asset:_helloLuaClass},
         {label:"Return Values", asset:_returnLuaClass},
@@ -30,6 +33,7 @@ package
         {label:"Moving Box", asset:_moveBoxLuaClass},
         {label:"Button Click", asset:_buttonClickLuaClass},
         {label:"Create AS Object", asset:_createASObjectLuaClass},
+        //{label:"Pause Count with Yield", asset:_pauseCountLuaClass}, TODO as3.yield() not working as expected
     ];
 
     [Bindable]
