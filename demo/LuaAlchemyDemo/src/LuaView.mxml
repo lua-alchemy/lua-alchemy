@@ -33,7 +33,7 @@
         importClassesForLua();
 
         LuaSampleCode.init();
-        sampleCodeCB.selectedIndex = 1;
+        sampleCodeCB.selectedIndex = 0;
         luaCodeTA.text = sampleCodeCB.selectedItem.code
       }
 
