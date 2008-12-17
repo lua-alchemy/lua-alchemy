@@ -20,12 +20,16 @@ package
 	  [Embed(source="../assets/buttonclick.lua", mimeType="application/octet-stream")]
 	  private static var _buttonClickLuaClass:Class;
 
+	  [Embed(source="../assets/createasobject.lua", mimeType="application/octet-stream")]
+	  private static var _createASObjectLuaClass:Class;
+
     private static var _embeddedLuaFiles:Array = [
         {label:"Hello World", asset:_helloLuaClass},
         {label:"Return Values", asset:_returnLuaClass},
         {label:"print()", asset:_printLuaClass},
         {label:"Moving Box", asset:_moveBoxLuaClass},
         {label:"Button Click", asset:_buttonClickLuaClass},
+        {label:"Create AS Object", asset:_createASObjectLuaClass},
     ];
 
     [Bindable]
