@@ -700,5 +700,22 @@ package wrapperSuite.tests
     {
     }
 */
+		public function testCreateAndCallObject():void
+		{
+      var script:String = ( <![CDATA[
+				local create_as_object = function()
+				   local obj = as3.new("Object")
+				   as3.set(obj, "addThirteen", function(n) return n+13 end)
+				   return obj
+				end
+				local as_object = create_as_object()
+				return as3.call(as_object, "addThirteen", 5) + 2
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertEquals(2, stack.length);
+      assertTrue(stack[0]);
+      assertEquals(20, stack[1]);
+		}
   }
 }

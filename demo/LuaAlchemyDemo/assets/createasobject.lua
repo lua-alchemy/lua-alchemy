@@ -26,7 +26,9 @@ end
 local t1 = make_counter()
 local t2 = make_counter()
 
-t1:inc(); t1:inc()
+t1:inc()
+t1:inc()
+t2:inc(5)
 
 print ("t1:", t1:get(), "t2:", t2:get())
 
@@ -41,11 +43,7 @@ local as_counter1 = counter_to_as(t1)
 local as_counter2 = counter_to_as(t2)
 
 as3.call(as_counter1, "inc")
-as3.call(as_counter1, "inc")
-as3.call(as_counter1, "inc")
-
--- TODO fix increment call with parameter
-as3.call(as_counter2, "inc", 100)
+as3.call(as_counter2, "inc", 10)
 
 print ("t1:", t1:get(), "t2:", t2:get())
 

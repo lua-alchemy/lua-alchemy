@@ -188,6 +188,7 @@ static int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
 static AS3_Val as3_lua_callback(void *data, AS3_Val args);
 static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end, int collapse_array);
 static void push_as3_lua_userdata(lua_State *L, AS3_Val val);
+static void push_as3_to_lua_stack(lua_State *L, AS3_Val val);
 
 static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
 {
@@ -200,7 +201,7 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
   for (i = 0; i < len; i++)
   {
     cur = AS3_Get(array, AS3_Int(i));
-    push_as3_lua_userdata(L, cur);
+    push_as3_to_lua_stack(L, cur);
     AS3_Release(cur);
   }
 
@@ -320,7 +321,7 @@ static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end,
   AS3_Val value;
   int i;
   
-  /* sztrace("****START create_as3_value_from_lua_stack()"); */
+  sztrace("****START create_as3_value_from_lua_stack()");
   
   if (collapse_array == 1 && start > end)
   {
@@ -341,11 +342,9 @@ static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end,
     }
   }
 
-  /*
   sztrace("ret type =");
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", ret)));
   sztrace("****END create_as3_value_from_lua_stack()");
-  */
 
   return ret;
 }
@@ -374,6 +373,9 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 */
 static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 {
+  sztrace("***push_as3_to_lua_stack()");
+  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)));
+  
   if (AS3_InstanceOf(val, Number_class))
   {
     lua_pushnumber(L, AS3_NumberValue(val));
