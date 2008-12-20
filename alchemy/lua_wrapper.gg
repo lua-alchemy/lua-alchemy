@@ -46,7 +46,7 @@ typedef struct LuaFunctionCallbackData
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
 
 #define check_as3userdata(L, index) \
-  (AS3LuaUserData*)luaL_checkudata(L, index, AS3LUA_METATABLE)
+  (AS3LuaUserData *)luaL_checkudata(L, index, AS3LUA_METATABLE)
 
 /************************************************************
 * AS3.h Helper Functions
@@ -357,13 +357,14 @@ static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end,
 * Take the given ActionScript value and push it onto the
 * stack with the correct metatable.
 */
-static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
+static int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 {
-  AS3LuaUserData *userdata;
+
+  AS3LuaUserData * userdata = NULL;
 
   AS3_Acquire(val);
 
-  userdata = (AS3LuaUserData *) lua_newuserdata(L, sizeof(AS3LuaUserData));
+  userdata = (AS3LuaUserData *)lua_newuserdata(L, sizeof(AS3LuaUserData));
   userdata->value = val;
 
   luaL_getmetatable(L, AS3LUA_METATABLE);
@@ -375,7 +376,7 @@ static void push_as3_lua_userdata(lua_State *L, AS3_Val val)
 * type if a primitive class (String, Number, Boolean, int, null)
 * or push as userdata
 */
-static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
+static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
 {
   /*
   sztrace("***push_as3_to_lua_stack()");
@@ -422,7 +423,7 @@ static void push_as3_to_lua_stack(lua_State *L, AS3_Val val)
 * Release control to Flash and return to this point on the next timer tick
 * Lua example: as3.yield()
 */
-static int as3_yield(lua_State *L)
+static int as3_yield(lua_State * L)
 {
   flyield();
   return 0;
@@ -432,7 +433,7 @@ static int as3_yield(lua_State *L)
 * Return the Flash stage
 * Lua example: as3.stage()
 */
-static int as3_stage(lua_State *L)
+static int as3_stage(lua_State * L)
 {
   /* TODO: This is currently void, call setSprite() before init() to fix */
   push_as3_lua_userdata(L, AS3_Stage());
@@ -444,9 +445,9 @@ static int as3_stage(lua_State *L)
 * Can be used to call static class functions
 * Lua example: v = as3.class("flash.utils.ByteArray")
 */
-static int as3_class(lua_State *L)
+static int as3_class(lua_State * L)
 {
-  const char *classname;
+  const char * classname = NULL;
   AS3_Val as_class;
 
   classname = lua_tostring(L, 1);
@@ -468,9 +469,9 @@ static int as3_class(lua_State *L)
 * Create a new instance of the given class in package::ClassName form.
 * Lua example: v = as3.new("flash.utils.ByteArray")
 */
-static int as3_new(lua_State *L)
+static int as3_new(lua_State * L)
 {
-  const char *classname;
+  const char * classname = NULL;
   AS3_Val as_class;
   AS3_Val params;
   AS3_Val as_object;
@@ -499,7 +500,7 @@ static int as3_new(lua_State *L)
 * Release the given ActionScript object so Flash will do garbage collection.
 * Lua example: as3.release(v)
 */
-static int as3_release(lua_State *L)
+static int as3_release(lua_State * L)
 {
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
 
@@ -517,7 +518,7 @@ static int as3_release(lua_State *L)
 * If conversion is not possible, this will return the original AS object
 * Lua example: as3.toluatype(v)
 */
-static int as3_toluatype(lua_State *L)
+static int as3_tolua(lua_State * L)
 {
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
   push_as3_to_lua_stack(L, userdata->value);
@@ -530,10 +531,10 @@ static int as3_toluatype(lua_State *L)
 * is returned as a Lua type if possible (see push_as3_to_lua_stack)
 * Lua example: as3.get(v, "text")
 */
-static int as3_get(lua_State *L)
+static int as3_get(lua_State * L)
 {
-  AS3LuaUserData *userdata;
-  const char *property;
+  AS3LuaUserData * userdata = NULL;
+  const char * property = NULL;
   AS3_Val val;
 
   userdata = check_as3userdata(L, 1);
@@ -555,10 +556,10 @@ static int as3_get(lua_State *L)
 * Set the requested property of a given ActionScript object.
 * Lua example: as3.set(v, "text", "hello from Lua")
 */
-static int as3_set(lua_State *L)
+static int as3_set(lua_State * L)
 {
-  AS3LuaUserData *userdata;
-  const char *property;
+  AS3LuaUserData * userdata = NULL;
+  const char * property = NULL;
   AS3_Val value;
 
   userdata = check_as3userdata(L, 1);
@@ -579,9 +580,9 @@ static int as3_set(lua_State *L)
 * Set a primitive ActionScript value (like String, Number, etc)
 * Lua example: as3.assign(v, 5)
 */
-static int as3_assign(lua_State *L)
+static int as3_assign(lua_State * L)
 {
-  AS3LuaUserData *userdata;
+  AS3LuaUserData * userdata = 0;
   AS3_Val value;
 
   userdata = check_as3userdata(L, 1);
@@ -598,11 +599,11 @@ static int as3_assign(lua_State *L)
 * Call a function on a given ActionScript object
 * Lua example: as3.call(v, "myFunction", "param1", param2, ...)
 */
-static int as3_call(lua_State *L)
+static int as3_call(lua_State * L)
 {
-  AS3LuaUserData *userdata;
+  AS3LuaUserData * userdata = NULL;
   AS3_Val params;
-  const char *function_name;
+  const char * function_name = NULL;
   AS3_Val result;
 
   userdata = check_as3userdata(L, 1);
@@ -628,7 +629,7 @@ static int as3_call(lua_State *L)
 * Return the ActionScript qualified name of the given object as a string
 * Lua example: as3.type(v)
 */
-static int as3_type(lua_State *L)
+static int as3_type(lua_State * L)
 {
   AS3LuaUserData *userdata;
   AS3_Val result;
@@ -654,10 +655,10 @@ static int as3_type(lua_State *L)
 * Can be used to call namespace functions
 * Lua example: v = as3.package("flash.utils", "getQualifiedClassName")
 */
-static int as3_namespacecall(lua_State *L)
+static int as3_namespacecall(lua_State * L)
 {
-  const char *namespace;
-  const char *function_name;
+  const char * namespace = NULL;
+  const char * function_name = NULL;
   AS3_Val as_namespace;
   AS3_Val as_method;
   AS3_Val params;
@@ -712,8 +713,7 @@ static const luaL_reg AS3_LUA_LIB[] =
 */
 static lua_State * initialize_state()
 {
-  lua_State *L;
-  L = lua_open();
+  lua_State * L = lua_open();
 
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
 
