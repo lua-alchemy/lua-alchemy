@@ -351,6 +351,36 @@ package wrapperSuite.tests
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
     }
 
+    public function testLuaCallbackCleanupWithListener():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      myHelper.count = 0;
+
+      var script:String = ( <![CDATA[
+       as3.call(testHelper,
+                "addEventListener",
+                "TestWrapperIncrementEvent",
+                function () as3.set(testHelper, "count", as3.get(testHelper, "count") + 1) end)
+      ]]> ).toString();
+
+      var stack:Array;
+      var expected:int;
+      for (expected = 1; expected <= 10; expected++)
+      {
+        lua_wrapper.luaClose(luaState);
+        luaState = lua_wrapper.luaInitilizeState();
+        lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
+        
+        stack = lua_wrapper.luaDoString(luaState, script);
+
+        myHelper.sendIncrementEvent();
+
+        assertEquals(1, stack.length);
+        assertTrue(stack[0]);
+        assertEquals(expected, myHelper.count);
+      }
+    }
+
     public function testCallLuaFunctionWithParametersNilReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();

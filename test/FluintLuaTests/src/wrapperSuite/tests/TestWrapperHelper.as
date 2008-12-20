@@ -6,6 +6,7 @@ package wrapperSuite.tests
   public class TestWrapperHelper extends EventDispatcher
   {
     public static const TEST_WRAPPER_HELPER_EVENT:String = "TestWrapperHelperEvent";
+    public static const TEST_WRAPPER_INCREMENT_EVENT:String = "TestWrapperIncrementEvent";
 
     public function TestWrapperHelper()
     {
@@ -31,6 +32,12 @@ package wrapperSuite.tests
     public function sendEvent():void
     {
       dispatchEvent(new Event(TEST_WRAPPER_HELPER_EVENT));
+    }
+
+    public var count:int = 0;
+    public function sendIncrementEvent():void
+    {
+      dispatchEvent(new Event(TEST_WRAPPER_INCREMENT_EVENT));
     }
 
   }
