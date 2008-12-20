@@ -19,7 +19,7 @@ OBJS =
 .c.o:
 	$(CC) $(INC) $(CFLAGS) -c $<
 
-all: $(NAME)
+all: $(NAME).swc
 
 glue.c : $(NAME).gg
 	$(GG) $(NAME).gg -oas $(NAME).as -cpackage cmodule.$(NAME) -package $(PACKAGE_NAME) -class $(NAME)
@@ -28,7 +28,7 @@ glue.c : $(NAME).gg
 
 glue.o : glue.c
 
-$(NAME) : glue.o $(OBJS)
+$(NAME).swc : glue.o $(OBJS)
 	$(CC) $(INC) $(CFLAGS) -swc -o $(NAME).swc glue.o $(OBJS) $(LDFLAGS)
 	mkdir -p $(WRAPPER_SWC_DIR)
 	cp $(NAME).swc $(WRAPPER_SWC_DIR)
