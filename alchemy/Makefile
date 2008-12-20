@@ -1,11 +1,11 @@
 .SUFFIXES: .cpp .c .o
 
-NAME=lua_wrapper
+NAME=lua-alchemy
+WRAPPER=lua_wrapper
 PATH:=${ALCHEMY_HOME}/achacks:${PATH}
 LUA_SRC=../lua/src
-PACKAGE_NAME=luaAlchemy
-WRAPPER_AS_DIR=./bin/src/${PACKAGE_NAME}
-WRAPPER_SWC_DIR=./bin/swc
+PACKAGE_WRAPPER=luaAlchemy
+WRAPPER_SRC_DIR=./bin/src
 GG = gluegen
 INC = -I $(LUA_SRC)
 CC = gcc
@@ -21,22 +21,22 @@ OBJS =
 
 all: $(NAME).swc
 
-glue.c : $(NAME).gg
-	$(GG) $(NAME).gg -oas $(NAME).as -cpackage cmodule.$(NAME) -package $(PACKAGE_NAME) -class $(NAME)
-	mkdir -p $(WRAPPER_AS_DIR)
-	cp $(NAME).as $(WRAPPER_AS_DIR)
+glue.c : $(WRAPPER).gg
+	$(GG) $(WRAPPER).gg -oas $(WRAPPER).as -cpackage cmodule.$(WRAPPER) -package $(PACKAGE_WRAPPER) -class $(WRAPPER)
+	mkdir -p $(WRAPPER_SRC_DIR)/$(PACKAGE_WRAPPER)
+	cp $(WRAPPER).as $(WRAPPER_SRC_DIR)/$(PACKAGE_WRAPPER)
 
 glue.o : glue.c
 
-$(NAME).swc : glue.o $(OBJS)
-	$(CC) $(INC) $(CFLAGS) -swc -o $(NAME).swc glue.o $(OBJS) $(LDFLAGS)
-	mkdir -p $(WRAPPER_SWC_DIR)
-	cp $(NAME).swc $(WRAPPER_SWC_DIR)
+$(WRAPPER).swc : glue.o $(OBJS)
+	$(CC) $(INC) $(CFLAGS) -swc -o $(WRAPPER).swc glue.o $(OBJS) $(LDFLAGS)
+
+$(NAME).swc : $(WRAPPER).swc
+	compc -namespace $(PACKAGE_WRAPPER) manifest.xml -source-path $(WRAPPER_SRC_DIR) -include-namespaces $(PACKAGE_WRAPPER) -include-classes $(PACKAGE_WRAPPER).$(WRAPPER) -include-libraries $(WRAPPER).swc -target-player=10.0.0 -output='$(NAME).swc'
 
 clean:
-	rm $(OBJS) glue.* $(NAME).swc 
+	rm $(OBJS) glue.* $(WRAPPER).swc $(WRAPPER).as $(NAME).swc
 	rm swfbridge.log 
 	rm *achacks*
 	rm -r _sb_*
-	rm $(WRAPPER_AS_DIR)/$(NAME).as
-	rm $(WRAPPER_SWC_DIR)/$(NAME).swc
+	rm -rf bin

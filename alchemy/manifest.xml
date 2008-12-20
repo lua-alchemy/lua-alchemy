@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="lua_wrapper" class="luaAlchemy.lua_wrapper"/>
+</componentPackage>

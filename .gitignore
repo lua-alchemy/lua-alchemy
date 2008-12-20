@@ -12,18 +12,15 @@ swfbridge.log
 
 test/FluintLuaTests/bin-*
 test/FluintLuaTests/build
-test/FluintLuaTests/libs/lua_wrapper.swc
-test/FluintLuaTests/src/luaAlchemy
 
 demo/LuaAlchemyDemo/bin-*
 demo/LuaAlchemyDemo/build
-demo/LuaAlchemyDemo/libs/lua_wrapper.swc
-demo/LuaAlchemyDemo/src/luaAlchemy
 
 alchemy/glue.*
 alchemy/bin
 alchemy/lua_wrapper.as
 alchemy/lua_wrapper.swc
+alchemy/lua-alchemy.swc
 
 lua/src/*.o
 lua/src/liblua.a

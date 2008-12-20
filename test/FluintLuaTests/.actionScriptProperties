@@ -16,7 +16,7 @@
 </modifiedEntries>
 </libraryPathEntry>
 <libraryPathEntry kind="1" linkType="1" path="libs"/>
-<libraryPathEntry kind="3" linkType="1" path="${LUA_ALCHEMY}/alchemy/bin/swc/lua_wrapper.swc" useDefaultLinkType="false"/>
+<libraryPathEntry kind="3" linkType="1" path="${LUA_ALCHEMY}/alchemy/lua-alchemy.swc" useDefaultLinkType="false"/>
 </libraryPath>
 <sourceAttachmentPath/>
 </compiler>
