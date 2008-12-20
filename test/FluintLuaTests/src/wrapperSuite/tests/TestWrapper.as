@@ -79,9 +79,9 @@ package wrapperSuite.tests
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Array);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NewByteArray():void
@@ -91,9 +91,9 @@ package wrapperSuite.tests
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is ByteArray);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Release():void
@@ -104,9 +104,9 @@ package wrapperSuite.tests
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertNull(stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3ToLuaTypeNumber():void
@@ -117,9 +117,9 @@ package wrapperSuite.tests
         return as3.toluatype(n1) + as3.toluatype(n2)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(13, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testBooleanToLuaType():void
@@ -135,12 +135,12 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(5, stack.length);
       assertTrue(stack[0]);
       assertEquals(true, stack[1]);
       assertEquals(true, stack[2]);
       assertEquals(true, stack[3]);
       assertEquals(false, stack[4]);
+      assertEquals(5, stack.length);
     }
 
     // TODO test all Lua to AS3 cast
@@ -152,9 +152,10 @@ package wrapperSuite.tests
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Class);
+
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Get():void
@@ -164,10 +165,11 @@ package wrapperSuite.tests
         return as3.get(v, "length")
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is int);
       assertEquals(0, stack[1]);
+
+      assertEquals(2, stack.length);
     }
 
     // TODO test getting every possible type defined in push_as3_to_lua_stack(),
@@ -182,7 +184,6 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(3, stack.length);
       assertTrue(stack[0]);
 
       assertTrue(stack[1] is TestWrapperHelper);
@@ -190,6 +191,8 @@ package wrapperSuite.tests
       assertEquals("hello", helper.string1);
 
       assertEquals("hello", stack[2]);
+
+      assertEquals(3, stack.length);
     }
 
     public function testAS3StringGetterSetter():void
@@ -201,7 +204,6 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(3, stack.length);
       assertTrue(stack[0]);
 
       assertTrue(stack[1] is TestWrapperHelper);
@@ -209,6 +211,8 @@ package wrapperSuite.tests
       assertEquals("hello", helper.string2);
 
       assertEquals("hello", stack[2]);
+
+      assertEquals(3, stack.length);
     }
 
     public function testAS3CallSetNameAge():void
@@ -220,9 +224,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("Name: Robert age: 38", stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3CallStaticNameAge():void
@@ -233,9 +237,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("Name: Jessie James age: 127", stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Yield():void
@@ -256,24 +260,24 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertFalse(stack[0]);
-      assertEquals("luaDoString:2: bad argument #1 to 'get' (LuaAlchemy.as3 expected, got userdata)\nstack traceback:\n	[C]: in function 'get'\n	luaDoString:2: in main chunk", stack[1]);
+      assertEquals("luaDoString:2: bad argument #1 to 'get' (LuaAlchemy.as3 expected, got userdata)\nstack traceback:\n\t[C]: in function 'get'\n\tluaDoString:2: in main chunk", stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Type():void
     {
       // TODO: FIXME: Test all available AS3 types (including ones that wouldn't work)
       var script:String = ( <![CDATA[
-        ba = as3.new("flash.utils::ByteArray")
-        s = as3.new("String")
+        local ba = as3.new("flash.utils::ByteArray")
+        local s = as3.new("String")
         return as3.type(ba), as3.type(s)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(3, stack.length);
       assertTrue(stack[0]);
       assertEquals("flash.utils::ByteArray", stack[1]);
       assertEquals("String", stack[2]);
+      assertEquals(3, stack.length);
     }
 
     public function testAS3TypeInvalid():void
@@ -322,9 +326,9 @@ package wrapperSuite.tests
         return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("wrapperSuite.tests::TestWrapperHelper", stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3SetGlobal():void
@@ -337,9 +341,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(1, stack.length);
       assertTrue(stack[0]);
       assertEquals("Name: Bubba Joe Bob Brain age: 13", myHelper.nameAge);
+      assertEquals(1, stack.length);
     }
 
     public function testLuaAddEventListener():void
@@ -357,8 +361,8 @@ package wrapperSuite.tests
 
       myHelper.sendEvent();
 
-      assertEquals(1, stack.length);
       assertTrue(stack[0]);
+      assertEquals(1, stack.length);
 
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
     }
@@ -382,7 +386,7 @@ package wrapperSuite.tests
         lua_wrapper.luaClose(luaState);
         luaState = lua_wrapper.luaInitilizeState();
         lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
-        
+
         stack = lua_wrapper.luaDoString(luaState, script);
 
         myHelper.sendIncrementEvent();
@@ -403,18 +407,18 @@ package wrapperSuite.tests
       ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
 
       var func:Function = stack[1] as Function;
       var ret:* = func("Neo", 40);
       assertEquals(null, ret);
 
       assertEquals("Name: Neo age: 40", myHelper.nameAge);
-   }
+    }
 
-   public function testCallLuaFunctionWithSingleReturn():void
+    public function testCallLuaFunctionWithSingleReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
       lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
@@ -426,9 +430,9 @@ package wrapperSuite.tests
       ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
 
       var func:Function = stack[1] as Function;
       var ret:* = func();
@@ -436,21 +440,21 @@ package wrapperSuite.tests
       assertEquals(13, ret);
     }
 
-   public function testCallLuaFunctionWithMultiReturn():void
+    public function testCallLuaFunctionWithMultiReturn():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
       lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
-       return function ()
-            return 1 + 12, "hello there"
+        return function ()
+          return 1 + 12, "hello there"
         end
       ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
 
       var func:Function = stack[1] as Function;
       var ret:* = func();
@@ -470,8 +474,8 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(1, stack.length);
       assertTrue(stack[0] is Stage);
+      assertEquals(1, stack.length);
     }
 */
 
@@ -484,9 +488,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("", stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3StringCommon():void
@@ -496,24 +500,13 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("Lua Alchemy", stack[1]);
+      assertEquals(2, stack.length);
     }
 
 /*
     // TODO: Looks like there is a bug in Alchemy .5a AS3_StringN().
-    public function testAS3StringEmbeddedZero():void
-    {
-      var script:String = ( <![CDATA[
-        return "Embedded\0Zero"
-        ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-
-      assertEquals(1, stack.length);
-      assertEquals("Embedded\0Zero", stack[0]);
-    }
-
     public function testAS3StringEmbeddedZeroAS3():void
     {
       var script:String = ( <![CDATA[
@@ -521,9 +514,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(1, stack.length);
       // Note this does crazy things with test suite error output
       assertEquals("Embedded\u0000Zero", stack[0]);
+      assertEquals(1, stack.length);
     }
 */
 
@@ -534,9 +527,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(true, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3False():void
@@ -546,9 +539,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(false, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NumberInteger():void
@@ -558,9 +551,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(42, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NumberPI():void
@@ -570,9 +563,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(Math.PI, stack[1]); // Note this is implementation specific. Compare with epsilon.
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NumberPosInf():void
@@ -582,9 +575,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(1/0, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NumberNegInf():void
@@ -594,9 +587,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(-1/0, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3NumberNaN():void
@@ -606,9 +599,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(isNaN(stack[1])); // Note NaN != NaN
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Nil():void
@@ -618,9 +611,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(null, stack[1]);
+      assertEquals(2, stack.length);
     }
 
 /*
@@ -632,9 +625,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("userdata", stack[1]); // TODO: Should return black-box object, not string.
+      assertEquals(2, stack.length);
     }
 */
 
@@ -646,9 +639,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals(0, stack[1]);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Table():void
@@ -658,9 +651,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("table", stack[1]); // TODO: Should return black-box object, not string.
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Function():void
@@ -670,9 +663,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
     }
 
     public function testAS3Thread():void
@@ -682,9 +675,9 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
       assertTrue(stack[0]);
       assertEquals("thread", stack[1]); // TODO: Should return black-box object, not string.
+      assertEquals(2, stack.length);
     }
 
     // TODO: Test all supported AS3 types in that manner!
@@ -755,9 +748,11 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(2, stack.length);
+      trace(stack);
+
       assertTrue(stack[0]);
       assertEquals(20, stack[1]);
-		}
+      assertEquals(2, stack.length);
+    }
   }
 }
