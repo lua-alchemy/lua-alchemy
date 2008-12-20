@@ -16,7 +16,7 @@ OBJS =
 
 .cpp.o:
 	$(CCPP) $(INC) $(CFLAGS) -c $<
-.c.o:
+.c.o: lstack.h
 	$(CC) $(INC) $(CFLAGS) -c $<
 
 all: $(NAME).swc
