@@ -73,7 +73,7 @@ static AS3_Val get_class(const char * as_class_path)
   }
   else
   {
-    as_namespace = AS3_String("");
+    as_namespace = AS3_Undefined();
     as_class = AS3_String(as_class_path);
   }
 
