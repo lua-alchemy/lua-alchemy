@@ -19,7 +19,7 @@
 
 /* AS3.h is included automatically by gluegen */
 
-void sztrace(char*);
+void sztrace(char *);
 
 /* Some global variables initialized in ggInit() */
 AS3_Val no_params = NULL;
@@ -39,7 +39,7 @@ typedef struct AS3LuaUserData
 
 typedef struct LuaFunctionCallbackData
 {
-  lua_State *L;
+  lua_State * L;
   int ref;
 } LuaFunctionCallbackData;
 
@@ -56,11 +56,11 @@ typedef struct LuaFunctionCallbackData
 * Get an actionscript class with the given namespace and class name
 * in the format: package::ClassName
 */
-static AS3_Val get_class(const char *as_class_path)
+static AS3_Val get_class(const char * as_class_path)
 {
   AS3_Val as_namespace;
   AS3_Val as_class;
-  char *class_ptr;
+  char * class_ptr = NULL;
 
   /* TODO might want to store classes in a table to save loading again */
 
@@ -68,8 +68,8 @@ static AS3_Val get_class(const char *as_class_path)
 
   if (class_ptr > as_class_path)
   {
-    as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path)/sizeof(char));
-    as_class = AS3_String(class_ptr+2);
+    as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path) / sizeof(char));
+    as_class = AS3_String(class_ptr + 2);
   }
   else
   {
@@ -95,7 +95,7 @@ static AS3_Val get_class(const char *as_class_path)
  * BEGIN COPY-PASTE FROM Lua 5.1.4 ldblib.c
  */
 
-static lua_State *getthread (lua_State *L, int *arg) {
+static lua_State *getthread (lua_State * L, int *arg) {
   if (lua_isthread(L, 1)) {
     *arg = 1;
     return lua_tothread(L, 1);
@@ -109,11 +109,11 @@ static lua_State *getthread (lua_State *L, int *arg) {
 #define LEVELS1	12	/* size of the first part of the stack */
 #define LEVELS2	10	/* size of the second part of the stack */
 
-static int db_errorfb (lua_State *L) {
+static int db_errorfb (lua_State * L) {
   int level;
   int firstpart = 1;  /* still before eventual `...' */
   int arg;
-  lua_State *L1 = getthread(L, &arg);
+  lua_State * L1 = getthread(L, &arg);
   lua_Debug ar;
   if (lua_isnumber(L, arg+2)) {
     level = (int)lua_tointeger(L, arg+2);
