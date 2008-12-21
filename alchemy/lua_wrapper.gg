@@ -106,8 +106,8 @@ static lua_State *getthread (lua_State * L, int *arg) {
   }
 }
 
-#define LEVELS1	12	/* size of the first part of the stack */
-#define LEVELS2	10	/* size of the second part of the stack */
+#define LEVELS1 12  /* size of the first part of the stack */
+#define LEVELS2 10  /* size of the second part of the stack */
 
 static int db_errorfb (lua_State * L) {
   int level;
@@ -229,7 +229,7 @@ static AS3_Val as3_lua_callback(void *data, AS3_Val args)
 
   /* Process results, return stack except for function on the top */
   AS3_Val ret = create_as3_value_from_lua_stack(func_data->L, base + 1, lua_gettop(func_data->L), 1);
-  
+
   return ret;
 }
 
@@ -322,9 +322,9 @@ static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end,
   AS3_Val ret;
   AS3_Val value;
   int i;
-  
+
   /* sztrace("****START create_as3_value_from_lua_stack()"); */
-  
+
   if (collapse_array == 1 && start > end)
   {
     ret = AS3_Null();
@@ -382,7 +382,7 @@ static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
   sztrace("***push_as3_to_lua_stack()");
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)));
   */
-  
+
   if (AS3_InstanceOf(val, Number_class))
   {
     lua_pushnumber(L, AS3_NumberValue(val));
