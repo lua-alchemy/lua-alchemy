@@ -24,3 +24,11 @@ movebox()
 local timer = as3.new("flash.utils::Timer", 5000)
 as3.call(timer, "addEventListener", "timer", movebox)
 as3.call(timer, "start")
+
+_G.finalize_ = debug.setmetatable(newproxy(),
+{
+ __gc = function()
+  as3.call(timer, "stop")
+  timer = nil
+ end
+})
