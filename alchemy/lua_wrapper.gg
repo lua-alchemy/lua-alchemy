@@ -44,9 +44,40 @@ typedef struct LuaFunctionCallbackData
 } LuaFunctionCallbackData;
 
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
+typedef unsigned char BOOL;
+#define TRUE (1)
+#define FALSE (0)
 
 #define check_as3userdata(L, index) \
   (AS3LuaUserData *)luaL_checkudata(L, index, AS3LUA_METATABLE)
+
+/* Uncomment this to get a lot of debug traces */
+/*
+#define DO_SPAM 1
+*/
+
+#ifdef DO_SPAM
+  #define SPAM(a) sztrace a
+#else
+  #define SPAM(a) (void)0
+#endif /* DO_SPAM */
+
+/* TODO: Use some better Alchemy API */
+void fatal_error(const char * msg)
+{
+  sztrace("Lua Alchemy fatal error");
+  sztrace((char *)msg);
+  exit(-1);
+}
+
+/* Two arguments version to avoid string concatenation */
+void fatal_error2(const char * msg1, const char * msg2)
+{
+  sztrace("Lua Alchemy fatal error");
+  sztrace((char *)msg1);
+  sztrace((char *)msg2);
+  exit(-1);
+}
 
 /************************************************************
 * AS3.h Helper Functions
