@@ -292,28 +292,36 @@ package wrapperSuite.tests
       assertEquals(3, stack.length);
     }
 
+    public function testAS3TypeNoArgs():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.type()
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertFalse(stack[0]);
+      // TODO: This should not crash, but should return nil!
+      assertEquals("luaDoString:2: bad argument #1 to 'type' (value expected)\nstack traceback:\n\t[C]: in function 'type'\n\tluaDoString:2: in main chunk", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
     public function testAS3TypeInvalid():void
     {
       var script:String = ( <![CDATA[
-        return as3.type(5)
+        assert(as3.type(5) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
-      assertFalse(stack[0]);
-      // TODO: This should not crash, but should return nil!
-      assertEquals("luaDoString:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got number)\nstack traceback:\n	[C]: in function 'type'\n	luaDoString:2: in main chunk", stack[1]);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
     }
 
     public function testAS3TypeInvalidUserdata():void
     {
       var script:String = ( <![CDATA[
-        return as3.type(newproxy())
+        assert(as3.type(newproxy()) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
-      assertFalse(stack[0]);
-      // TODO: This should not crash, but should return nil!
-      assertEquals("luaDoString:2: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got userdata)\nstack traceback:\n	[C]: in function 'type'\n	luaDoString:2: in main chunk", stack[1]);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
     }
 
     public function testAS3TypeInvalidUserdataMt():void
@@ -322,13 +330,11 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         local value = newproxy()
         debug.setmetatable(value, {})
-        return as3.type(value)
+        assert(as3.type(value) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertEquals(2, stack.length);
-      assertFalse(stack[0]);
-      // TODO: This should not crash, but should return nil!
-      assertEquals("luaDoString:4: bad argument #1 to 'type' (LuaAlchemy.as3 expected, got userdata)\nstack traceback:\n	[C]: in function 'type'\n	luaDoString:4: in main chunk", stack[1]);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
     }
 
     public function testAS3NamespaceCall():void

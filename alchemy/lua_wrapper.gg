@@ -735,19 +735,40 @@ static int as3_call(lua_State * L)
 /*
 * Return the ActionScript qualified name of the given object as a string
 * Lua example: as3.type(v)
+* Loosely based on io_type() from Lua 5.1.4
 */
 static int as3_type(lua_State * L)
 {
-  AS3LuaUserData *userdata;
-  AS3_Val result;
-  AS3_Val params;
+  LCALL(L, stack);
 
-  userdata = check_as3userdata(L, 1);
+  void * userdata = NULL;
 
-  params = AS3_Array("AS3ValType", userdata->value);
+  luaL_checkany(L, 1);
 
+  userdata = lua_touserdata(L, 1);
+
+  lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+  if (userdata == NULL || !lua_getmetatable(L, 1))
+  {
+    lua_pop(L, 1); /* Pop AS3LUA_METATABLE */
+    lua_pushnil(L);
+  }
+  else if (!lua_rawequal(L, -2, -1))
+  {
+    lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+    lua_pushnil(L);
+  }
+  else
+  {
+    AS3LuaUserData * as3_userdata = NULL;
+    AS3_Val result = NULL;
+    AS3_Val params = NULL;
+
+    lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+
+    as3_userdata = (AS3LuaUserData *)userdata;
+    params = AS3_Array("AS3ValType", as3_userdata->value);
   result = AS3_Call(getQualifiedClassName_method, NULL, params);
-  /* TODO check for failure */
 
   push_as3_to_lua_stack(L, result);
 
@@ -791,8 +812,9 @@ static int as3_namespacecall(lua_State * L)
   AS3_Release(as_namespace);
   AS3_Release(as_method);
   AS3_Release(params);
+  }
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
