@@ -59,8 +59,10 @@
         }
 
         var stack:Array = lua_wrapper.luaDoString(luaState, getCode());
-        if (stack.length > 0)
-            outputTA.text = outputTA.text + "\n=== Return values ===\n" + stack.join("\n");
+
+        var success:Boolean = stack.shift();
+        outputTA.setStyle("color", success ? "black" : "red");
+        outputTA.text = outputTA.text + "\n=== Return values ===\n" + stack.join("\n") + "\n";
       }
 
       private function onLoadClicked(event:MouseEvent):void
