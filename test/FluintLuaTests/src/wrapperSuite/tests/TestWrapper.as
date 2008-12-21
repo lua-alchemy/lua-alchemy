@@ -114,7 +114,7 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         n1 = as3.new("int", 7)
         n2 = as3.new("Number", 6)
-        return as3.toluatype(n1) + as3.toluatype(n2)
+        return as3.tolua(n1) + as3.tolua(n2)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -128,10 +128,10 @@ package wrapperSuite.tests
         bt = as3.new("Boolean", true)
         bf = as3.new("Boolean", false)
         return
-          as3.toluatype(bt) == true,
-          as3.toluatype(bf) == false,
-          as3.toluatype(bt),
-          as3.toluatype(bf)
+          as3.tolua(bt) == true,
+          as3.tolua(bf) == false,
+          as3.tolua(bt),
+          as3.tolua(bf)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 

@@ -81,18 +81,18 @@ v = as3.new("String")
 <pre>
 </pre><br>
 
-<br><h2>as3.toluatype(this)</h2>
+<br><h2>as3.tolua(this)</h2>
 <p>Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
 If conversion is not possible, this will return the original AS object</p>
 <br><b>Example</b><br>
 v = as3.new("String", "some string")
-<br>s = as3.toluatype(v) -- s is a Lua string with value "some string"
+<br>s = as3.tolua(v) -- s is a Lua string with value "some string"
 <pre>
 </pre><br>
 
 <br><h2>as3.get(this, "property")</h2>
 <p>Return the requested property of a given ActionScript object.  The value
-is returned as a Lua type if possible (see as3.toluatype())</p>
+is returned as a Lua type if possible (see as3.tolua())</p>
 <br><b>Example</b><br>
 <pre>
 v = as3.new("Array")

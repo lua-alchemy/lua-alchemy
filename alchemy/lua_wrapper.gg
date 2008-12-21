@@ -516,7 +516,7 @@ static int as3_release(lua_State * L)
 /*
 * Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
 * If conversion is not possible, this will return the original AS object
-* Lua example: as3.toluatype(v)
+* Lua example: as3.tolua(v)
 */
 static int as3_tolua(lua_State * L)
 {
@@ -698,7 +698,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "class", as3_class },
   { "new", as3_new },
   { "release", as3_release },
-  { "toluatype", as3_toluatype },
+  { "tolua", as3_tolua },
   { "get", as3_get },
   { "set", as3_set },
   { "assign", as3_assign },
