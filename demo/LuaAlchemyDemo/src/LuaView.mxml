@@ -245,8 +245,9 @@
         <mx:ComboBox id="sampleCodeCB"
           dataProvider="{LuaSampleCode.sampleCode}"
           labelField="label"
-          change="luaCodeTA.text = sampleCodeCB.selectedItem.code"
-          toolTip="Select code samples to show in the code area below."/>
+            toolTip="Select code samples to show in the code area below when 'Show' is clicked."/>
+        <mx:Button label="Show" toolTip="Show the selected sample code."
+          click="luaCodeTA.text = sampleCodeCB.selectedItem.code"/>
     </mx:HBox>
     <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false"
       paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" wordWrap="false"/>
