@@ -16,7 +16,7 @@
     <mx:htmlText>
 <![CDATA[<h1>Lua Alchemy</h1>
 <br><p>Project Home: <a target="_blank" href="http://code.google.com/p/lua-alchemy/">http://code.google.com/p/lua-alchemy/</a>
-<br>Version: v.1a</p>
+<br>Version: v0.1a</p>
 
 <br><h1>Introduction</h1>
 <p><a target="_blank" href="http://code.google.com/p/lua-alchemy/"/>Lua Alchemy</a> is a port of the <a target="_blank" href="http://www.lua.org/">Lua 5.1.4</a>
@@ -25,8 +25,9 @@ programming language for ActionScript using
 
 <br><h1>Known Issues</h1>
 <ul>
-  <li>Memory Leaks - Objects created on the canvas aren't properly cleaned up.</li>
-  <li>No stdio - Lua calls to io.write() and print() don't have anywhere to go.</li>
+  <li>Code Editor - TextArea makes for a poor code editor.  Behavior of copy/paste is erratic and you may loose line returns.  You can load/save files and use a real code editor if needed.</li>
+  <li>Memory Leaks - Not all the demos properly cleanup their listeners and there may be some memory leaks in the lua-alchemy code (to be fixed in future versions).</li>
+  <li>No stdio - Lua calls to io.write() and print() don't have anywhere to go.  The print() demo shows how to override print to go to the output canvas.</li>
   <li>Callback Cleanup - Event listeners made in Lua aren't cleaned up properly.
     If you click on run like crazy, the callbacks aren't properly
     cleaned up and the timer can call again causing an error. Also previous timers are
@@ -37,15 +38,21 @@ programming language for ActionScript using
 <br><b>Example</b><br>
 <pre>
 as3.call(canvas, "setStyle", "backgroundColor", "red")
-</pre><br>
+</pre>
 
 <br><p>There is also an "output" variable exported from the Flex application.  This is the TextArea in the lower right part of the demo and could be used to override the Lua print() funciton like this:<p>
 <br><pre>
-  print = function(...) as3.set(output, "text", as3.get(output, "text") .. table.concat({...}, "\t") .. "\n") end
-</pre><br>
+print = function(...)<br>
+ local t = {...}<br>
+ for k,v in pairs(t) do<br>
+   t[k] = tostring(v)<br>
+ end<br>
+  as3.set(output, "text", as3.get(output, "text") .. table.concat(t,"\t") .. "\n")<br>
+end<br>
+</pre>
 
 <br><h2>as3.yield()</h2>
-<p>Release control to Flash and return to this point on the next timer tick</p>
+<p>Release control to Flash and return to this point on the next timer tick.  This currently doesn't allow UI updates, but does prevent the script from timing out over long operations.</p>
 <br><b>Example</b><br>
 <pre>
 as3.yield()
@@ -69,15 +76,15 @@ all of mx.containers and mx.controls has been included along with all the top le
 all flash objects get.</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("flash.utils:ByteArray")
-<br>s = as3.new("String", "some string")
+v = as3.new("flash.utils:ByteArray")<br>
+s = as3.new("String", "some string")
 </pre><br>
 
 <br><h2>as3.release(this)</h2>
 <p>Release the given ActionScript object so Flash will do garbage collection.</p>
 <br><b>Example</b><br>
-v = as3.new("String")
-<br>as3.release(v)
+v = as3.new("String")<br>
+as3.release(v)
 <pre>
 </pre><br>
 
@@ -85,8 +92,8 @@ v = as3.new("String")
 <p>Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
 If conversion is not possible, this will return the original AS object</p>
 <br><b>Example</b><br>
-v = as3.new("String", "some string")
-<br>s = as3.toluatype(v) -- s is a Lua string with value "some string"
+v = as3.new("String", "some string")<br>
+s = as3.toluatype(v) -- s is a Lua string with value "some string"
 <pre>
 </pre><br>
 
@@ -95,40 +102,40 @@ v = as3.new("String", "some string")
 is returned as a Lua type if possible (see as3.toluatype())</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("Array")
-<br>return as3.get(v, "length")
+v = as3.new("Array")<br>
+return as3.get(v, "length")
 </pre><br>
 
 <br><h2>as3.set(this, "property", value)</h2>
 <p>Set the requested property of a given ActionScript object.</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("mx.components::TextArea")
-<br>as3.set(v, "text", "hello")
+v = as3.new("mx.components::TextArea")<br>
+as3.set(v, "text", "hello")
 </pre><br>
 
 <br><h2>as3.call(this, "function"[, param1, ... paramN])</h2>
 <p>Call a function on a given ActionScript object</p>
 <br><b>Example</b><br>
 <pre>
-box = as3.new("mx.containers::Canvas")
-<br>as3.call(box, "setStyle", "backgroundColor", "blue")
+box = as3.new("mx.containers::Canvas")<br>
+as3.call(box, "setStyle", "backgroundColor", "blue")
 </pre><br>
 
 <br><h2>as3.type(this)</h2>
 <p>Returns the ActionScript getQualifiedClassName() for the given value</p>
 <br><b>Example</b><br>
 <pre>
-box = as3.new("mx.containers::Canvas")
-<br>type = as3.type(box) -- "mx.containers::Canvas"
+box = as3.new("mx.containers::Canvas")<br>
+type = as3.type(box) -- "mx.containers::Canvas"
 </pre><br>
 
 <br><h2>as3.namespacecall("package", "function"[, param1, ... paramN])</h2>
 <p>Call a namespace level function</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("wrapperSuite.tests::TestWrapperHelper")
-<br>return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
+v = as3.new("wrapperSuite.tests::TestWrapperHelper")<br>
+return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
 </pre><br>
 ]]>
     </mx:htmlText>
@@ -146,6 +153,12 @@ h2 {
 
 p {
     font-size: 12;
+    text-align: justify;
+}
+
+pre {
+    font-size: 12;
+    font-family: mono;
     text-align: justify;
 }
 
