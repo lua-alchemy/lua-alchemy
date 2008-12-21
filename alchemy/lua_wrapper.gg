@@ -41,12 +41,19 @@ typedef struct LuaFunctionCallbackData
 {
   lua_State * L;
   int ref;
+  AS3_Val as3Function;
 } LuaFunctionCallbackData;
 
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
+#define AS3LUA_CALLBACKMT "LuaAlchemy.cbMT"
+#define AS3LUA_CALLBACKS "LuaAlchemy.callbacks"
+
 typedef unsigned char BOOL;
 #define TRUE (1)
 #define FALSE (0)
+
+#define AS3LUA_CBFNINDEX (1)
+#define AS3LUA_CBSDATAINDEX (2)
 
 #define check_as3userdata(L, index) \
   (AS3LuaUserData *)luaL_checkudata(L, index, AS3LUA_METATABLE)
@@ -314,19 +321,30 @@ static int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
   return status;
 }
 
-static AS3_Val as3_lua_callback(void *data, AS3_Val args);
-static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end, int collapse_array);
-static void push_as3_lua_userdata(lua_State *L, AS3_Val val);
-static void push_as3_to_lua_stack(lua_State *L, AS3_Val val);
+static AS3_Val as3_lua_callback(void * data, AS3_Val args);
+static AS3_Val create_as3_value_from_lua_stack(
+    lua_State * L,
+    int start,
+    int end,
+    BOOL collapse_array
+  );
+static int push_as3_lua_userdata(lua_State * L, AS3_Val val);
+static int push_as3_to_lua_stack(lua_State * L, AS3_Val val);
 
-static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
+static int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
 {
-  if (!AS3_InstanceOf(array, Array_class))
-    return 0;
+  LCALL(L, stack);
 
-  int len = AS3_IntValue(AS3_GetS(array, "length"));
-  int i;
+  int len = 0;
+  int i = 0;
   AS3_Val cur;
+
+  if (!AS3_InstanceOf(array, Array_class))
+  {
+    LRETURN(L, stack, 0);
+  }
+
+  len = AS3_IntValue(AS3_GetS(array, "length"));
   for (i = 0; i < len; i++)
   {
     cur = AS3_Get(array, AS3_Int(i));
@@ -334,46 +352,247 @@ static int push_as3_array_to_lua_stack(lua_State *L, AS3_Val array)
     AS3_Release(cur);
   }
 
-  return len;
+  LRETURN(L, stack, len);
 }
 
+static int as3_trace(lua_State * L);
+
 /*
-* Function used as a callback for all Lua functions passed throuhg
+* Function used as a callback for all Lua functions passed through
 * get_as3_value_from_lua_stack()
 */
-static AS3_Val as3_lua_callback(void *data, AS3_Val args)
+static AS3_Val as3_lua_callback(void * data, AS3_Val args)
 {
-  LuaFunctionCallbackData *func_data = (LuaFunctionCallbackData*)data;
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
 
-  int base = lua_gettop(func_data->L);
+  SPAM(("as3_lua_callback(): begin"));
 
-  lua_rawgeti(func_data->L, LUA_REGISTRYINDEX, func_data->ref); /* push stored function */
-  int nargs = push_as3_array_to_lua_stack(func_data->L, args); /* push arguments */
+  AS3_Val res;
+  LuaFunctionCallbackData * func_data = (LuaFunctionCallbackData *) data;
+  int nargs = 0;
+  int status = 0;
+  int results_base = 0;
+  lua_State * L = func_data->L;
+  if (L == NULL)
+  {
+    /* TODO: Should we crash here?
+    fatal_error("state expired"); / * Does not return * /
+    */
+    sztrace("as3_lua_callback: state expired");
+    return AS3_Undefined();
+  }
 
-  /* call function (error checking omitted) */
-  /* TODO: call do_pcall_with_traceback; see luaDoString() */
-  lua_pcall(func_data->L, nargs,  LUA_MULTRET, 0);
+  { /* A new scope for LCALL to work (C89 conformance) */
+    LCALL(L, stack);
 
-  /* Process results, return stack except for function on the top */
-  AS3_Val ret = create_as3_value_from_lua_stack(func_data->L, base + 1, lua_gettop(func_data->L), 1);
+    /* TODO: Cache that with lua_ref, it is faster */
+    lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_CALLBACKS);
 
-  return ret;
+    /* TODO: Assert we have a table here */
+
+    lua_rawgeti(L, -1, func_data->ref); /* push stored function */
+
+    if (lua_istable(L, -1) == 0) /* Probably nil */
+    {
+      lua_pop(L, 1); /* Pop bad callback table */
+      LCHECK_FN(L, stack, 0, fatal_error);
+
+      fatal_error("function callback not found"); /* Does not return */
+    }
+
+    lua_rawgeti(L, -1, AS3LUA_CBFNINDEX);
+
+    /* TODO: Assert we have Lua function (or other callable object) on the top of the stack */
+
+    LCHECK_FN(L, stack, 2 + 1, fatal_error);
+
+    nargs = push_as3_array_to_lua_stack(L, args); /* push arguments */
+
+    LCHECK_FN(L, stack, 2 + 1 + nargs, fatal_error);
+
+    results_base = LBASE(L, stack) + 2;
+    status = do_pcall_with_traceback(L, nargs, LUA_MULTRET);
+    if (status != 0)
+    {
+      const char * msg = NULL;
+
+      LCHECK_FN(L, stack, 2 + 1, fatal_error); /* Tables and error message */
+      lua_remove(L, -2); /* Remove AS3LUA_CALLBACKS table */
+      lua_remove(L, -2); /* Remove holder table */
+      LCHECK_FN(L, stack, 1, fatal_error); /* Only error message */
+
+      /* Error message is on stack */
+      /* NOTE: It is not necessary string! If we want to preserve its type, see lua_DoString. */
+
+      if (lua_tostring(L, -1) == NULL)
+      {
+        lua_pop(L, 1);
+        lua_pushliteral(L, "(non-string)");
+      }
+
+      LCHECK_FN(L, stack, 1, fatal_error);
+
+      lua_pushliteral(L, "Error in Lua callback:\n");
+      lua_insert(L, -2);
+
+      LCHECK_FN(L, stack, 2, fatal_error);
+
+      lua_concat(L, 2);
+
+      LCHECK_FN(L, stack, 1, fatal_error);
+
+      sztrace((char *)lua_tostring(L, -1));
+
+      /* TODO: ?! */
+      /* lua_error(L); */
+
+      msg = lua_tostring(L, -1);
+      lua_pop(L, 1);
+
+/*
+      fatal_error(msg); / * Does not return * /
+*/
+    }
+
+    /* Process results */
+
+#ifdef DO_SPAM
+    /* TODO: Remove */
+    lua_pushcfunction(L, as3_trace);
+    lua_pushliteral(L, "STACK");
+    Pdumpstack(L, results_base);
+    lua_call(L, 2, 0);
+#endif /* DO_SPAM */
+
+    res = create_as3_value_from_lua_stack(L, results_base + 1, LTOP(L, stack), TRUE);
+
+#ifdef DO_SPAM
+    SPAM(("as3_lua_callback() result type"));
+    AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", res)));
+#endif /* DO_SPAM */
+
+    lua_settop(L, LBASE(L, stack)); /* Cleanup results and two holder tables */
+
+    SPAM(("as3_lua_callback(): end"));
+
+    return res;
+  }
+
+  /* Unreachable */
+}
+
+static int release_callback(lua_State * L)
+{
+  SPAM(("release_callback() : begin"));
+
+  LuaFunctionCallbackData ** pUserdata = (LuaFunctionCallbackData **)luaL_checkudata(
+      L, 1, AS3LUA_CALLBACKMT
+    );
+  if (pUserdata == NULL)
+  {
+    SPAM(("release_callback() : bad userdata"));
+    return 0;
+  }
+
+  LuaFunctionCallbackData * pCallback = *pUserdata;
+  if (pCallback == NULL)
+  {
+    SPAM(("release_callback() : bad callback"));
+    return 0;
+  }
+
+  if (pCallback->L != NULL)
+  {
+    if (pCallback->as3Function != AS3_Undefined())
+    {
+      SPAM(("release_callback() : before release"));
+      AS3_Release(pCallback->as3Function);
+      SPAM(("release_callback() : after release"));
+      pCallback->as3Function = AS3_Undefined();
+    }
+
+    pCallback->L = NULL;
+  }
+
+  *pUserdata = NULL;
+
+  SPAM(("release_callback() : end"));
+
+  return 0;
+}
+
+static AS3_Val setup_callback(lua_State * L, int index)
+{
+  LCALL(L, stack);
+
+  SPAM(("setup_callback() : begin"));
+
+  AS3_Val as3Function;
+  int ref = 0;
+  LuaFunctionCallbackData ** pUserdata = NULL;
+
+  /*
+    NOTE: Can't do lua_newuserdata() immediately
+          since it would be deleted by Lua on lua_close()
+  */
+  /* TODO: Free this somewhere! When freeing, remove pData->ref from the state */
+  LuaFunctionCallbackData * pData = malloc(sizeof(LuaFunctionCallbackData));
+
+  index = LABSIDX(L, stack, index); /* Normalize index */
+
+  /* TODO: Cache that with lua_ref, it is faster */
+  lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_CALLBACKS);
+  /* TODO: Assert this is a table */
+
+  lua_newtable(L);
+
+  LCHECK(L, stack, 2);
+
+  lua_pushvalue(L, index); /* Store function */
+  lua_rawseti(L, -2, AS3LUA_CBFNINDEX);
+
+  LCHECK(L, stack, 2);
+
+  pUserdata = lua_newuserdata(L, sizeof(LuaFunctionCallbackData *));
+  *pUserdata = pData;
+
+  luaL_getmetatable(L, AS3LUA_CALLBACKMT);
+  lua_setmetatable(L, -2);
+  lua_rawseti(L, -2, AS3LUA_CBSDATAINDEX);
+
+  LCHECK(L, stack, 2);
+
+  ref = luaL_ref(L, -2);
+
+  LCHECK(L, stack, 1);
+
+  lua_pop(L, 1); /* Pop AS3LUA_CALLBACKS */
+
+  as3Function = AS3_Function(pData, as3_lua_callback);
+
+  pData->ref = ref;
+  pData->L = L;
+  pData->as3Function = as3Function;
+
+  LCHECK(L, stack, 0);
+
+  SPAM(("setup_callback() : end"));
+
+  return as3Function;
 }
 
 /*
 * Take the Lua stack item at index i and convert it into an
 * ActionScript value.
 */
-static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
+static AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
 {
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  LCALL(L, stack);
   AS3_Val value;
-  AS3LuaUserData *userdata;
-  int t;
-  LuaFunctionCallbackData *func_data;
 
-  value = AS3_Undefined();
-  t = lua_type(L, i);
-
+  int t = lua_type(L, i);
   switch (t)
   {
     case LUA_TSTRING:  /* strings */
@@ -402,37 +621,50 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
       value = AS3_Null();
       break;
 
-    case LUA_TUSERDATA:  /* userdata should only be AS3LuaUserData */
-      userdata = (AS3LuaUserData *) lua_touserdata(L, i);
+    case LUA_TUSERDATA:  /* userdata */
+      {
+        void * userdata = lua_touserdata(L, i);
+        lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+        if (userdata == NULL || !lua_getmetatable(L, i))
+        {
+          lua_pop(L, 1); /* Pop AS3LUA_METATABLE */
+          value = AS3_String(lua_typename(L, t));
+        }
+        else if (!lua_rawequal(L, -2, -1))
+        {
+          lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+          value = AS3_String(lua_typename(L, t));
+        }
+        else
+        {
+          lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+          AS3LuaUserData * userdata = (AS3LuaUserData *)lua_touserdata(L, i);
       value = userdata->value;
+        }
+      }
       break;
 
     case LUA_TFUNCTION: /* function */
-      func_data = malloc(sizeof(LuaFunctionCallbackData)); /* TODO cleanup this when function dies */
-
-      lua_pushvalue(L, i);
-
-      func_data->L = L;
-      func_data->ref = luaL_ref(L, LUA_REGISTRYINDEX);
-
-      value = AS3_Function(func_data, as3_lua_callback);
+      value = setup_callback(L, i);
       break;
 
-    case LUA_TLIGHTUSERDATA: /* not used */
-    case LUA_TTABLE: /* TODO deal with this type */
-    case LUA_TTHREAD: /* TODO deal with this type */
+    case LUA_TLIGHTUSERDATA: /* TODO: blackbox this type */
+    case LUA_TTABLE: /* TODO: deal with this type */
+    case LUA_TTHREAD: /* TODO: blackbox this type */
       value = AS3_String(lua_typename(L, t));
       break;
 
     default:  /* unreachable */
-      luaL_error(L, "unknown Lua type %d", t);
+      fatal_error("unknown Lua type");
       break;
   }
 
-  /*
-  sztrace("get_as3_value_from_lua_stack()");
+#ifdef DO_SPAM
+  SPAM(("get_as3_value_from_lua_stack(): end"));
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value)));
-  */
+#endif /* DO_SPAM */
+
+  LCHECK_FN(L, stack, 0, fatal_error);
 
   return value;
 }
@@ -444,38 +676,49 @@ static AS3_Val get_as3_value_from_lua_stack(lua_State *L, int i)
 * return of length 1 will just return the specific value.
 * Otherwise an array is returned.
 */
-static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end, int collapse_array)
+static AS3_Val create_as3_value_from_lua_stack(
+    lua_State * L,
+    int start,
+    int end,
+    BOOL collapse_array
+  )
 {
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  LCALL(L, stack);
   AS3_Val ret;
   AS3_Val value;
-  int i;
 
-  /* sztrace("****START create_as3_value_from_lua_stack()"); */
+  SPAM(("create_as3_value_from_lua_stack(): begin"));
 
-  if (collapse_array == 1 && start > end)
+  if (collapse_array == TRUE && start > end)
   {
     ret = AS3_Null();
   }
-  else if (collapse_array == 1 && start == end)
+  else if (collapse_array == TRUE && start == end)
   {
     ret = get_as3_value_from_lua_stack(L, start);
   }
   else
   {
-    ret = AS3_Array("");
+    int i;
 
-    for (i = start; i <= end; i++)
+    ret = AS3_Array("");
+    for (i = start; i <= end; ++i)
     {
+      SPAM(("create_as3_value_from_lua_stack() + 1 begin"));
       value = get_as3_value_from_lua_stack(L, i);
       AS3_CallS("push", ret, AS3_Array("AS3ValType", value));
+      SPAM(("create_as3_value_from_lua_stack() + 1 end"));
     }
   }
 
-  /*
-  sztrace("ret type =");
+#ifdef DO_SPAM
+  SPAM(("create_as3_value_from_lua_stack(): end"));
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", ret)));
-  sztrace("****END create_as3_value_from_lua_stack()");
-  */
+#endif /* DO_SPAM */
+
+  LCHECK_FN(L, stack, 0, fatal_error);
 
   return ret;
 }
@@ -508,10 +751,13 @@ static int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 */
 static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
 {
-  /*
-  sztrace("***push_as3_to_lua_stack()");
+  LCALL(L, stack);
+
+#ifdef DO_SPAM
+  SPAM(("push_as3_to_lua_stack(): begin: value, type"));
+  AS3_Trace(val);
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)));
-  */
+#endif /* DO_SPAM */
 
   if (AS3_InstanceOf(val, Number_class))
   {
@@ -545,8 +791,13 @@ static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
   }
   else
   {
+    SPAM(("push_as3_to_lua_stack(): defaulting to userdata"));
     push_as3_lua_userdata(L, val);
   }
+
+  SPAM(("push_as3_to_lua_stack(): end"));
+
+  LRETURN(L, stack, 1);
 }
 
 /************************************************************
@@ -646,6 +897,8 @@ static int as3_new(lua_State * L)
 */
 static int as3_release(lua_State * L)
 {
+  SPAM(("as3_release() : begin"));
+
   LCALL(L, stack);
 
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
@@ -655,6 +908,8 @@ static int as3_release(lua_State * L)
     AS3_Release(userdata->value);
     userdata->value = AS3_Undefined();
   }
+
+  SPAM(("as3_release() : end"));
 
   LRETURN(L, stack, 0);
 }
@@ -666,8 +921,6 @@ static int as3_release(lua_State * L)
 */
 static int as3_tolua(lua_State * L)
 {
-  SPAM(("as3_release() : begin"));
-
   LCALL(L, stack);
 
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
@@ -748,8 +1001,6 @@ static int as3_assign(lua_State * L)
 
   /* TODO how to assign the value of a String, Number, int, etc? var s:String; s = "hello"; and do we care? */
 
-  SPAM(("as3_release() : end"));
-
   LRETURN(L, stack, 0);
 }
 
@@ -766,19 +1017,47 @@ static int as3_call(lua_State * L)
   const char * function_name = NULL;
   AS3_Val result;
 
+  lua_pushnil(L); /* Hack to ensure we're not at empty stack */
+
   userdata = check_as3userdata(L, 1);
 
   function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
 
-  params = create_as3_value_from_lua_stack(L, 3, lua_gettop(L), 0);
+  LCHECK(L, stack, 1);
+
+  params = create_as3_value_from_lua_stack(L, 3, LBASE(L, stack), FALSE);
+
+  LCHECK(L, stack, 1);
 
   result = AS3_CallS(function_name, userdata->value, params);
   /* TODO check for function call failure, make sure to relase params */
+  if (LTOP(L, stack) == 0)
+  {
+    /* TODO: HACK. Lua state is not usable after panic! */
+    fatal_error("as3_call(): callback error detected");
+  }
+
+  LCHECK(L, stack, 1);
+  lua_pop(L, 1); /* Remove our protection from empty stack */
 
   AS3_Release(params);
 
+#ifdef DO_SPAM
+  SPAM(("as3_call() result type"));
+  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", result)));
+#endif /* DO_SPAM */
+
   push_as3_to_lua_stack(L, result);
+
+#ifdef DO_SPAM
+  /* TODO: Remove */
+  int top = lua_gettop(L);
+  lua_pushcfunction(L, as3_trace);
+  lua_pushliteral(L, "AS3_CALL()");
+  Pdumpstack(L, top);
+  lua_call(L, 2, 0);
+#endif /* DO_SPAM */
 
   AS3_Release(result);
 
@@ -827,8 +1106,9 @@ static int as3_type(lua_State * L)
 
   AS3_Release(result);
   AS3_Release(params);
+  }
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -838,6 +1118,8 @@ static int as3_type(lua_State * L)
 */
 static int as3_namespacecall(lua_State * L)
 {
+  LCALL(L, stack);
+
   const char * namespace = NULL;
   const char * function_name = NULL;
   AS3_Val as_namespace;
@@ -854,7 +1136,7 @@ static int as3_namespacecall(lua_State * L)
   as_namespace = AS3_String(namespace);
   as_method = AS3_NSGetS(as_namespace, function_name);
 
-  params = create_as3_value_from_lua_stack(L, 3, lua_gettop(L), 0);
+  params = create_as3_value_from_lua_stack(L, 3, LBASE(L, stack), FALSE);
 
   result = AS3_Call(as_method, NULL, params);
   /* TODO check for function call failure, make sure to release as_namespace, as_method, params */
@@ -865,7 +1147,6 @@ static int as3_namespacecall(lua_State * L)
   AS3_Release(as_namespace);
   AS3_Release(as_method);
   AS3_Release(params);
-  }
 
   LRETURN(L, stack, 1);
 }
@@ -941,9 +1222,13 @@ static const luaL_reg AS3_LUA_LIB[] =
 */
 static lua_State * initialize_state()
 {
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
   lua_State * L = lua_open();
 
   lua_atpanic(L, &panic_handler);
+
+  LCALL(L, stack);
 
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
 
@@ -955,10 +1240,27 @@ static lua_State * initialize_state()
 
   lua_pop(L, 1); /* pop as3 metatable created above */
 
+  LCHECK_FN(L, stack, 0, fatal_error);
+
+  luaL_newmetatable(L, AS3LUA_CALLBACKMT);
+  lua_pushcfunction(L, release_callback);
+  lua_setfield(L, -2, "__gc");
+
+  lua_pop(L, 1); /* pop callback metatable created above */
+
+  LCHECK_FN(L, stack, 0, fatal_error);
+
   luaL_register(L, "as3", AS3_LUA_LIB);
   lua_pop(L, 1); /* pop as3 library table created by above call */
 
+  LCHECK_FN(L, stack, 0, fatal_error);
+
+  lua_newtable(L);
+  lua_setfield(L, LUA_REGISTRYINDEX, AS3LUA_CALLBACKS);
+
   lua_gc(L, LUA_GCRESTART, 0); /* restart collector */
+
+  LCHECK_FN(L, stack, 0, fatal_error);
 
   return L;
 }
@@ -992,41 +1294,95 @@ public function luaInitilizeState():(lua_State *)uint
 
 public function luaClose(luaState:(lua_State *)uint):void
 {
+  /* Note: Keep these traces. It is easy to get bad things happening in final GC */
+  sztrace("luaClose() : begin");
   lua_close(luaState);
+  sztrace("luaClose() : end");
 }
 
 public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS3_Val)Array
 {
-  int base = 0;
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  lua_State * L = luaState;
+
+  LCALL(L, stack);
+  if (LBASE(L, stack) != 0)
+  {
+    LERROR(L, stack, "dirty state stack");
+  }
+
+  SPAM(("luaDoString(): begin"));
+
   int status = 0;
   AS3_Malloced_Str str = AS3_StringValue(strValue);
+  AS3_Val res;
 
-  lua_pushboolean(luaState, 1); /* Placeholder for execution status */
-  base = lua_gettop(luaState);
+  lua_pushboolean(L, 1); /* Placeholder for execution status */
 
   status = luaL_loadbuffer(
-      luaState,
+      L,
       str,
       AS3_IntValue(AS3_GetS(strValue, "length")),
-      "=luaDoString"
+      "=luaDoString" /* TODO: Pass chunk name as an optional argument */
     );
 
   free(str);
 
-  if (!status)
+  if (status == 0)
   {
-    status = do_pcall_with_traceback(luaState, 0, LUA_MULTRET);
+    LCHECK_FN(L, stack, 2, fatal_error);
+    SPAM(("luaDoString(): run begin"));
+    status = do_pcall_with_traceback(L, 0, LUA_MULTRET);
+    SPAM(("luaDoString(): run end"));
   }
 
-  if (status)
+  if (status != 0)
   {
-    lua_pushboolean(luaState, 0); /* ERROR */
-    lua_replace(luaState, base);
+    LCHECK_FN(L, stack, 2, fatal_error);
+
+    {
+      /* TODO: Overhead. Remove? */
+
+      const char * msg = NULL;
+
+      lua_pushvalue(L, -1); /* To preserve original value type */
+
+      msg = lua_tostring(L, -1);
+      if (msg == NULL)
+      {
+        msg = "(non-string)";
+      }
+
+      sztrace("luaDoString(): error:");
+      sztrace((char *)msg);
+      lua_pop(L, 1);
+    }
+
+    lua_pushboolean(L, 0); /* ERROR */
+    lua_replace(L, 1);
     /* Error message is on stack */
     /* NOTE: It is not necessary string! */
+
+    LCHECK_FN(L, stack, 2, fatal_error);
   }
 
-  return create_as3_value_from_lua_stack(luaState, base, lua_gettop(luaState), 0);
+  SPAM(("luaDoString(): before create_as3_value_from_lua_stack"));
+
+  res = create_as3_value_from_lua_stack(
+      L,
+      1,
+      LTOP(L, stack),
+      FALSE
+    );
+
+  SPAM(("luaDoString(): after create_as3_value_from_lua_stack"));
+
+  lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
+
+  SPAM(("luaDoString(): end"));
+
+  return res;
 }
 
 // TODO: Add luaDoStringThrow()?
