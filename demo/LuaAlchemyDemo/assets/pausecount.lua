@@ -16,7 +16,7 @@ as3.call(vbox, "addChild", button)
 as3.call(canvas, "addChild", vbox)
 
 function gettimer()
-  return as3.toluatype(as3.namespacecall("flash.utils", "getTimer"))
+  return as3.tolua(as3.namespacecall("flash.utils", "getTimer"))
 end
 
 function delay(msec)
