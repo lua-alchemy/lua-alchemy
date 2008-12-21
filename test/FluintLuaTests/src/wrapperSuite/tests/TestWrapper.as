@@ -895,16 +895,36 @@ package wrapperSuite.tests
     {
     }
 */
+
+    public function testCreateCallbackInLua():void
+    {
+      var script:String = ( <![CDATA[
+        as3.new("Function", function() end) -- TODO: Does this make sense?
+        ]]> ).toString();
+
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
     public function testCreateAndCallObject():void
     {
       var script:String = ( <![CDATA[
         local create_as_object = function()
            local obj = as3.new("Object")
-           as3.set(obj, "addThirteen", function(n) return n+13 end)
+           as3.set(
+               obj,
+               "addThirteen",
+               function(n)
+                 return n + 13
+               end
+             )
            return obj
         end
         local as_object = create_as_object()
-        return as3.call(as_object, "addThirteen", 5) + 2
+        local result = as3.call(as_object, "addThirteen", 5)
+        result = result + 2
+        return result
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
@@ -912,6 +932,62 @@ package wrapperSuite.tests
 
       assertTrue(stack[0]);
       assertEquals(20, stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testCreateAndCallObjectErrorNonstring():void
+    {
+      var script:String = ( <![CDATA[
+        local create_as_object = function()
+           local obj = as3.new("Object")
+           as3.set(
+               obj,
+               "error",
+               function(n)
+                 error({})
+               end
+             )
+           return obj
+        end
+        local as_object = create_as_object()
+        as3.call(as_object, "error")
+        return "error is ignored"
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack);
+
+      assertTrue(stack[0]);
+      assertEquals("error is ignored", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testCreateAndCallObjectErrorString():void
+    {
+      var script:String = ( <![CDATA[
+        local create_as_object = function()
+           local obj = as3.new("Object")
+           as3.set(
+               obj,
+               "error",
+               function(n)
+                 as3.trace("about to trigger error")
+                 error("Boo!")
+               end
+             )
+           return obj
+        end
+        local as_object = create_as_object()
+        as3.trace("about to call method")
+        as3.call(as_object, "error")
+        return "error is ignored"
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack);
+
+      assertTrue(stack[0]);
+      assertEquals("error is ignored", stack[1]);
       assertEquals(2, stack.length);
     }
   }
