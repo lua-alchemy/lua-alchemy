@@ -10,7 +10,7 @@ as3.set(button, "label", "Say Hello");
 as3.call(button, "addEventListener", "click",
   function (e)
       as3.call(alertClass, "show", "Hello " .. as3.get(input, "text"), as3.type(e))
-  end)
+  end, false, 0, true) -- set useWeakReference=true so listener doesn't keep button reference
 
 as3.call(vbox, "addChild", label)
 as3.call(vbox, "addChild", input)
