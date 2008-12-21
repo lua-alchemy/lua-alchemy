@@ -385,6 +385,88 @@ package wrapperSuite.tests
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
     }
 
+    public function testCallLuaNoop():void
+    {
+      var script:String = ( <![CDATA[
+      ]]> ).toString();
+
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack.toString());
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testSyntaxError():void
+    {
+      var script:String = ( <![CDATA[
+        bad code here
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertFalse(stack[0]);
+      assertEquals("luaDoString:2: '=' expected near 'code'", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testRuntimeErrorString():void
+    {
+      var script:String = ( <![CDATA[
+        error("my runtime error")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertFalse(stack[0]);
+      assertEquals("luaDoString:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tluaDoString:2: in main chunk", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testRuntimeErrorNonstring():void
+    {
+      var script:String = ( <![CDATA[
+        error({})
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertFalse(stack[0]);
+      assertEquals("table", stack[1]); // TODO: Should be a black-boxed object
+      assertEquals(2, stack.length);
+    }
+
+    public function testCallLuaFunctionGetNoop():void
+    {
+      var script:String = ( <![CDATA[
+       return function() end
+      ]]> ).toString();
+
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack.toString());
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
+    }
+
+    public function testCallLuaFunctionCallNoop():void
+    {
+      var script:String = ( <![CDATA[
+       return function() end
+      ]]> ).toString();
+
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack.toString());
+
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Function);
+      assertEquals(2, stack.length);
+
+      var func:Function = stack[1] as Function;
+
+      var ret:* = func();
+      assertEquals(null, ret);
+    }
+
     public function testLuaCallbackCleanupWithListener():void
     {
       var myHelper:TestWrapperHelper = new TestWrapperHelper();
@@ -698,55 +780,118 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
+    private function passThroughTest(asValIn:*, luaVal:String, asValOut:*):void
+    {
+      lua_wrapper.setGlobal(luaState, "myValue", asValIn);
+
+      var script:String = ( <![CDATA[
+        if myValue ~= ]]> ) + luaVal + ( <![CDATA[ then
+          as3.trace("BAD VALUE, GOT", myValue, "EXPECTED", ]]> ) + luaVal + ( <![CDATA[)
+          error("myValue mismatch")
+        end
+        return myValue
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+      assertEquals(asValOut, stack[1]);
+      assertEquals(2, stack.length);
+    }
+
     // TODO: Test all supported AS3 types in that manner!
     //       Note this does not replace separate testing of AS3 value
     //       creation in the Lua.
     public function testAS3PassThroughStringEmpty():void
     {
-      lua_wrapper.setGlobal(luaState, "myValue", "");
-
-      var script:String = ( <![CDATA[
-        assert(myValue == "")
-        return myValue
-        ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-
-      assertEquals(2, stack.length);
-      assertTrue(stack[0]);
-      assertEquals("", stack[1]);
+      passThroughTest("", <![CDATA[""]]>, "");
     }
 
     public function testAS3PassThroughStringCommon():void
     {
-      lua_wrapper.setGlobal(luaState, "myValue", "Lua Alchemy");
-
-      var script:String = ( <![CDATA[
-        assert(myValue == "Lua Alchemy")
-        return myValue
-        ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-
-      assertEquals(2, stack.length);
-      assertTrue(stack[0]);
-      assertEquals("Lua Alchemy", stack[1]);
+      passThroughTest("Lua Alchemy", <![CDATA["Lua Alchemy"]]>, "Lua Alchemy");
     }
 
 /*
     // TODO: Looks like there is a bug in Alchemy .5a AS3_StringN().
     public function testAS3PassThroughStringEmbeddedZero():void
     {
-      lua_wrapper.setGlobal(luaState, "Embedded\u0000Zero", "myValue");
+      passThroughTest("Embedded\u0000Zero", <![CDATA["Embedded\0Zero"]]>, "Embedded\u0000Zero");
+    }
+*/
+
+    public function testAS3PassThroughNull():void
+    {
+      passThroughTest(null, <![CDATA[nil]]>, null);
+    }
+
+    public function testAS3PassThroughUndefined():void
+    {
+      passThroughTest(undefined, <![CDATA[nil]]>, null);
+    }
+
+    public function testAS3PassThroughNumberIntegral():void
+    {
+      passThroughTest(42, <![CDATA[42]]>, 42);
+    }
+
+    public function testAS3PassThroughNumberPI():void
+    {
+      passThroughTest(Math.PI, <![CDATA[math.pi]]>, Math.PI);
+    }
+
+    public function testAS3PassThroughNumberPosInf():void
+    {
+      passThroughTest(1/0, <![CDATA[1/0]]>, 1/0);
+    }
+
+    public function testAS3PassThroughNumberNegInf():void
+    {
+      passThroughTest(-1/0, <![CDATA[-1/0]]>, -1/0);
+    }
+
+    public function testAS3PassThroughNumberNaN():void
+    {
+      lua_wrapper.setGlobal(luaState, "myValue", 0/0);
 
       var script:String = ( <![CDATA[
-        assert(myValue == "Embedded\0Zero")
+        assert(type(myValue) == "number")
+        assert(myValue ~= myValue)
         return myValue
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(1, stack.length);
-      assertEquals("Embedded\u0000Zero", stack[0]);
+      assertTrue(stack[0]);
+      assertTrue(isNaN(stack[1]));
+      assertEquals(2, stack.length);
     }
-*/
+
+    public function testAS3PassThroughBooleanTrue():void
+    {
+      passThroughTest(true, <![CDATA[true]]>, true);
+    }
+
+    public function testAS3PassThroughBooleanFalse():void
+    {
+      passThroughTest(false, <![CDATA[false]]>, false);
+    }
+
+    public function testAS3PassThroughObject():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, "myValue", myHelper);
+
+      var script:String = ( <![CDATA[
+        if as3.type(myValue) ~= "wrapperSuite.tests::TestWrapperHelper" then
+          error("Bad as3.type of myValue: " .. as3.type(myValue))
+        end
+        return myValue
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+      assertEquals(myHelper, stack[1]);
+      assertEquals(2, stack.length);
+    }
 
 /*
     public function testAS3Assign():void
