@@ -118,6 +118,26 @@ static AS3_Val get_class(const char * as_class_path)
   return ret;
 }
 
+/*
+  TODO: Ugly workaround. Remove.
+        See http://tinyurl.com/a9djb2
+*/
+static BOOL is_null(AS3_Val val)
+{
+  BOOL result = FALSE;
+  AS3_Val argsVal = AS3_Array("AS3ValType", val);
+  AS3_Val classNameVal = AS3_Call(getQualifiedClassName_method, NULL, argsVal);
+  AS3_Malloced_Str className = AS3_StringValue(classNameVal);
+  AS3_Release(argsVal);
+  AS3_Release(classNameVal);
+
+  result = (strncmp(className, "null", 4) == 0);
+
+  free(className);
+
+  return result;
+}
+
 /************************************************************
 * Lua Helper Functions
 ************************************************************/
@@ -499,7 +519,7 @@ static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
   }
   else if (AS3_InstanceOf(val, int_class))
   {
-    lua_pushnumber(L, AS3_IntValue(val));
+    lua_pushinteger(L, AS3_IntValue(val));
   }
   else if (AS3_InstanceOf(val, String_class))
   {
@@ -515,7 +535,11 @@ static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
   {
     lua_pushboolean(L, AS3_IntValue(val));
   }
-  else if (val == AS3_Undefined() || val == AS3_Null())
+  else if (val == AS3_Undefined())
+  {
+    lua_pushnil(L);
+  }
+  else if (is_null(val))
   {
     lua_pushnil(L);
   }

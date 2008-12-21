@@ -716,8 +716,6 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-/*
-    // TODO: This should work!
     public function testAS3UserdataForeign():void
     {
       var script:String = ( <![CDATA[
@@ -729,7 +727,6 @@ package wrapperSuite.tests
       assertEquals("userdata", stack[1]); // TODO: Should return black-box object, not string.
       assertEquals(2, stack.length);
     }
-*/
 
     public function testAS3UserdataAS3():void
     {
