@@ -137,6 +137,13 @@ type = as3.type(box) -- "mx.containers::Canvas"
 v = as3.new("wrapperSuite.tests::TestWrapperHelper")<br>
 return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
 </pre><br>
+
+<br><h2>as3.trace(param1, ... paramN)</h2>
+<p>Write to Flash trace output (print-like)</p>
+<br><b>Example</b><br>
+<pre>
+as3.trace("Hello from Lua Alchemy!")
+</pre><br>
 ]]>
     </mx:htmlText>
   </mx:TextArea>
