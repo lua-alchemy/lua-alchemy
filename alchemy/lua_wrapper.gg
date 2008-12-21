@@ -199,21 +199,78 @@ static int db_errorfb (lua_State * L) {
 #undef LEVELS1
 #undef LEVELS2
 
+/*
+ * BEGIN COPY-PASTE FROM Lua 5.1.4 lbaselib.c
+ */
+
+static int luaB_tostring (lua_State *L) {
+  luaL_checkany(L, 1);
+  if (luaL_callmeta(L, 1, "__tostring"))  /* is there a metafield? */
+    return 1;  /* use its value */
+  switch (lua_type(L, 1)) {
+    case LUA_TNUMBER:
+      lua_pushstring(L, lua_tostring(L, 1));
+      break;
+    case LUA_TSTRING:
+      lua_pushvalue(L, 1);
+      break;
+    case LUA_TBOOLEAN:
+      lua_pushstring(L, (lua_toboolean(L, 1) ? "true" : "false"));
+      break;
+    case LUA_TNIL:
+      lua_pushliteral(L, "nil");
+      break;
+    default:
+      lua_pushfstring(L, "%s: %p", luaL_typename(L, 1), lua_topointer(L, 1));
+      break;
+  }
+  return 1;
+}
+
+/*
+ * END COPY-PASTE FROM Lua 5.1.4 lbaselib.c
+ */
+
 static int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
 {
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  SPAM(("do_pcall_with_traceback(): begin"));
+
+  LCALL_ARGS(L, stack, 1 + narg); /* The function itself with arguments */
   int status = 0;
-  int base = lua_gettop(L) - narg;  /* function index */
 
   lua_pushcfunction(L, db_errorfb);  /* push traceback function */
-  lua_insert(L, base);  /* put it under chunk and args */
-  status = lua_pcall(L, narg, nresults, base);
-  lua_remove(L, base);  /* remove traceback function */
+  lua_insert(L, LBASE(L, stack));  /* put it under chunk and args */
 
-  /* force a complete garbage collection in case of errors */
+  LCHECK_FN(L, stack, 1 + narg + 1, fatal_error);
+
+  SPAM(("do_pcall_with_traceback(): before call"));
+
+  status = lua_pcall(L, narg, nresults, LBASE(L, stack));
+
+  lua_remove(L, LBASE(L, stack));  /* remove traceback function */
+
   if (status != 0)
   {
+    SPAM(("do_pcall_with_traceback(): after call ERROR"));
+
+    /* force a complete garbage collection in case of errors */
     lua_gc(L, LUA_GCCOLLECT, 0);
+
+    LCHECK_FN(L, stack, 1, fatal_error);
   }
+  else
+  {
+    SPAM(("do_pcall_with_traceback(): after call OK"));
+
+    if (nresults != LUA_MULTRET)
+    {
+      LCHECK_FN(L, stack, nresults, fatal_error);
+    }
+  }
+
+  SPAM(("do_pcall_with_traceback(): end"));
 
   return status;
 }
@@ -720,6 +777,51 @@ static int as3_namespacecall(lua_State * L)
 }
 
 /*
+* Adapted from Lua 5.1.4 luaB_print()
+* NOTE: This function has string concatenation overhead due to forced \n in sztrace().
+* If there is a fputs() analog, use it (and rewrite this function again, based on luaB_print).
+*/
+static int as3_trace(lua_State * L)
+{
+  LCALL(L, stack);
+  int i;
+  int n = LBASE(L, stack);
+
+  luaL_Buffer b;
+  luaL_buffinit(L, &b);
+
+  lua_pushcfunction(L, luaB_tostring);
+  for (i = 1; i <= n; i++)
+  {
+    if (i > 1)
+    {
+      luaL_addchar(&b, ' ');
+    }
+
+    const char * s = NULL;
+    lua_pushvalue(L, -1);  /* function to be called */
+    lua_pushvalue(L, i);   /* value to print */
+    lua_call(L, 1, 1);
+    s = lua_tostring(L, -1);  /* get result */
+    if (s == NULL)
+    {
+      return luaL_error(
+          L,
+          LUA_QL("tostring") " must return a string to " LUA_QL("as3.trace")
+        );
+    }
+
+    luaL_addvalue(&b);
+  }
+
+  luaL_pushresult(&b);
+  sztrace((char *)lua_tostring(L, -1)); /* WARNING: Beware of embedded zeroes */
+  lua_pop(L, 2); /* Pop concatenated string and luaB_tostring function */
+
+  LRETURN(L, stack, 0);
+}
+
+/*
 * AS function registry for Lua
 */
 static const luaL_reg AS3_LUA_LIB[] =
@@ -736,6 +838,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "call", as3_call },
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
+  { "trace", as3_trace },
   { NULL, NULL } /* The end */
 };
 

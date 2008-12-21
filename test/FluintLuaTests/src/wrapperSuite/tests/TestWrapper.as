@@ -249,8 +249,20 @@ package wrapperSuite.tests
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertEquals(1, stack.length);
       assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3Trace():void
+    {
+      var script:String = ( <![CDATA[
+        as3.trace("trace test", 1, 2, "boo", {}, function() end)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
     }
 
     public function testAS3Metatable():void
