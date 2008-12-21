@@ -26,15 +26,13 @@ programming language for ActionScript using
 <br><h1>Known Issues</h1>
 <ul>
   <li>Code Editor - TextArea makes for a poor code editor.  Behavior of copy/paste is erratic and you may loose line returns.  You can load/save files and use a real code editor if needed.</li>
-  <li>Memory Leaks - Not all the demos properly cleanup their listeners and there may be some memory leaks in the lua-alchemy code (to be fixed in future versions).</li>
   <li>No stdio - Lua calls to io.write() and print() don't have anywhere to go.  The print() demo shows how to override print to go to the output canvas.</li>
-  <li>Callback Cleanup - Event listeners made in Lua aren't cleaned up properly.
-    If you click on run like crazy, the callbacks aren't properly
-    cleaned up and the timer can call again causing an error. Also previous timers are
-    still going if you run the default code twice </li>
+  <li>Possible Memory Leaks - Event listeners and timers made in Lua aren't cleaned up automatically.
+    The "Moving Box" demo has a garbage collection function to stop the timer.  The "Button Click"
+    demo uses a weak reference on the listener.</li>
 </ul>
 <br><h1>Lua AS3 Interface</h1>
-<p>The lua script has a "canvas" variable exported from the Flex application.  This canvas is in the upper right of the demo application. You can manipulate this canvas just like any object using the as3 interface described below.<p>
+<p>The Lua script has a "canvas" variable exported from the Flex application.  This canvas is in the upper right of the demo application. You can manipulate this canvas just like any object using the as3 interface described below.<p>
 <br><b>Example</b><br>
 <pre>
 as3.call(canvas, "setStyle", "backgroundColor", "red")
