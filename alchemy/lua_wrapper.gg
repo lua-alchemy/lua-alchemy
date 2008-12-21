@@ -466,6 +466,7 @@ static AS3_Val create_as3_value_from_lua_stack(lua_State *L, int start, int end,
 */
 static int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 {
+  LCALL(L, stack);
 
   AS3LuaUserData * userdata = NULL;
 
@@ -476,6 +477,8 @@ static int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 
   luaL_getmetatable(L, AS3LUA_METATABLE);
   lua_setmetatable(L, -2);
+
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -532,8 +535,11 @@ static int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
 */
 static int as3_yield(lua_State * L)
 {
+  LCALL(L, stack);
+
   flyield();
-  return 0;
+
+  LRETURN(L, stack, 0);
 }
 
 /*
@@ -542,9 +548,12 @@ static int as3_yield(lua_State * L)
 */
 static int as3_stage(lua_State * L)
 {
+  LCALL(L, stack);
+
   /* TODO: This is currently void, call setSprite() before init() to fix */
   push_as3_lua_userdata(L, AS3_Stage());
-  return 1;
+
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -554,6 +563,8 @@ static int as3_stage(lua_State * L)
 */
 static int as3_class(lua_State * L)
 {
+  LCALL(L, stack);
+
   const char * classname = NULL;
   AS3_Val as_class;
 
@@ -569,7 +580,7 @@ static int as3_class(lua_State * L)
 
   AS3_Release(as_class);
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -578,6 +589,8 @@ static int as3_class(lua_State * L)
 */
 static int as3_new(lua_State * L)
 {
+  LCALL(L, stack);
+
   const char * classname = NULL;
   AS3_Val as_class;
   AS3_Val params;
@@ -589,7 +602,7 @@ static int as3_new(lua_State * L)
   as_class = get_class(classname);
   /* TODO error if as_class == null */
 
-  params = create_as3_value_from_lua_stack(L, 2, lua_gettop(L), 0);
+  params = create_as3_value_from_lua_stack(L, 2, LTOP(L, stack), FALSE);
 
   as_object = AS3_New(as_class, params);
   /* TODO error if as_object == null, make sure you free the class and params */
@@ -600,7 +613,7 @@ static int as3_new(lua_State * L)
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -609,6 +622,8 @@ static int as3_new(lua_State * L)
 */
 static int as3_release(lua_State * L)
 {
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
 
   if (userdata->value != AS3_Undefined())
@@ -617,7 +632,7 @@ static int as3_release(lua_State * L)
     userdata->value = AS3_Undefined();
   }
 
-  return 0;
+  LRETURN(L, stack, 0);
 }
 
 /*
@@ -627,10 +642,14 @@ static int as3_release(lua_State * L)
 */
 static int as3_tolua(lua_State * L)
 {
+  SPAM(("as3_release() : begin"));
+
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = check_as3userdata(L, 1);
   push_as3_to_lua_stack(L, userdata->value);
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -640,6 +659,8 @@ static int as3_tolua(lua_State * L)
 */
 static int as3_get(lua_State * L)
 {
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = NULL;
   const char * property = NULL;
   AS3_Val val;
@@ -656,7 +677,7 @@ static int as3_get(lua_State * L)
 
   AS3_Release(val);
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
@@ -665,6 +686,8 @@ static int as3_get(lua_State * L)
 */
 static int as3_set(lua_State * L)
 {
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = NULL;
   const char * property = NULL;
   AS3_Val value;
@@ -680,7 +703,7 @@ static int as3_set(lua_State * L)
   AS3_SetS(userdata->value, property, value);
   /* TODO check if AS3_SetS sucessful */
 
-  return 0;
+  LRETURN(L, stack, 0);
 }
 
 /*
@@ -689,6 +712,8 @@ static int as3_set(lua_State * L)
 */
 static int as3_assign(lua_State * L)
 {
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = 0;
   AS3_Val value;
 
@@ -699,7 +724,9 @@ static int as3_assign(lua_State * L)
 
   /* TODO how to assign the value of a String, Number, int, etc? var s:String; s = "hello"; and do we care? */
 
-  return 0;
+  SPAM(("as3_release() : end"));
+
+  LRETURN(L, stack, 0);
 }
 
 /*
@@ -708,6 +735,8 @@ static int as3_assign(lua_State * L)
 */
 static int as3_call(lua_State * L)
 {
+  LCALL(L, stack);
+
   AS3LuaUserData * userdata = NULL;
   AS3_Val params;
   const char * function_name = NULL;
@@ -729,7 +758,7 @@ static int as3_call(lua_State * L)
 
   AS3_Release(result);
 
-  return 1;
+  LRETURN(L, stack, 1);
 }
 
 /*
