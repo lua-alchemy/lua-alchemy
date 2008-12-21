@@ -122,6 +122,25 @@ static AS3_Val get_class(const char * as_class_path)
 * Lua Helper Functions
 ************************************************************/
 
+int panic_handler(lua_State * L)
+{
+  const char * pStr = lua_tostring(L, -1);
+  if (pStr != NULL)
+  {
+    /*
+      NOTE: Not doing pop, since we would exit program anyway,
+            and Lua interpreter 'L' is in 'undefined state'.
+      lua_pop(L, 1);
+    */
+
+    fatal_error2("Lua panicked:", (char *)pStr);
+  }
+
+  fatal_error("Lua panicked, failed to get error message.");
+
+  return 1; /* Unreachable */
+}
+
 /*
  * BEGIN COPY-PASTE FROM Lua 5.1.4 ldblib.c
  */
@@ -848,6 +867,8 @@ static const luaL_reg AS3_LUA_LIB[] =
 static lua_State * initialize_state()
 {
   lua_State * L = lua_open();
+
+  lua_atpanic(L, &panic_handler);
 
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
 
