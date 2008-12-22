@@ -16,7 +16,7 @@ OBJS = bridge_as3_c.o bridge_as3_lua.o bridge_lua_c.o callbacks_as3_lua.o lstack
 
 .cpp.o:
 	$(CCPP) $(INC) $(CFLAGS) -c $<
-.c.o: lstack.h
+.c.o:
 	$(CC) $(INC) $(CFLAGS) -c $<
 
 all: $(NAME).swc
@@ -34,14 +34,15 @@ $(WRAPPER).swc : glue.o $(OBJS)
 $(NAME).swc : $(WRAPPER).swc
 	compc -namespace $(PACKAGE_WRAPPER) manifest.xml -source-path $(WRAPPER_SRC_DIR) -include-namespaces $(PACKAGE_WRAPPER) -include-classes $(PACKAGE_WRAPPER).$(WRAPPER) -include-libraries $(WRAPPER).swc -target-player=10.0.0 -output='$(NAME).swc'
 
-bridge_as3_c.o : bridge_as3_c.c bridge_as3_c.h
+bridge_as3_c.o : bridge_as3_c.c bridge_as3_c.h lua-alchemy.h
 bridge_as3_lua.o : bridge_as3_lua.c bridge_as3_lua.h
 bridge_lua_c.o : bridge_lua_c.c bridge_lua_c.h
 callbacks_as3_lua.o : callbacks_as3_lua.c callbacks_as3_lua.h
 lstack.o : lstack.c lstack.h
+$(WRAPPER).gg : lua-alchemy.h bridge_as3_c.h bridge_as3_lua.h bridge_lua_c.h callbacks_as3_lua.h lstack.h
 
 clean:
-	rm $(OBJS) glue.* $(WRAPPER).swc $(WRAPPER).as $(NAME).swc
+	rm $(OBJS) glue.* $(WRAPPER).swc $(WRAPPER).as $(NAME).swc *.o
 	rm swfbridge.log 
 	rm *achacks*
 	rm -r _sb_*

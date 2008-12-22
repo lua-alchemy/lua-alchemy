@@ -13,7 +13,7 @@
 #define LTOP(L, v) (lua_gettop((L)))
 
 #define LERROR_IMPL(L, v, msg) \
-  Pdumpstack((L), (v)); \
+  dump_lua_stack((L), (v)); \
   lua_pushliteral((L), __FILE__); \
   lua_pushliteral((L), "("); \
   lua_pushinteger((L), __LINE__); \
@@ -40,7 +40,7 @@
   }
 
 #define LCHECK_IMPL(L, v, n) \
-  Pdumpstack((L), (v)); \
+  dump_lua_stack((L), (v)); \
   lua_pushliteral((L), __FILE__); \
   lua_pushliteral((L), "("); \
   lua_pushinteger((L), __LINE__); \
@@ -79,6 +79,6 @@
 #define LEXTRA(L, v) (LTOP((L), (v)) - LBASE((L), (v)))
 #define LABSIDX(L, v, i) ( ((i) <= 0) ? LTOP((L), (v)) + 1 + (i) : (i) )
 
-int Pdumpstack(lua_State * L, int base);
+int dump_lua_stack(lua_State * L, int base);
 
 #endif /* LSTACK_H_ */

@@ -3,7 +3,7 @@
  */
 #include "lstack.h"
 
-int Pdumpstack(lua_State * L, int base)
+int dump_lua_stack(lua_State * L, int base)
 {
   int top = lua_gettop(L);
 

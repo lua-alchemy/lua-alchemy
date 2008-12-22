@@ -16,21 +16,12 @@
 #include <lualib.h>
 
 #include "lstack.h"
+#include "bridge_as3_c.h"
+#include "lua-alchemy.h"
 
 /* AS3.h is included automatically by gluegen */
 
 void sztrace(char *);
-
-/* Some global variables initialized in ggInit() */
-AS3_Val no_params = NULL;
-AS3_Val zero_param = NULL;
-AS3_Val Number_class = NULL;
-AS3_Val int_class = NULL;
-AS3_Val String_class = NULL;
-AS3_Val Boolean_class = NULL;
-AS3_Val flash_utils_namespace = NULL;
-AS3_Val getQualifiedClassName_method = NULL;
-AS3_Val Array_class = NULL;
 
 typedef struct AS3LuaUserData
 {
@@ -47,10 +38,6 @@ typedef struct LuaFunctionCallbackData
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
 #define AS3LUA_CALLBACKMT "LuaAlchemy.cbMT"
 #define AS3LUA_CALLBACKS "LuaAlchemy.callbacks"
-
-typedef unsigned char BOOL;
-#define TRUE (1)
-#define FALSE (0)
 
 #define AS3LUA_CBFNINDEX (1)
 #define AS3LUA_CBSDATAINDEX (2)
@@ -89,61 +76,6 @@ void fatal_error2(const char * msg1, const char * msg2)
 /************************************************************
 * AS3.h Helper Functions
 ************************************************************/
-
-/*
-* Get an actionscript class with the given namespace and class name
-* in the format: package::ClassName
-*/
-static AS3_Val get_class(const char * as_class_path)
-{
-  AS3_Val as_namespace;
-  AS3_Val as_class;
-  char * class_ptr = NULL;
-
-  /* TODO might want to store classes in a table to save loading again */
-
-  class_ptr = strstr(as_class_path, "::");
-
-  if (class_ptr > as_class_path)
-  {
-    as_namespace = AS3_StringN(as_class_path, (class_ptr - as_class_path) / sizeof(char));
-    as_class = AS3_String(class_ptr + 2);
-  }
-  else
-  {
-    as_namespace = AS3_Undefined();
-    as_class = AS3_String(as_class_path);
-  }
-
-  AS3_Val ret = AS3_NSGet(as_namespace, as_class);
-
-  /* TODO check for failure getting class */
-
-  AS3_Release(as_namespace);
-  AS3_Release(as_class);
-
-  return ret;
-}
-
-/*
-  TODO: Ugly workaround. Remove.
-        See http://tinyurl.com/a9djb2
-*/
-static BOOL is_null(AS3_Val val)
-{
-  BOOL result = FALSE;
-  AS3_Val argsVal = AS3_Array("AS3ValType", val);
-  AS3_Val classNameVal = AS3_Call(getQualifiedClassName_method, NULL, argsVal);
-  AS3_Malloced_Str className = AS3_StringValue(classNameVal);
-  AS3_Release(argsVal);
-  AS3_Release(classNameVal);
-
-  result = (strncmp(className, "null", 4) == 0);
-
-  free(className);
-
-  return result;
-}
 
 /************************************************************
 * Lua Helper Functions
@@ -460,7 +392,7 @@ static AS3_Val as3_lua_callback(void * data, AS3_Val args)
     /* TODO: Remove */
     lua_pushcfunction(L, as3_trace);
     lua_pushliteral(L, "STACK");
-    Pdumpstack(L, results_base);
+    dump_lua_stack(L, results_base);
     lua_call(L, 2, 0);
 #endif /* DO_SPAM */
 
@@ -1083,7 +1015,7 @@ static int as3_call(lua_State * L)
   int top = lua_gettop(L);
   lua_pushcfunction(L, as3_trace);
   lua_pushliteral(L, "AS3_CALL()");
-  Pdumpstack(L, top);
+  dump_lua_stack(L, top);
   lua_call(L, 2, 0);
 #endif /* DO_SPAM */
 
@@ -1300,16 +1232,7 @@ static lua_State * initialize_state()
 #define GGINIT_DEFINED true
 static void ggInit()
 {
-  /* setup some useful constants */
-  no_params = AS3_Array("");
-  zero_param = AS3_Int(0);
-  Number_class = get_class("Number");
-  int_class = get_class("int");
-  String_class = get_class("String");
-  Boolean_class = get_class("Boolean");
-  flash_utils_namespace = AS3_String("flash.utils");
-  getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
-  Array_class = get_class("Array");
+  initialize_as3_constants();
 }
 
 /* end of passthru C section */
