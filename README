@@ -6,10 +6,11 @@ The translated C/C++ code uses a big ActionScript ByteArray as the C/C++ heap an
 
 File Manifest
 -------------
-/AUTHORS - Contact information for the authors of lua-alchemy
-/COPYRIGHT - Copyright for the lua-alchemy project
-/README - This file describing the project
-/alchemy/ - Alchemy specific C and ActionScript code
-/demo/ - Flash and Flex demos
-/lua/ - Current version of Lua
-/test/ - Lua and ActionScript tests
+    AUTHORS - Contact information for the authors of lua-alchemy
+    COPYRIGHT - Copyright for the lua-alchemy project
+    HISTORY - Project history log
+    README - This file describing the project
+    alchemy/ - Alchemy specific C and ActionScript code
+    demo/ - Flash and Flex demos
+    lua/ - Current version of Lua
+    test/ - Lua and ActionScript tests
