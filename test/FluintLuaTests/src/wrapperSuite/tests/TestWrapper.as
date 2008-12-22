@@ -122,6 +122,42 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
+    public function testAS3ToLuaTolerantToNativeTypesAndIsVariadic():void
+    {
+      var script:String = ( <![CDATA[
+        local check = function(msg, a, e)
+          if type(a) ~= type(e) then
+            error(msg ..": unexpected type: got "..type(a).." expected "..type(e))
+          end
+
+          if a ~= e then
+            error(msg ..": unexpected value: got "..tostring(a).." expected "..tostring(e))
+          end
+        end
+        local a, b, c, d = as3.tolua(
+            1,
+            "Lua Alchemy",
+            as3.new("Number", 42),
+            as3.new("flash.utils::ByteArray")
+          )
+        check("a", a, 1)
+        check("b", b, "Lua Alchemy")
+        check("c", c, 42)
+
+        if type(d) ~= "userdata" then
+          error("d: unexpected type: got "..type(a).." expected userdata")
+        end
+
+        if as3.type(d) ~= "flash.utils::ByteArray" then
+          error("d: unexpected as3.type: got "..as3.type(a).." expected flash.utils::ByteArray")
+        end
+
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
     public function testBooleanToLuaType():void
     {
       var script:String = ( <![CDATA[

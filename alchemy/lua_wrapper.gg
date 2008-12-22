@@ -915,18 +915,46 @@ static int as3_release(lua_State * L)
 }
 
 /*
-* Convert ActionScript to a lua type if possible (see push_as3_to_lua_stack).
-* If conversion is not possible, this will return the original AS object
+* Convert ActionScript to a Lua type if possible (see push_as3_to_lua_stack).
+* Supports multiple arguments.
+* If conversion is not possible, this will return the original AS object.
+* If argument is a Lua value, it is returned intact.</p>
 * Lua example: as3.tolua(v)
 */
 static int as3_tolua(lua_State * L)
 {
   LCALL(L, stack);
 
-  AS3LuaUserData * userdata = check_as3userdata(L, 1);
-  push_as3_to_lua_stack(L, userdata->value);
+  int i = 1;
 
-  LRETURN(L, stack, 1);
+  luaL_checkany(L, 1); /* Need at least one argument */
+
+  lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+
+  for (i = 1; i <= LBASE(L, stack); ++i)
+  {
+    void * userdata = lua_touserdata(L, i);
+    if (userdata == NULL || !lua_getmetatable(L, i))
+    {
+      lua_pushvalue(L, i);
+    }
+    else if (!lua_rawequal(L, LBASE(L, stack) + 1, -1))
+    {
+      lua_pop(L, 1); /* Pop userdata metatable */
+      lua_pushvalue(L, i);
+    }
+    else
+    {
+      AS3LuaUserData * as3_userdata = (AS3LuaUserData *)userdata;
+
+      lua_pop(L, 1); /* Pop userdata metatable */
+      push_as3_to_lua_stack(L, as3_userdata->value);
+    }
+  }
+
+  lua_remove(L, LBASE(L, stack) + 1); /* Remove AS3LUA_METATABLE */
+
+  LRETURN(L, stack, LBASE(L, stack));
 }
 
 /*
@@ -1100,12 +1128,12 @@ static int as3_type(lua_State * L)
 
     as3_userdata = (AS3LuaUserData *)userdata;
     params = AS3_Array("AS3ValType", as3_userdata->value);
-  result = AS3_Call(getQualifiedClassName_method, NULL, params);
+    result = AS3_Call(getQualifiedClassName_method, NULL, params);
 
-  push_as3_to_lua_stack(L, result);
+    push_as3_to_lua_stack(L, result);
 
-  AS3_Release(result);
-  AS3_Release(params);
+    AS3_Release(result);
+    AS3_Release(params);
   }
 
   LRETURN(L, stack, 1);
