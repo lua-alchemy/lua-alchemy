@@ -1100,12 +1100,12 @@ static int as3_type(lua_State * L)
 
     as3_userdata = (AS3LuaUserData *)userdata;
     params = AS3_Array("AS3ValType", as3_userdata->value);
-  result = AS3_Call(getQualifiedClassName_method, NULL, params);
+    result = AS3_Call(getQualifiedClassName_method, NULL, params);
 
-  push_as3_to_lua_stack(L, result);
+    push_as3_to_lua_stack(L, result);
 
-  AS3_Release(result);
-  AS3_Release(params);
+    AS3_Release(result);
+    AS3_Release(params);
   }
 
   LRETURN(L, stack, 1);

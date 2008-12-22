@@ -96,7 +96,7 @@ s = as3.tolua(v) -- s is a Lua string with value "some string"
 </pre><br>
 
 <br><h2>as3.get(this, "property")</h2>
-<p>Return the requested property of a given ActionScript object.  The value
+<p>Return the requested property of a given ActionScript object. The value
 is returned as a Lua type if possible (see as3.tolua())</p>
 <br><b>Example</b><br>
 <pre>
