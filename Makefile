@@ -1,5 +1,5 @@
 all:
-	(cd lua; make generic CFLAGS="-O3 -Wall -DLUA_USE_POSIX -DLUA_ANSI")
+	(cd lua; make generic CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_ANSI")
 	(cd alchemy; make)
 	(cd test/FluintLuaTests; ant)
 	(cd demo/LuaAlchemyDemo; ant)
