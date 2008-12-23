@@ -76,9 +76,9 @@ static void ggInit()
 /* end of passthru C section */
 }
 
-public function luaInitilizeState():(lua_State *)uint
+public function luaInitilizeState():(unsigned int)uint
 {
-  return initialize_state();
+  return (unsigned int)initialize_state();
 }
 
 public function luaClose(luaState:(lua_State *)uint):void
