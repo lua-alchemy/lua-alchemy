@@ -36,7 +36,7 @@ $(NAME).swc : $(WRAPPER).swc
 
 bridge_as3_c.o : bridge_as3_c.c bridge_as3_c.h lua-alchemy.h
 bridge_as3_lua.o : bridge_as3_lua.c bridge_as3_lua.h
-bridge_lua_c.o : bridge_lua_c.c bridge_lua_c.h
+bridge_lua_c.o : bridge_lua_c.c bridge_lua_c.h lstack.h lua-alchemy.h
 callbacks_as3_lua.o : callbacks_as3_lua.c callbacks_as3_lua.h
 lstack.o : lstack.c lstack.h
 $(WRAPPER).gg : lua-alchemy.h bridge_as3_c.h bridge_as3_lua.h bridge_lua_c.h callbacks_as3_lua.h lstack.h
