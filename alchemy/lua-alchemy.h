@@ -20,4 +20,6 @@ typedef unsigned char BOOL;
 
 void sztrace(char *);
 
+#define AS3LUA_METATABLE "LuaAlchemy.as3"
+
 #endif /* LUA_ALCHEMY_H_ */
