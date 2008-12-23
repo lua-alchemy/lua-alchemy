@@ -11,6 +11,7 @@ package wrapperSuite
 			addTestCase(new TestWrapper());
 			addTestCase(new TestAS3LuaInterface());
 			addTestCase(new TestTypeConversion());
+			addTestCase(new TestCallbacks());
 		}
 		
 	}
