@@ -51,9 +51,6 @@ package wrapperSuite.tests
       doString(script, [ true, 6 ]);
     }
 
-
-    // TODO test all Lua to AS3 cast
-
     public function testCallLuaNoop():void
     {
       var script:String = ( <![CDATA[
