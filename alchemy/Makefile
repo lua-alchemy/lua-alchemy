@@ -46,7 +46,7 @@ lstack.o : lstack.c lstack.h
 
 as3_lua_interface.o : as3_lua_interface.c as3_lua_interface.h lstack.h lua-alchemy.h bridge_as3_lua.h bridge_as3_c.h bridge_lua_c.h
 
-$(WRAPPER).gg : lua-alchemy.h bridge_as3_c.h bridge_as3_lua.h bridge_lua_c.h callbacks_as3_lua.h lstack.h
+$(WRAPPER).gg : lua-alchemy.h bridge_as3_c.h bridge_as3_lua.h bridge_lua_c.h callbacks_as3_lua.h lstack.h as3_lua_interface.h
 
 clean:
 	rm $(OBJS) glue.* $(WRAPPER).swc $(WRAPPER).as $(NAME).swc *.o
