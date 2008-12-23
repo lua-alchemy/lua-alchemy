@@ -17,6 +17,7 @@ demo/LuaAlchemyDemo/bin-*
 demo/LuaAlchemyDemo/build
 
 alchemy/glue.*
+alchemy/*.o
 alchemy/bin
 alchemy/lua_wrapper.as
 alchemy/lua_wrapper.swc
