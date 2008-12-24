@@ -67,6 +67,44 @@ int as3_class(lua_State * L)
 }
 
 /*
+* Return the requested class in package::ClassName form.
+* Can be used to call static class functions
+* Lua example: v = as3.class2("flash.utils", "ByteArray")
+* Namespace may be empty (pass nil, false or empty string)
+* NOTE: This function is intentionally not documented.
+*/
+int as3_class2(lua_State * L)
+{
+  LCALL(L, stack);
+
+  const char * namespacename = NULL;
+  const char * classname = NULL;
+  AS3_Val as_class;
+
+  if (lua_toboolean(L, 1))
+  {
+    namespacename = luaL_checkstring(L, 1);
+    if (namespacename[0] == '\0')
+    {
+      namespacename = NULL;
+    }
+  }
+  classname = luaL_checkstring(L, 2);
+
+  as_class = get_class2(namespacename, classname);
+  if (as3_class == NULL)
+  {
+    luaL_error(L, "'package::ClassName' must be valid");
+  }
+
+  push_as3_lua_userdata(L, as_class);
+
+  AS3_Release(as_class);
+
+  LRETURN(L, stack, 1);
+}
+
+/*
 * Create a new instance of the given class in package::ClassName form.
 * Lua example: v = as3.new("flash.utils.ByteArray")
 */
@@ -92,7 +130,53 @@ int as3_new(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  AS3_Release(as_object);
+  AS3_Release(as_object); /* TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  AS3_Release(params);
+  AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
+
+  LRETURN(L, stack, 1);
+}
+
+/*
+* Create a new instance of the given class in package::ClassName form.
+* Lua example: v = as3.new2("flash.utils", "ByteArray")
+* Namespace may be empty (pass nil, false or empty string)
+* NOTE: This function is intentionally not documented.
+*/
+int as3_new2(lua_State * L)
+{
+  LCALL(L, stack);
+
+  const char * namespacename = NULL;
+  const char * classname = NULL;
+  AS3_Val as_class;
+  AS3_Val params;
+  AS3_Val as_object;
+
+  if (lua_toboolean(L, 1))
+  {
+    namespacename = luaL_checkstring(L, 1);
+    if (namespacename[0] == '\0')
+    {
+      namespacename = NULL;
+    }
+  }
+  classname = luaL_checkstring(L, 2);
+
+  as_class = get_class2(namespacename, classname);
+  if (as3_class == NULL)
+  {
+    luaL_error(L, "'package::ClassName' must be valid");
+  }
+
+  params = create_as3_value_from_lua_stack(L, 3, LTOP(L, stack), FALSE);
+
+  as_object = AS3_New(as_class, params);
+  /* TODO error if as_object == null, make sure you free the class and params */
+
+  push_as3_lua_userdata(L, as_object);
+
+  AS3_Release(as_object); /* TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
 
@@ -450,6 +534,8 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
   { "trace", as3_trace },
+  { "class2", as3_class2 },
+  { "new2", as3_new2 },
   { NULL, NULL } /* The end */
 };
 

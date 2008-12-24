@@ -7,10 +7,48 @@ package wrapperSuite.tests
 
   public class TestAS3LuaInterface extends CommonTestCase
   {
+    /* TODO: Test New, New2, Class and Class2 with bad arguments */
+
     public function testAS3NewArray():void
     {
       var script:String = ( <![CDATA[
         v = as3.new("Array")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Array);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3New2ArrayEmptyStr():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.new2("", "Array")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Array);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3New2ArrayNil():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.new2(nil, "Array")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Array);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3New2ArrayFalse():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.new2(false, "Array")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -28,6 +66,18 @@ package wrapperSuite.tests
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
       assertTrue(stack[1] is ByteArray);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3New2ByteArray():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.new2("flash.utils", "ByteArray")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue("expected ByteArray", stack[1] is ByteArray);
       assertEquals(2, stack.length);
     }
 
@@ -67,6 +117,69 @@ package wrapperSuite.tests
       assertTrue(stack[0]);
       assertTrue(stack[1] is Class);
 
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3Class2StringNil():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.class2(nil, "String")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Class);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3Class2StringFalse():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.class2(false, "String")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Class);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3Class2StringEmptyString():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.class2("", "String")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Class);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3ClassByteArray():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.class("flash.utils::ByteArray")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Class);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3Class2ByteArray():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.class2("flash.utils", "ByteArray")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is Class);
       assertEquals(2, stack.length);
     }
 
