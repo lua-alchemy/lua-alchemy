@@ -219,8 +219,6 @@ int as3_tolua(lua_State * L)
 
   int i = 1;
 
-  luaL_checkany(L, 1); /* Need at least one argument */
-
   lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
 
   for (i = 1; i <= LBASE(L, stack); ++i)

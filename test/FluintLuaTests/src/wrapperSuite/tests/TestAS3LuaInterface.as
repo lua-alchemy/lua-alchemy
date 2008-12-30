@@ -107,6 +107,26 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
+    public function testAS3ToLuaNoargs():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.tolua() == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToLuaNil():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.tolua(nil) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
     public function testAS3Class():void
     {
       var script:String = ( <![CDATA[
