@@ -12,5 +12,6 @@ File Manifest
     README - This file describing the project
     alchemy/ - Alchemy specific C and ActionScript code
     demo/ - Flash and Flex demos
+    etc/ - Odds and ends of various usefulness
     lua/ - Current version of Lua
     test/ - Lua and ActionScript tests
