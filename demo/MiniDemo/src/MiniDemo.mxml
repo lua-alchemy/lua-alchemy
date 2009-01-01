@@ -26,7 +26,7 @@
         lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
 
         var stack:Array = lua_wrapper.doFile(luaState, "demo.lua");
-        if (stack[0] == false)
+        if (stack.shift() == false)
         {
           Alert.show(
               stack.join("\n") + "\n",
