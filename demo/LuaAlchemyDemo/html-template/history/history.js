@@ -18,10 +18,10 @@ BrowserHistoryUtils = {
 BrowserHistory = (function() {
     // type of browser
     var browser = {
-        ie: false, 
-        firefox: false, 
-        safari: false, 
-        opera: false, 
+        ie: false,
+        firefox: false,
+        safari: false,
+        opera: false,
         version: -1
     };
 
@@ -102,45 +102,45 @@ BrowserHistory = (function() {
     // Get the Flash player object for performing ExternalInterface callbacks.
     // Updated for changes to SWFObject2.
     function getPlayer(id) {
-		if (id && document.getElementById(id)) {
-			var r = document.getElementById(id);
-			if (typeof r.SetVariable != "undefined") {
-				return r;
-			}
-			else {
-				var o = r.getElementsByTagName("object");
-				var e = r.getElementsByTagName("embed");
-				if (o.length > 0 && typeof o[0].SetVariable != "undefined") {
-					return o[0];
-				}
-				else if (e.length > 0 && typeof e[0].SetVariable != "undefined") {
-					return e[0];
-				}
-			}
-		}
-		else {
-			var o = document.getElementsByTagName("object");
-			var e = document.getElementsByTagName("embed");
-			if (e.length > 0 && typeof e[0].SetVariable != "undefined") {
-				return e[0];
-			}
-			else if (o.length > 0 && typeof o[0].SetVariable != "undefined") {
-				return o[0];
-			}
-			else if (o.length > 1 && typeof o[1].SetVariable != "undefined") {
-				return o[1];
-			}
-		}
-		return undefined;
-	}
-    
+    if (id && document.getElementById(id)) {
+      var r = document.getElementById(id);
+      if (typeof r.SetVariable != "undefined") {
+        return r;
+      }
+      else {
+        var o = r.getElementsByTagName("object");
+        var e = r.getElementsByTagName("embed");
+        if (o.length > 0 && typeof o[0].SetVariable != "undefined") {
+          return o[0];
+        }
+        else if (e.length > 0 && typeof e[0].SetVariable != "undefined") {
+          return e[0];
+        }
+      }
+    }
+    else {
+      var o = document.getElementsByTagName("object");
+      var e = document.getElementsByTagName("embed");
+      if (e.length > 0 && typeof e[0].SetVariable != "undefined") {
+        return e[0];
+      }
+      else if (o.length > 0 && typeof o[0].SetVariable != "undefined") {
+        return o[0];
+      }
+      else if (o.length > 1 && typeof o[1].SetVariable != "undefined") {
+        return o[1];
+      }
+    }
+    return undefined;
+  }
+
     function getPlayers() {
         var players = [];
         if (players.length == 0) {
             var tmp = document.getElementsByTagName('object');
             players = tmp;
         }
-        
+
         if (players.length == 0 || players[0].object == null) {
             var tmp = document.getElementsByTagName('embed');
             players = tmp;
@@ -148,17 +148,17 @@ BrowserHistory = (function() {
         return players;
     }
 
-	function getIframeHash() {
-		var doc = getHistoryFrame().contentWindow.document;
-		var hash = String(doc.location.search);
-		if (hash.length == 1 && hash.charAt(0) == "?") {
-			hash = "";
-		}
-		else if (hash.length >= 2 && hash.charAt(0) == "?") {
-			hash = hash.substring(1);
-		}
-		return hash;
-	}
+  function getIframeHash() {
+    var doc = getHistoryFrame().contentWindow.document;
+    var hash = String(doc.location.search);
+    if (hash.length == 1 && hash.charAt(0) == "?") {
+      hash = "";
+    }
+    else if (hash.length >= 2 && hash.charAt(0) == "?") {
+      hash = hash.substring(1);
+    }
+    return hash;
+  }
 
     /* Get the current location hash excluding the '#' symbol. */
     function getHash() {
@@ -294,11 +294,11 @@ BrowserHistory = (function() {
                     currentHref = document.location.href;
                     document.location.reload();
                 } else {
-					if (getHash() != getIframeHash()) {
-						// this.iframe.src = this.blankURL + hash;
-						var sourceToSet = historyFrameSourcePrefix + getHash();
-						getHistoryFrame().src = sourceToSet;
-					}
+          if (getHash() != getIframeHash()) {
+            // this.iframe.src = this.blankURL + hash;
+            var sourceToSet = historyFrameSourcePrefix + getHash();
+            getHistoryFrame().src = sourceToSet;
+          }
                 }
             }
         }
@@ -332,8 +332,8 @@ BrowserHistory = (function() {
                 var bsl = backStack.length;
 
                 var urlActions = {
-                    back: false, 
-                    forward: false, 
+                    back: false,
+                    forward: false,
                     set: false
                 }
 
@@ -344,7 +344,7 @@ BrowserHistory = (function() {
                     // clearInterval(this.locationTimer);
                     handleBackButton();
                 }
-                
+
                 // first check to see if we could have gone forward. We always halt on
                 // a no-hash item.
                 if (forwardStack.length > 0) {
@@ -361,10 +361,10 @@ BrowserHistory = (function() {
                         handleBackButton();
                     }
                 }
-                
+
                 if (!urlActions.back && !urlActions.forward) {
                     var foundInStacks = {
-                        back: -1, 
+                        back: -1,
                         forward: -1
                     }
 
@@ -473,32 +473,32 @@ BrowserHistory = (function() {
             anchorDiv.id = 'firefox_anchorDiv';
             document.body.appendChild(anchorDiv);
         }
-        
+
         //setTimeout(checkForUrlChange, 50);
     }
 
     return {
-        historyHash: historyHash, 
-        backStack: function() { return backStack; }, 
-        forwardStack: function() { return forwardStack }, 
-        getPlayer: getPlayer, 
+        historyHash: historyHash,
+        backStack: function() { return backStack; },
+        forwardStack: function() { return forwardStack },
+        getPlayer: getPlayer,
         initialize: function(src) {
             _initialize(src);
-        }, 
+        },
         setURL: function(url) {
             document.location.href = url;
-        }, 
+        },
         getURL: function() {
             return document.location.href;
-        }, 
+        },
         getTitle: function() {
             return document.title;
-        }, 
+        },
         setTitle: function(title) {
             try {
                 backStack[backStack.length - 1].title = title;
             } catch(e) { }
-            //if on safari, set the title to be the empty string. 
+            //if on safari, set the title to be the empty string.
             if (browser.safari) {
                 if (title == "") {
                     try {
@@ -510,7 +510,7 @@ BrowserHistory = (function() {
                 }
             }
             document.title = title;
-        }, 
+        },
         setDefaultURL: function(def)
         {
             defaultHash = def;
@@ -547,8 +547,8 @@ BrowserHistory = (function() {
                 //setHash(def);
                 setInterval(checkForUrlChange, 50);
             }
-            
-            
+
+
             if (browser.firefox || browser.opera)
             {
                 var reg = new RegExp("#" + def + "$");
@@ -561,7 +561,7 @@ BrowserHistory = (function() {
                 //setHash(def);
             }
 
-        }, 
+        },
 
         /* Set the current browser URL; called from inside BrowserManager to propagate
          * the application state out to the container.
@@ -586,7 +586,7 @@ BrowserHistory = (function() {
            }
 
            return false;
-        }, 
+        },
 
         browserURLChange: function(flexAppUrl) {
             var objectId = null;
@@ -594,7 +594,7 @@ BrowserHistory = (function() {
                 objectId = currentObjectId;
             }
             pendingURL = '';
-            
+
             if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
                 var pl = getPlayers();
                 for (var i = 0; i < pl.length; i++) {
@@ -641,7 +641,7 @@ function goForwardOrBackInHistory(step)
 
 //BrowserHistoryUtils.addEvent(window, "load", function() { BrowserHistory.initialize(); });
 (function(i) {
-    var u =navigator.userAgent;var e=/*@cc_on!@*/false; 
+    var u =navigator.userAgent;var e=/*@cc_on!@*/false;
     var st = setTimeout;
     if(/webkit/i.test(u)){
         st(function(){
