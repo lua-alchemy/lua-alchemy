@@ -64,6 +64,31 @@ static lua_State * initialize_state()
 }
 
 /*
+* Reports error to trace.
+*/
+static int autotrace_error(lua_State * L, int status)
+{
+  if (status != 0)
+  {
+    const char * msg = NULL;
+
+    lua_pushvalue(L, -1); /* To preserve original value type */
+
+    msg = lua_tostring(L, -1);
+    if (msg == NULL)
+    {
+      msg = "(non-string)";
+    }
+
+    sztrace("Lua error:");
+    sztrace((char *)msg);
+    lua_pop(L, 1);
+  }
+
+  return status;
+}
+
+/*
 * This function will be called at the top of the generated main().
 * The GGINIT_DEFINED macro is required.
 */
@@ -87,6 +112,54 @@ public function luaClose(luaState:(lua_State *)uint):void
   sztrace("luaClose() : begin");
   lua_close(luaState);
   sztrace("luaClose() : end");
+}
+
+public function doFile(luaState:(lua_State *)uint, strFileName:(AS3_Val)*):(AS3_Val)Array
+{
+  /*
+  * Experimental. Assuming strFileName to be added with CLibInit.supplyFile()
+  * or otherwise be available in the security sandbox.
+  */
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  lua_State * L = luaState;
+  int status = 0;
+  AS3_Malloced_Str str = AS3_StringValue(strFileName);
+  AS3_Val res;
+
+  LCALL(L, stack);
+  if (LBASE(L, stack) != 0)
+  {
+    LERROR(L, stack, "dirty state stack");
+  }
+
+  lua_pushboolean(L, 1); /* Placeholder for execution status */
+
+  status = luaL_loadfile(L, str);
+
+  free(str);
+
+  if (status == 0)
+  {
+    LCHECK_FN(L, stack, 2, fatal_error);
+    SPAM(("doFile(): run begin"));
+    status = do_pcall_with_traceback(L, 0, LUA_MULTRET);
+    SPAM(("doFile(): run end"));
+  }
+
+  if (autotrace_error(L, status) != 0)
+  {
+    lua_pushboolean(L, 0); /* ERROR */
+    lua_replace(L, 1);
+    /* Error message is on stack */
+    /* NOTE: It is not necessary string! */
+  }
+
+  res = create_as3_value_from_lua_stack(L, 1, LTOP(L, stack), FALSE);
+
+  lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
+
+  return res;
 }
 
 public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS3_Val)Array
@@ -126,44 +199,17 @@ public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS
     SPAM(("luaDoString(): run end"));
   }
 
-  if (status != 0)
+  if (autotrace_error(L, status) != 0)
   {
-    LCHECK_FN(L, stack, 2, fatal_error);
-
-    {
-      /* TODO: Overhead. Remove? */
-
-      const char * msg = NULL;
-
-      lua_pushvalue(L, -1); /* To preserve original value type */
-
-      msg = lua_tostring(L, -1);
-      if (msg == NULL)
-      {
-        msg = "(non-string)";
-      }
-
-      sztrace("luaDoString(): error:");
-      sztrace((char *)msg);
-      lua_pop(L, 1);
-    }
-
     lua_pushboolean(L, 0); /* ERROR */
     lua_replace(L, 1);
     /* Error message is on stack */
     /* NOTE: It is not necessary string! */
-
-    LCHECK_FN(L, stack, 2, fatal_error);
   }
 
   SPAM(("luaDoString(): before create_as3_value_from_lua_stack"));
 
-  res = create_as3_value_from_lua_stack(
-      L,
-      1,
-      LTOP(L, stack),
-      FALSE
-    );
+  res = create_as3_value_from_lua_stack(L, 1, LTOP(L, stack), FALSE);
 
   SPAM(("luaDoString(): after create_as3_value_from_lua_stack"));
 

@@ -3,6 +3,7 @@ package wrapperSuite.tests
   import flash.utils.ByteArray;
 
   import luaAlchemy.lua_wrapper;
+  import cmodule.lua_wrapper.CLibInit;
 
   import net.digitalprimates.fluint.tests.TestCase;
 
@@ -99,5 +100,79 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
+    // Note: it seems that you can not override once supplied file in Alchemy
+
+    public function testDoFileNoError():void
+    {
+      var script:String = ( <![CDATA[
+        return 42
+        ]]> ).toString();
+      var luaAsset:ByteArray = new ByteArray();
+      luaAsset.writeUTFBytes(script);
+      const libInitializer:CLibInit = new CLibInit();
+      libInitializer.supplyFile("myFileDoFileNoError.lua", luaAsset);
+      var stack:Array = lua_wrapper.doFile(luaState, "myFileDoFileNoError.lua");
+
+      assertTrue(stack[0]);
+      assertEquals(42, stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testDoFileNoFile():void
+    {
+      var stack:Array = lua_wrapper.doFile(luaState, "no such file");
+
+      assertFalse(stack[0]);
+      assertEquals("cannot open no such file: No such file or directory", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testDoFileSyntaxError():void
+    {
+      var script:String = ( <![CDATA[
+        bad code here
+        ]]> ).toString();
+      var luaAsset:ByteArray = new ByteArray();
+      luaAsset.writeUTFBytes(script);
+      const libInitializer:CLibInit = new CLibInit();
+      libInitializer.supplyFile("myFileSyntaxError.lua", luaAsset);
+      var stack:Array = lua_wrapper.doFile(luaState, "myFileSyntaxError.lua");
+
+      assertFalse(stack[0]);
+      assertEquals("myFileSyntaxError.lua:2: '=' expected near 'code'", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testDoFileRuntimeErrorString():void
+    {
+      var script:String = ( <![CDATA[
+        error("my runtime error")
+        ]]> ).toString();
+      var luaAsset:ByteArray = new ByteArray();
+      luaAsset.writeUTFBytes(script);
+      const libInitializer:CLibInit = new CLibInit();
+      libInitializer.supplyFile("myFileRuntimeErrorString.lua", luaAsset);
+      var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorString.lua");
+
+      assertFalse(stack[0]);
+      assertEquals("myFileRuntimeErrorString.lua:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tmyFileRuntimeErrorString.lua:2: in main chunk", stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testDoFileRuntimeErrorTable():void
+    {
+      var script:String = ( <![CDATA[
+        error({})
+        ]]> ).toString();
+      var luaAsset:ByteArray = new ByteArray();
+      luaAsset.writeUTFBytes(script);
+      const libInitializer:CLibInit = new CLibInit();
+      libInitializer.supplyFile("myFileRuntimeErrorTable.lua", luaAsset);
+      var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorTable.lua");
+
+      assertFalse(stack[0]);
+      assertEquals("table", stack[1]); // TODO: Should be a black-boxed object
+      assertEquals(2, stack.length);
+    }
   }
 }
