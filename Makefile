@@ -13,3 +13,4 @@ clean:
 	(cd alchemy; make clean)
 	(cd test/FluintLuaTests; ant clear)
 	(cd demo/LuaAlchemyDemo; ant clear)
+	(cd demo/MiniDemo; ant clear)
