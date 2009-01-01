@@ -3,6 +3,7 @@ all:
 	(cd alchemy; make)
 	(cd test/FluintLuaTests; ant)
 	(cd demo/LuaAlchemyDemo; ant)
+	(cd demo/MiniDemo; ant)
 
 clean:
 	(cd lua;  make clean)

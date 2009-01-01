@@ -16,6 +16,9 @@ test/FluintLuaTests/build
 demo/LuaAlchemyDemo/bin-*
 demo/LuaAlchemyDemo/build
 
+demo/MiniDemo/bin-*
+demo/MiniDemo/build
+
 alchemy/glue.*
 alchemy/*.o
 alchemy/bin
