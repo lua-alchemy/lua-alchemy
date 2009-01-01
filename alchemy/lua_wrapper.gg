@@ -49,7 +49,7 @@ static lua_State * initialize_state()
   LCHECK_FN(L, stack, 0, fatal_error);
 
   initialize_callbacks(L);
-  
+
   LCHECK_FN(L, stack, 0, fatal_error);
 
   register_as3_lua_interface(L);

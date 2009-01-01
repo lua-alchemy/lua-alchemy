@@ -23,7 +23,6 @@ typedef struct LuaFunctionCallbackData
 #define AS3LUA_CBFNINDEX (1)
 #define AS3LUA_CBSDATAINDEX (2)
 
-
 static AS3_Val as3_lua_callback(void * data, AS3_Val args);
 AS3_Val as3_lua_callback(void * data, AS3_Val args);
 static int release_callback(lua_State * L);

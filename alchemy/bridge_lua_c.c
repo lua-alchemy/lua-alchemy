@@ -27,7 +27,6 @@ void fatal_error2(const char * msg1, const char * msg2)
   exit(-1);
 }
 
-
 int panic_handler(lua_State * L)
 {
   const char * pStr = lua_tostring(L, -1);
