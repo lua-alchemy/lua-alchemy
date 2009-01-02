@@ -4,7 +4,7 @@ do
   -- Setup loader
   local loader = as3.new2("flash.net", "URLLoader")
   loader.dataFormat = as3.package.flash.net.URLLoaderDataFormat.BINARY
-  loader.addEventHandler(
+  loader.addEventListener(
       as3.package.flash.events.Event.COMPLETE,
       function(e)
         as3.trace("COMPLETE")
@@ -12,7 +12,7 @@ do
       end,
       false, 0, true -- TODO: Do we really need the weak reference here?
     )
-  loader.addEventHandler(
+  loader.addEventListener(
       as3.package.flash.events.IOErrorEvent.IO_ERROR,
       function(e)
         as3.trace("IO_ERROR")
@@ -20,7 +20,7 @@ do
       end,
       false, 0, true -- TODO: Do we really need the weak reference here?
     )
-  loader.addEventHandler(
+  loader.addEventListener(
       as3.package.flash.events.SecurityErrorEvent.SECURITY_ERROR,
       function(e)
         as3.trace("SECURITY_ERROR")
@@ -29,8 +29,8 @@ do
       false, 0, true -- TODO: Do we really need the weak reference here?
     )
 
-  local init = function()
-    as3.trace("BEGIN INIT")
+  local init = function(filename)
+    as3.trace("BEGIN INIT", filename)
 
     assert(load_done == true, "nested call detected")
 
@@ -45,6 +45,7 @@ do
     as3.trace("BEGIN WAIT")
 
     while not load_done do
+      --for i = 1, 1000 do as3.yield() end
       --as3.trace("* loaded:", loader.bytesLoaded, "total:", loader.bytesTotal, "type", as3.type(loader.data), "data", loader.data)
       as3.yield() -- TODO: ?!?!?!
       load_done = true -- TODO: Debugging, remove ASAP
