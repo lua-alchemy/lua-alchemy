@@ -10,6 +10,9 @@ clean:
 	rm lua/swfbridge.log
 	rm lua/*achacks*
 	rm -r lua/_sb_*
+	rm lua/src/swfbridge.log
+	rm lua/src/*achacks*
+	rm -r lua/src/_sb_*
 	(cd alchemy; make clean)
 	(cd test/FluintLuaTests; ant clear)
 	(cd demo/LuaAlchemyDemo; ant clear)
