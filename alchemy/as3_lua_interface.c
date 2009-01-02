@@ -16,7 +16,7 @@
 * Release control to Flash and return to this point on the next timer tick
 * Lua example: as3.yield()
 */
-int as3_yield(lua_State * L)
+static int as3_yield(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -29,7 +29,7 @@ int as3_yield(lua_State * L)
 * Return the Flash stage
 * Lua example: as3.stage()
 */
-int as3_stage(lua_State * L)
+static int as3_stage(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -44,7 +44,7 @@ int as3_stage(lua_State * L)
 * Can be used to call static class functions
 * Lua example: v = as3.class("flash.utils.ByteArray")
 */
-int as3_class(lua_State * L)
+static int as3_class(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -73,7 +73,7 @@ int as3_class(lua_State * L)
 * Namespace may be empty (pass nil, false or empty string)
 * NOTE: This function is intentionally not documented.
 */
-int as3_class2(lua_State * L)
+static int as3_class2(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -108,7 +108,7 @@ int as3_class2(lua_State * L)
 * Create a new instance of the given class in package::ClassName form.
 * Lua example: v = as3.new("flash.utils.ByteArray")
 */
-int as3_new(lua_State * L)
+static int as3_new(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -143,7 +143,7 @@ int as3_new(lua_State * L)
 * Namespace may be empty (pass nil, false or empty string)
 * NOTE: This function is intentionally not documented.
 */
-int as3_new2(lua_State * L)
+static int as3_new2(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -187,7 +187,7 @@ int as3_new2(lua_State * L)
 * Release the given ActionScript object so Flash will do garbage collection.
 * Lua example: as3.release(v)
 */
-int as3_release(lua_State * L)
+static int as3_release(lua_State * L)
 {
   SPAM(("as3_release() : begin"));
 
@@ -213,7 +213,7 @@ int as3_release(lua_State * L)
 * If argument is a Lua value, it is returned intact.</p>
 * Lua example: as3.tolua(v)
 */
-int as3_tolua(lua_State * L)
+static int as3_tolua(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -252,7 +252,7 @@ int as3_tolua(lua_State * L)
 * is returned as a Lua type if possible (see push_as3_to_lua_stack)
 * Lua example: as3.get(v, "text")
 */
-int as3_get(lua_State * L)
+static int as3_get(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -279,7 +279,7 @@ int as3_get(lua_State * L)
 * Set the requested property of a given ActionScript object.
 * Lua example: as3.set(v, "text", "hello from Lua")
 */
-int as3_set(lua_State * L)
+static int as3_set(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -305,7 +305,7 @@ int as3_set(lua_State * L)
 * Set a primitive ActionScript value (like String, Number, etc)
 * Lua example: as3.assign(v, 5)
 */
-int as3_assign(lua_State * L)
+static int as3_assign(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -326,7 +326,7 @@ int as3_assign(lua_State * L)
 * Call a function on a given ActionScript object
 * Lua example: as3.call(v, "myFunction", "param1", param2, ...)
 */
-int as3_call(lua_State * L)
+static int as3_call(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -387,7 +387,7 @@ int as3_call(lua_State * L)
 * Lua example: as3.type(v)
 * Loosely based on io_type() from Lua 5.1.4
 */
-int as3_type(lua_State * L)
+static int as3_type(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -434,7 +434,7 @@ int as3_type(lua_State * L)
 * Can be used to call namespace functions
 * Lua example: v = as3.package("flash.utils", "getQualifiedClassName")
 */
-int as3_namespacecall(lua_State * L)
+static int as3_namespacecall(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -470,11 +470,13 @@ int as3_namespacecall(lua_State * L)
 }
 
 /*
+* Print arguments to a trace()
 * Adapted from Lua 5.1.4 luaB_print()
 * NOTE: This function has string concatenation overhead due to forced \n in sztrace().
 * If there is a fputs() analog, use it (and rewrite this function again, based on luaB_print).
+* Lua example: as3.trace("Hello", "from Lua Alchemy")
 */
-int as3_trace(lua_State * L)
+static int as3_trace(lua_State * L)
 {
   LCALL(L, stack);
   int i;
@@ -534,6 +536,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "trace", as3_trace },
   { "class2", as3_class2 },
   { "new2", as3_new2 },
+
   { NULL, NULL } /* The end */
 };
 
@@ -544,8 +547,8 @@ void register_as3_lua_interface(lua_State * L)
   lua_setfield(L, -2, "__gc");
   lua_pop(L, 1); /* pop as3 metatable created above */
 
-	/* TODO call? LCHECK_FN(L, stack, 0, fatal_error); */
+  /* TODO call? LCHECK_FN(L, stack, 0, fatal_error); */
 
   luaL_register(L, "as3", AS3_LUA_LIB);
-  lua_pop(L, 1); /* pop as3 library table created by above call */	
+  lua_pop(L, 1); /* pop as3 library table created by above call */
 }
