@@ -6,6 +6,7 @@ all:
 	(cd demo/MiniDemo; ant)
 
 clean:
+	rm swfbridge.log
 	(cd lua;  make clean)
 	rm lua/swfbridge.log
 	rm lua/*achacks*
