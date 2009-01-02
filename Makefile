@@ -4,6 +4,7 @@ all:
 	(cd test/FluintLuaTests; ant)
 	(cd demo/LuaAlchemyDemo; ant)
 	(cd demo/MiniDemo; ant)
+	(cd demo/Rapid; ant)
 
 clean:
 	rm swfbridge.log
@@ -18,3 +19,4 @@ clean:
 	(cd test/FluintLuaTests; ant clear)
 	(cd demo/LuaAlchemyDemo; ant clear)
 	(cd demo/MiniDemo; ant clear)
+	(cd demo/Rapid; ant clear)

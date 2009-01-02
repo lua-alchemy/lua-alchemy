@@ -1,11 +1,3 @@
-print = function(...)
- local t = {...}
- for k,v in pairs(t) do
-   t[k] = tostring(v)
- end
- as3.set(output, "text", as3.get(output, "text") .. table.concat(t, "\t") .. "\n")
-end
-
 --[[
 
 obj * newindex -> as3.set
@@ -66,14 +58,14 @@ do
 
   local unproxy = function(o)
     local mt = getmetatable(o)
-    if mt[1] == proxy_tag then
+    if mt and mt[1] == proxy_tag then
       o = mt:value()
     end
     return o
   end
 
   do -- Patch as3 metatable
-    local mt = debug.getmetatable(canvas)
+    local mt = debug.getmetatable(assert(as3.canvas))
 
     mt.__index = function(t, k)
       return make_callobj(t, k)
@@ -88,17 +80,19 @@ do
     local methods =
     {
       "release", "tolua", "get", "set", "assign",
-      "call", "type", "namespacecall", "trace"
+      "call", "type", "namespacecall", "trace",
+      "class", "class2", "new", "new2"
     }
 
     for _, name in ipairs(methods) do
       local old_fn = as3[name]
       as3[name] = function(...)
-        local args = {...}
-        for i, v in ipairs(args) do
-          args[i] = unproxy(v)
+        local n = select("#", ...)
+        local args = {}
+        for i = 1, n do
+          args[i] = unproxy(select(i, ...))
         end
-        return old_fn(unpack(args))
+        return old_fn(unpack(args, 1, n))
       end
     end
   end
@@ -116,7 +110,7 @@ pkgobj * index(key) ->
   pkgobj.class = pkgobj.key
   pkgobj.key = key
 
-pkgobj * as3.any -> as3.any(as3.class2(pkgobj.namespace.."."..pkgobj.class, pkgobj.key))
+pkgobj * as3.any -> as3.any(as3.get(as3.class2(pkgobj.namespace, pkgobj.class), pkgobj.key)))
 
 pkgobj * colon_call(pkgobj, ...) ->
   as3.call(as3.class2(pkgobj.namespace, pkgobj.class), pkgobj.key, ...)
@@ -139,6 +133,19 @@ pkgobj * newindex(key, value) ->
   do -- Patch for as3.package()
     local make_pkgobj
     do
+      -- Note this would not work as __eq metamethod, since metatables are different
+      local pkgobj_equals = function(lhs, rhs)
+        local lhsmt, rhsmt = getmetatable(lhs), getmetatable(rhs)
+        --[[as3.trace(
+            "eq",
+            lhsmt.namespace_, lhsmt.class_, lhsmt.key_,
+            rhsmt.namespace_, rhsmt.class_, rhsmt.key_
+          )--]]
+        return lhsmt.namespace_ == rhsmt.namespace_
+           and lhsmt.class_ == rhsmt.class_
+           and lhsmt.key_ == rhsmt.key_
+      end
+
       local splitpath = function(...) -- TODO: Test this well!
         -- TODO: Huge overhead, but simple. Rewrite.
 
@@ -173,25 +180,37 @@ pkgobj * newindex(key, value) ->
 
       local value = function(self)
         if self.value_ == nil then
-          self.value_ = as3.class2(self:path2())
+          --as3.trace("value", self.namespace_, self.class_, self.key_, debug.traceback())
+          self.value_ = as3.get(as3.class2(self.namespace_, self.class_), self.key_)
         end
         return self.value_
       end
 
       local call = function(t, self, ...)
         local mt = getmetatable(t)
+        local selfmt = getmetatable(self)
 
-        if t == self then
+        --as3.trace("call begin")
+
+        if
+          selfmt
+          and ( -- Hack. Need to find out if self is our parent
+              mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
+            )
+        then
           -- colon call mode
+          --as3.trace("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
           return as3.call(as3.class2(mt.namespace_, mt.class_), mt.key_, ...)
         end
 
         if mt.key_ ~= "new" then
           -- dot call mode
-          return as3.namespacecall(mt.namespace_.."."..mt.class_, mt.key_, ...)
+          --as3.trace("dot call", mt.namespace_, mt.class_, mt.key_)
+          return as3.namespacecall(mt.namespace_.."."..mt.class_, mt.key_, self, ...)
         end
 
         -- new object mode
+        --as3.trace("new call", mt.namespace_, mt.class_, mt.key_)
         return as3.new2(mt.namespace_, mt.class_, ...)
       end
 
@@ -201,6 +220,7 @@ pkgobj * newindex(key, value) ->
       end
 
       local index = function(t, k)
+        --as3.trace("index", getmetatable(t):path2(k))
         return make_pkgobj(getmetatable(t):path2(k))
       end
 
@@ -245,20 +265,3 @@ pkgobj * newindex(key, value) ->
       )
   end
 end
-
-local vbox = as3.package("mx")["containers::VBox"].new()
-
-do
-  local label = as3.package("mx.controls::Label").new()
-  label.text = "Hello"
-  label.text = as3.tolua(label.text) .. " World"
-  vbox.addChild(label)
-end
-
-do
-  local label = as3.package.mx.controls.Label.new()
-  label.text = "From Lua Alchemy"
-  vbox.addChild(label)
-end
-
-canvas.addChild(vbox)

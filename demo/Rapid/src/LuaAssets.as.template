@@ -1,0 +1,37 @@
+package
+{
+  import cmodule.lua_wrapper.CLibInit;
+  import flash.utils.ByteArray;
+  import flash.system.Security;
+
+  public class LuaAssets
+  {
+    ${DECLARE_FILES}
+
+    private static var _filesystemRoot:String;
+
+    public static function filesystemRoot():String
+    {
+      return _filesystemRoot;
+    }
+
+    public static function init():void
+    {
+      ${REGISTER_FILES}
+
+      if (
+           Security.sandboxType == Security.LOCAL_WITH_FILE
+        || Security.sandboxType == Security.LOCAL_TRUSTED
+        )
+      {
+        _filesystemRoot = ${FILESYSTEM_ROOT};
+      }
+      else
+      {
+        _filesystemRoot = "builtin://";
+      }
+
+      trace("LuaAssets: filesystem root is set to " + _filesystemRoot);
+    }
+  }
+}

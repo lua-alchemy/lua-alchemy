@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+  xmlns:mx="http://www.adobe.com/2006/mxml"
+  layout="vertical" xmlns:local="*"
+  creationComplete="onCreationComplete()"
+  >
+  <mx:Canvas id="luaCanvas" width="100%" height="100%"/>
+  <mx:Script>
+    <![CDATA[
+      import mx.controls.Alert;
+      import luaAlchemy.lua_wrapper;
+      import cmodule.lua_wrapper.CLibInit;
+
+      // Extra imports to expose stuff to Lua
+      import mx.effects.Move;
+      import mx.containers.*;
+      import mx.controls.*;
+
+      private var luaState:uint;
+
+      private function onCreationComplete():void
+      {
+        LuaAssets.init();
+
+        luaState = lua_wrapper.luaInitilizeState();
+        lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_CANVAS", luaCanvas);
+        lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", LuaAssets.filesystemRoot());
+
+        var stack:Array = lua_wrapper.doFile(luaState, "builtin://init.lua");
+        if (stack.shift() == false)
+        {
+          Alert.show(
+              stack.join("\n") + "\n",
+              "Lua error",
+              mx.controls.Alert.OK
+            );
+        }
+      }
+
+      // TODO: Make this code reusable
+      /**
+      * When you compile in the Flex library statically, the linker only includes
+      * classes you are actually using.  Only the classes used would be available
+      * for the Lua script to create.  So to ensure the script has access to the
+      * classes I wanted to create, I declared one of them so it would be included.
+      */
+      private function importClassesForLua():void
+      {
+        var accordion:Accordion
+        var applicationControlBar:ApplicationControlBar
+        var box:Box
+        var boxDirection:BoxDirection
+        var canvas:Canvas
+        var controlBar:ControlBar
+        var dividedBox:DividedBox
+        var form:Form
+        var formHeading:FormHeading
+        var formItem:FormItem
+        var formItemDirection:FormItemDirection
+        var grid:Grid
+        var gridItem:GridItem
+        var gridRow:GridRow
+        var hBox:HBox
+        var hDividedBox:HDividedBox
+        var panel:Panel
+        var tabNavigator:TabNavigator
+        var tile:Tile
+        var tileDirection:TileDirection
+        var titleWindow:TitleWindow
+        var vBox:VBox
+        var vDividedBox:VDividedBox
+        var viewStack:ViewStack
+
+        var alert:Alert
+        var button:Button
+        var buttonBar:ButtonBar
+        var buttonLabelPlacement:ButtonLabelPlacement
+        var checkBox:CheckBox
+        var colorPicker:ColorPicker
+        var comboBase:ComboBase
+        var comboBox:ComboBox
+        var dataGrid:DataGrid
+        var dateChooser:DateChooser
+        var dateField:DateField
+        var formItemLabel:FormItemLabel
+        var horizontalList:HorizontalList
+        var hRule:HRule
+        var hScrollBar:HScrollBar
+        var hSlider:HSlider
+        var image:Image
+        var label:Label
+        var linkBar:LinkBar
+        var linkButton:LinkButton
+        var list:List
+        var menu:Menu
+        var menuBar:MenuBar
+        var navBar:NavBar
+        var numericStepper:NumericStepper
+        var popUpButton:PopUpButton
+        var popUpMenuButton:PopUpMenuButton
+        var progressBar:ProgressBar
+        var progressBarDirection:ProgressBarDirection
+        var progressBarLabelPlacement:ProgressBarLabelPlacement
+        var progressBarMode:ProgressBarMode
+        var radioButton:RadioButton
+        var radioButtonGroup:RadioButtonGroup
+        var richTextEditor:RichTextEditor
+        var spacer:Spacer
+        var sWFLoader:SWFLoader
+        var tabBar:TabBar
+        var text:Text
+        var textArea:TextArea
+        var textInput:TextInput
+        var tileList:TileList
+        var toggleButtonBar:ToggleButtonBar
+        var toolTip:ToolTip
+        var tree:Tree
+        var videoDisplay:VideoDisplay
+        var vRule:VRule
+        var vScrollBar:VScrollBar
+        var vSlider:VSlider
+
+        var timer:Timer
+        var move:Move
+      }
+    ]]>
+  </mx:Script>
+</mx:Application>

@@ -2,4 +2,5 @@ Flash and Flex demos of lua-alchemy in action.
 
   LuaAlchemyDemo/ - Has a text editor for code and a canvas that can be
                     controlled by Lua code.
-  MiniDemo/ - Minimalistic Lua Alchemy demo
+  MiniDemo/ - Minimalistic Lua Alchemy demo.
+  Rapid/ - Rapid development prototype.
