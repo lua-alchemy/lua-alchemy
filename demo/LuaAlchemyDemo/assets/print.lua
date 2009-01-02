@@ -1,9 +1,10 @@
 print = function(...)
- local t = {...}
- for k,v in pairs(t) do
-   t[k] = tostring(v)
+ local n = select("#", ...)
+ local t = {}
+ for i = 1, n do
+   t[i] = tostring(select(i, ...))
  end
- as3.set(output, "text", as3.get(output, "text") .. table.concat(t,"\t") .. "\n")
+ as3.set(output, "text", as3.get(output, "text") .. table.concat(t, "\t") .. "\n")
 end
 
 print("Hello from Lua")
