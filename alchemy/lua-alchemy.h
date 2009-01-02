@@ -22,4 +22,6 @@ void sztrace(char *);
 
 #define AS3LUA_METATABLE "LuaAlchemy.as3"
 
+#define AS3LUA_VERSION "v0.1a"
+
 #endif /* LUA_ALCHEMY_H_ */

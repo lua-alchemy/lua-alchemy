@@ -56,6 +56,9 @@ static lua_State * initialize_state()
 
   LCHECK_FN(L, stack, 0, fatal_error);
 
+  lua_pushliteral(L, AS3LUA_VERSION);
+  lua_setglobal(L, "_LUA_ALCHEMY");
+
   lua_gc(L, LUA_GCRESTART, 0); /* restart collector */
 
   LCHECK_FN(L, stack, 0, fatal_error);
