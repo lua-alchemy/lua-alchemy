@@ -19,13 +19,13 @@ void initialize_as3_constants()
 {
   no_params = AS3_Array("");
   zero_param = AS3_Int(0);
-  Number_class = get_class("Number");
-  int_class = get_class("int");
-  String_class = get_class("String");
-  Boolean_class = get_class("Boolean");
+  Number_class = get_class2(NULL, "Number");
+  int_class = get_class2(NULL, "int");
+  String_class = get_class2(NULL, "String");
+  Boolean_class = get_class2(NULL, "Boolean");
   flash_utils_namespace = AS3_String("flash.utils");
   getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
-  Array_class = get_class("Array");	
+  Array_class = get_class2(NULL, "Array");
 }
 
 /*
