@@ -393,8 +393,6 @@ static int as3_type(lua_State * L)
 
   void * userdata = NULL;
 
-  luaL_checkany(L, 1);
-
   userdata = lua_touserdata(L, 1);
 
   lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
