@@ -383,9 +383,8 @@ package wrapperSuite.tests
           return as3.type()
           ]]> ).toString();
         var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertFalse(stack[0]);
-        // TODO: This should not crash, but should return nil!
-        assertEquals("luaDoString:2: bad argument #1 to 'type' (value expected)\nstack traceback:\n\t[C]: in function 'type'\n\tluaDoString:2: in main chunk", stack[1]);
+        assertTrue(stack[0]);
+        assertEquals(null, stack[1]);
         assertEquals(2, stack.length);
       }
 
