@@ -1,10 +1,9 @@
-package
+package ${PACKAGE_NAME}
 {
-  import cmodule.lua_wrapper.CLibInit;
   import flash.utils.ByteArray;
   import flash.system.Security;
 
-  public class LuaAssets
+  public class ${ASSETS_CLASS_NAME}
   {
     ${DECLARE_FILES}
 
@@ -15,7 +14,7 @@ package
       return _filesystemRoot;
     }
 
-    public static function init():void
+    public static function init(libInitializer:*):void
     {
       ${REGISTER_FILES}
 

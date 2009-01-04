@@ -17,8 +17,10 @@
 
   <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
 
-  <!-- dirs -->
+  <property name="assets.class.name" value="LuaAssets"/>
+  <property name="assets.package.name" value=""/>
 
+  <!-- dirs -->
   <property name="build.dir" location="build/"/>
   <property name="release.build.dir" location="${build.dir}/release/"/>
   <property name="debug.build.dir" location="${build.dir}/debug/"/>
@@ -26,7 +28,11 @@
   <property name="assets.dir" location="assets/"/>
   <property name="lib.dir" location="libs/"/>
   <property name="alchemy.dir" location="../../alchemy"/>
+  <property name="lua_lib.dir" location="../../lua_lib"/>
   <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
+  <property name="build.tools.dir" location="../../build"/>
+  <property name="assets.class.dir" location="${src.dir}/${assets.package.name}/"/>
+  <property name="assets.class.as" location="${assets.class.dir}/${assets.class.name}.as"/>
 
   <!-- files -->
   <property name="main.application" location="${src.dir}/Rapid.mxml"/>
@@ -61,6 +67,20 @@
   <target name="build"
     depends="clear, init, compile.release, compile.debug, make.release.wrapper, make.debug.wrapper"
     description="--> Rapid application">
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: generate.assets
+       - - - - - - - - - - - - - - - - - -->
+  <target name="generate.assets">
+    <exec executable="${build.tools.dir}/gen_assets.sh" dir="${basedir}"
+      input="${build.tools.dir}/LuaAssets.as.template"
+      output="${assets.class.as}">
+      <arg path="${assets.dir}"/>
+      <arg value="${assets.class.name}"/>
+      <arg value="${assets.dir}"/>
+      <arg value="${assets.package.name}"/>
+    </exec>
   </target>
 
   <!-- - - - - - - - - - - - - - - - - -
@@ -106,15 +126,15 @@
   <!-- - - - - - - - - - - - - - - - - -
         target: compile.release
        - - - - - - - - - - - - - - - - - -->
-  <target name="compile.release">
-    <exec executable="${basedir}/gen_assets.sh" dir="${basedir}" input="${src.dir}/LuaAssets.as.template" output="${src.dir}/LuaAssets.as">
-        <arg path="${assets.dir}"/>
-    </exec>
+  <target name="compile.release" depends="generate.assets">
     <mxmlc file="${main.application}" output="${main.application.release.out}"
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.dir}" append="true">
         <include name="lua-alchemy.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lua_lib.dir}/build/release" append="true">
+        <include name="lua-alchemy-lua-lib.swc" />
       </compiler.include-libraries>
     </mxmlc>
   </target>
@@ -122,15 +142,15 @@
   <!-- - - - - - - - - - - - - - - - - -
         target: compile.debug
        - - - - - - - - - - - - - - - - - -->
-  <target name="compile.debug">
-    <exec executable="${basedir}/gen_assets.sh" dir="${basedir}" input="${src.dir}/LuaAssets.as.template" output="${src.dir}/LuaAssets.as">
-        <arg path="${assets.dir}"/>
-    </exec>
+  <target name="compile.debug" depends="generate.assets">
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.dir}" append="true">
         <include name="lua-alchemy.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lua_lib.dir}/build/debug" append="true">
+        <include name="lua-alchemy-lua-lib.swc" />
       </compiler.include-libraries>
     </mxmlc>
   </target>
@@ -141,7 +161,7 @@
   <target name="clear">
     <delete failonerror="false">
       <fileset dir="${build.dir}" includes="**/*.*" />
-      <fileset dir="${src.dir}" includes="LuaAssets.as" />
+      <fileset dir="${assets.class.dir}" includes="${assets.class.as}" />
     </delete>
   </target>
 
@@ -152,5 +172,6 @@
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${release.build.dir}"/>
     <mkdir dir="${debug.build.dir}"/>
+    <mkdir dir="${assets.class.dir}"/>
   </target>
 </project>

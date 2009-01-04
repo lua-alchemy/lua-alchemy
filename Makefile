@@ -1,6 +1,7 @@
 all:
 	(cd lua; make generic CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_ANSI")
 	(cd alchemy; make)
+	(cd lua_lib; make)
 	(cd test/FluintLuaTests; ant)
 	(cd demo/LuaAlchemyDemo; ant)
 	(cd demo/MiniDemo; ant)
@@ -16,6 +17,7 @@ clean:
 	rm lua/src/*achacks*
 	rm -r lua/src/_sb_*
 	(cd alchemy; make clean)
+	(cd lua_lib; make clean)
 	(cd test/FluintLuaTests; ant clear)
 	(cd demo/LuaAlchemyDemo; ant clear)
 	(cd demo/MiniDemo; ant clear)

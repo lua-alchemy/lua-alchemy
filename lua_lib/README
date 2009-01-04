@@ -1,0 +1,7 @@
+Lua Alchemy core Lua libraries
+
+    assets/
+        lua_alchemy/
+            as3/ -- Lua-side extensions as3 module
+            lua/ -- Lua-side extensions to Lua core libraries
+        lua_alchemy.lua -- File to load whole core library at once

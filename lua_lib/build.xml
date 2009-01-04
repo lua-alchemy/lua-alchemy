@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<project name="lua-alchemy-lib" default="build" basedir=".">
+
+  <property environment="env"/>
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
+
+  <fail>
+    <condition>
+      <not>
+        <isset property="env.FLEX_HOME" />
+      </not>
+    </condition>
+    Error!
+    You need to set FLEX_HOME environement variable (path to Flex SDK)
+    export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
+  </fail>
+
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+  <property name="assets.class.name" value="LuaAssets"/>
+  <property name="assets.package.name" value="luaAlchemy"/>
+
+  <!-- dirs -->
+
+  <property name="build.dir" location="build/"/>
+  <property name="release.build.dir" location="${build.dir}/release/"/>
+  <property name="debug.build.dir" location="${build.dir}/debug/"/>
+  <property name="src.dir" location="src/"/>
+  <property name="assets.dir" location="assets/"/>
+  <property name="lib.dir" location="libs/"/>
+  <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
+  <property name="build.tools.dir" location="../build"/>
+  <property name="assets.class.dir" location="${src.dir}/${assets.package.name}/"/>
+  <property name="assets.class.as" location="${assets.class.dir}/${assets.class.name}.as"/>
+
+  <!-- files -->
+  <property name="output.swc.name" value="lua-alchemy-lua-lib"/>
+  <property name="main.library.release.out" location="${release.build.dir}/${output.swc.name}.swc"/>
+  <property name="main.library.debug.out" location="${debug.build.dir}/${output.swc.name}.swc"/>
+
+  <description>
+    Lua Alchemy Core Lua Libraries
+  </description>
+
+  <!-- =================================
+        target: build
+       ================================= -->
+  <target name="build"
+    depends="clear, init, compile.release, compile.debug"
+    description="--> Lua Alchemy Core Lua Libraries">
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: generate.assets
+       - - - - - - - - - - - - - - - - - -->
+  <target name="generate.assets">
+    <exec executable="${build.tools.dir}/gen_assets.sh" dir="${basedir}"
+      input="${build.tools.dir}/LuaAssets.as.template"
+      output="${assets.class.as}">
+      <arg path="${assets.dir}"/>
+      <arg value="${assets.class.name}"/>
+      <arg value="${assets.dir}"/>
+      <arg value="${assets.package.name}"/>
+    </exec>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.release
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.release" depends="generate.assets">
+    <compc debug="false" output="${main.library.release.out}"
+      include-classes="${assets.package.name}.${assets.class.name}">
+      <source-path path-element="${src.dir}" />
+    </compc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.debug
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.debug" depends="generate.assets">
+    <compc debug="true" output="${main.library.debug.out}"
+      include-classes="${assets.package.name}.${assets.class.name}">
+      <source-path path-element="${src.dir}" />
+    </compc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: clear
+         - - - - - - - - - - - - - - - - - -->
+  <target name="clear">
+    <delete failonerror="false">
+      <fileset dir="${build.dir}" includes="**/*.*" />
+      <fileset dir="${assets.class.dir}" includes="${assets.class.as}" />
+    </delete>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: init
+         - - - - - - - - - - - - - - - - - -->
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${release.build.dir}"/>
+    <mkdir dir="${debug.build.dir}"/>
+    <mkdir dir="${assets.class.dir}"/>
+  </target>
+</project>

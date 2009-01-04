@@ -1,3 +1,9 @@
+-- Provides
+--   Syntax sugar support for as3 module
+--   as3.package()
+-- Depends on
+--   as3.canvas
+
 --[[
 
 obj * newindex -> as3.set

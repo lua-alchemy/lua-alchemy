@@ -20,7 +20,10 @@
 
       private function onCreationComplete():void
       {
-        LuaAssets.init();
+        const libInitializer:CLibInit = new CLibInit();
+
+        luaAlchemy.LuaAssets.init(libInitializer);
+        LuaAssets.init(libInitializer);
 
         luaState = lua_wrapper.luaInitilizeState();
         lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_CANVAS", luaCanvas);

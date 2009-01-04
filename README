@@ -1,7 +1,7 @@
 Port of the Lua programming language for ActionScript using Alchemy.
 
 Alchemy works by translating C/C++ code to ActionScript through a LLVM compiler
-which instead of producing machine or bytecode produces ActionScript. 
+which instead of producing machine or bytecode produces ActionScript.
 The translated C/C++ code uses a big ActionScript ByteArray as the C/C++ heap and stack.
 
 File Manifest
@@ -11,7 +11,10 @@ File Manifest
     HISTORY - Project history log
     README - This file describing the project
     alchemy/ - Alchemy specific C and ActionScript code
+    benchmark/ - Lua benchmarks
+    build/ - Build utility tools
     demo/ - Flash and Flex demos
     etc/ - Odds and ends of various usefulness
-    lua/ - Current version of Lua
+    lua/ - Current version of Lua (5.1.4)
+    lua_lib/ - Lua Alchemy core Lua libraries
     test/ - Lua and ActionScript tests
