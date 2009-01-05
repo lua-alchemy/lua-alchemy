@@ -486,5 +486,292 @@ package wrapperSuite.tests
       assertTrue(stack[0]);
       assertEquals(1, stack.length);
     }
+
+    public function testAS3ToAS3Nil():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(nil)
+        assert(as3.type(v) == "null")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3BooleanTrue():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(true)
+        assert(as3.type(v) == "Boolean")
+        assert(as3.tolua(v) == true)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3BooleanFalse():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(false)
+        assert(as3.type(v) == "Boolean")
+        assert(as3.tolua(v) == false)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3NumberInteger():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(42)
+        assert(as3.type(v) == "int")
+        assert(as3.tolua(v) == 42)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3NumberPi():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(math.pi)
+        assert(as3.type(v) == "Number")
+        assert(as3.tolua(v) == math.pi)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3NumberPosInf():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(1/0)
+        assert(as3.type(v) == "Number")
+        assert(as3.tolua(v) == 1/0)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3NumberNegInf():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(-1/0)
+        assert(as3.type(v) == "Number")
+        assert(as3.tolua(v) == -1/0)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3NumberNaN():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(0/0)
+        assert(as3.type(v) == "Number")
+        assert(as3.tolua(v) ~= as3.tolua(v))
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3StringEmpty():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3("")
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3StringNonempty():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3("Lua Alchemy")
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "Lua Alchemy")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3StringEmbeddedZero():void
+    {
+      var script:String = ( <![CDATA[
+        local s = "Embedded\0Zero"
+        assert(#s == 13)
+        local v = as3.toas3(s)
+        assert(as3.type(v) == "String")
+        -- TODO: Wrong! String must unmodified! Replace with assertions below.
+        assert(as3.tolua(v) == "Embedded")
+        assert(#as3.tolua(v) == 8)
+        --assert(as3.tolua(v) == s)
+        --assert(#as3.tolua(v) == #s)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3Table():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3({})
+        assert(v)
+        -- TODO: Must be black-boxed object, not string!
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "table")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3Coroutine():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3(coroutine.create(function() end))
+        assert(v)
+        -- TODO: Must be black-boxed object, not string!
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "thread")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3Function():void
+    {
+      var script:String = ( <![CDATA[
+        local i = 3
+        local f = function(p) assert(type(p) == "number") i = i + p; return 42 end
+        local v = as3.toas3(f)
+        assert(v)
+        assert(as3.type(v):match("^Function%-%d+$"))
+        -- TODO: Wrong! Value must be unboxed! (Or must it?)
+        assert(as3.tolua(v) == v)
+        --assert(as3.tolua(v) == f)
+        assert(i == 3)
+        assert(as3.call(v, "call", v, 7) == 42)
+        assert(i == 10)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3CallbackToLua():void
+    {
+      var script:String = ( <![CDATA[
+        local called = false
+        local v = as3.toas3(
+            function(a, b, c)
+              called = true
+              as3.trace("arguments", a, b, c)
+              assert(a == 42)
+              assert(b == nil)
+              assert(c == "Lua Alchemy")
+              return c, a, b
+            end
+          )
+
+        assert(as3.type(v):match("^Function%-%d+$"))
+        local r = as3.call(v, "call", v, 42, nil, "Lua Alchemy")
+        assert(called, "function must be called")
+        as3.trace("ZZZ2", as3.call(r, "join"), r, type(r), tostring(r), as3.type(r))
+        assert(as3.type(r) == "Array")
+        assert(as3.get(r, 0) == "Lua Alchemy")
+        assert(as3.get(r, 1) == 42)
+        assert(as3.get(r, 2) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3Multiarg():void
+    {
+      var script:String = ( <![CDATA[
+        local a, b, c = as3.tolua(as3.toas3(42, nil, "Lua Alchemy"))
+        assert(a == 42)
+        assert(b == nil)
+        assert(c == "Lua Alchemy")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3As3Values():void
+    {
+      var script:String = ( <![CDATA[
+        local ba = as3.new("flash.utils::ByteArray")
+        local s = as3.new("String")
+        local n = as3.new("Number", 42)
+        assert(as3.toas3(ba) == ba)
+        assert(as3.toas3(s) == s)
+        assert(as3.toas3(n) == n)
+        return ba, s, n
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1] is ByteArray);
+      assertEquals("", stack[2]);
+      assertEquals(42, stack[3]);
+      assertEquals(4, stack.length);
+    }
+
+    public function testAS3ToAS3NoArgs():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.toas3() == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3ForeignUserdata():void
+    {
+      var script:String = ( <![CDATA[
+        local p = newproxy()
+        local v = as3.toas3(p)
+        assert(v)
+        -- TODO: Must be black-boxed object, not string!
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "userdata")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToAS3ForeignUserdataMt():void
+    {
+      // Have to use debug library since common setmetatable works on tables only
+      var script:String = ( <![CDATA[
+        local p = newproxy()
+        debug.setmetatable(p, {})
+        local v = as3.toas3(p)
+        -- TODO: Must be black-boxed object, not string!
+        assert(as3.type(v) == "String")
+        assert(as3.tolua(v) == "userdata")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
   }
 }

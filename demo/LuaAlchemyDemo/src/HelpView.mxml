@@ -99,6 +99,15 @@ local s, n = as3.tolua(v, 42) -- s is a Lua string with value "some string", n i
 <pre>
 </pre><br>
 
+<br><h2>as3.toas3(this, ...)</h2>
+<p>Convert Lua value to a AS3 type.
+Supports multiple arguments.
+If argument is an AS3 value, it is returned intact.</p>
+<br><b>Example</b><br>
+local n, f = as3.toas3(42, function() end) -- n is Number 42, f is an AS3 function
+<pre>
+</pre><br>
+
 <br><h2>as3.get(this, "property")</h2>
 <p>Return the requested property of a given ActionScript object. The value
 is returned as a Lua type if possible (see as3.tolua())</p>

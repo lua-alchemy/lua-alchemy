@@ -544,6 +544,61 @@ static int as3_trace(lua_State * L)
 }
 
 /*
+* Convert Lua value to AS3 type.
+* Supports multiple arguments.
+* If argument is an AS3 value, it is returned intact.</p>
+* Lua example: as3.toas3(v)
+*/
+static int as3_toas3(lua_State * L)
+{
+  LCALL(L, stack);
+
+  lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+
+  int i = 1;
+  for (i = 1; i <= LBASE(L, stack); ++i)
+  {
+    /* Note: we must push userdata, push_as3_to_lua_stack() wouldn't do it
+     * since it does autoconversions.
+     */
+
+    int t = lua_type(L, i);
+    if (t != LUA_TUSERDATA)
+    {
+      push_as3_lua_userdata(L, get_as3_value_from_lua_stack_type(L, i, t));
+    }
+    else
+    {
+      /* We have to reuse existing AS3 userdata value */
+      if (!lua_getmetatable(L, i))
+      {
+        /* This userdata does not have metatable */
+        push_as3_lua_userdata(L, as3_value_from_foreign_userdata(L, i));
+      }
+      else
+      {
+        if (!lua_rawequal(L, -1, -2))
+        {
+          /* This userdata has foreign metatable */
+          lua_pop(L, 1); /* Pop userdata metatable */
+          push_as3_lua_userdata(L, as3_value_from_foreign_userdata(L, i));
+        }
+        else
+        {
+          /* This is our AS3 userdata, reuse it */
+          lua_pop(L, 1); /* Pop userdata metatable */
+          lua_pushvalue(L, i);
+        }
+      }
+    }
+  }
+
+  lua_remove(L, LBASE(L, stack) + 1); /* Remove AS3LUA_METATABLE metatable */
+
+  LRETURN(L, stack, LBASE(L, stack));
+}
+
+/*
 * AS function registry for Lua
 */
 static const luaL_reg AS3_LUA_LIB[] =
@@ -564,6 +619,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "class2", as3_class2 },
   { "new2", as3_new2 },
   { "is_as3_value", as3_is_as3_value },
+  { "toas3", as3_toas3 },
 
   { NULL, NULL } /* The end */
 };
