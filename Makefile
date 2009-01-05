@@ -2,10 +2,8 @@ all:
 	(cd lua; make generic CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_ANSI")
 	(cd alchemy; make)
 	(cd lua_lib; make)
-	(cd test/FluintLuaAlchemyTests; ant)
-	(cd demo/LuaAlchemyDemo; ant)
-	(cd demo/MiniDemo; ant)
-	(cd demo/Rapid; ant)
+	(cd test; make)
+	(cd demo; make)
 
 clean:
 	rm swfbridge.log
@@ -18,7 +16,5 @@ clean:
 	rm -r lua/src/_sb_*
 	(cd alchemy; make clean)
 	(cd lua_lib; make clean)
-	(cd test/FluintLuaAlchemyTests; ant clear)
-	(cd demo/LuaAlchemyDemo; ant clear)
-	(cd demo/MiniDemo; ant clear)
-	(cd demo/Rapid; ant clear)
+	(cd test; make clean)
+	(cd demo; make clean)
