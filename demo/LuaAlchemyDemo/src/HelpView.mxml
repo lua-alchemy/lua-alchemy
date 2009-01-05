@@ -66,7 +66,7 @@ all of mx.containers and mx.controls has been included along with all the top le
 all flash objects get.</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.class("flash.utils:ByteArray")
+local v = as3.class("flash.utils:ByteArray")
 </pre><br>
 
 <br><h2>as3.new("[package::]ClassName[, param1,... paramN]")</h2>
@@ -76,14 +76,14 @@ all of mx.containers and mx.controls has been included along with all the top le
 all flash objects get.</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("flash.utils:ByteArray")<br>
-s = as3.new("String", "some string")
+local v = as3.new("flash.utils:ByteArray")<br>
+local s = as3.new("String", "some string")
 </pre><br>
 
 <br><h2>as3.release(this)</h2>
 <p>Release the given ActionScript object so Flash will do garbage collection.</p>
 <br><b>Example</b><br>
-v = as3.new("String")<br>
+local v = as3.new("String")<br>
 as3.release(v)
 <pre>
 </pre><br>
@@ -94,8 +94,8 @@ Supports multiple arguments.
 If conversion is not possible, this will return the original AS object.
 If argument is a Lua value, it is returned intact.</p>
 <br><b>Example</b><br>
-v = as3.new("String", "some string")<br>
-s, n = as3.tolua(v, 42) -- s is a Lua string with value "some string", n is a Lua number 42
+local v = as3.new("String", "some string")<br>
+local s, n = as3.tolua(v, 42) -- s is a Lua string with value "some string", n is a Lua number 42
 <pre>
 </pre><br>
 
@@ -104,7 +104,7 @@ s, n = as3.tolua(v, 42) -- s is a Lua string with value "some string", n is a Lu
 is returned as a Lua type if possible (see as3.tolua())</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("Array")<br>
+local v = as3.new("Array")<br>
 return as3.get(v, "length")
 </pre><br>
 
@@ -112,7 +112,7 @@ return as3.get(v, "length")
 <p>Set the requested property of a given ActionScript object.</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("mx.components::TextArea")<br>
+local v = as3.new("mx.components::TextArea")<br>
 as3.set(v, "text", "hello")
 </pre><br>
 
@@ -120,7 +120,7 @@ as3.set(v, "text", "hello")
 <p>Call a function on a given ActionScript object</p>
 <br><b>Example</b><br>
 <pre>
-box = as3.new("mx.containers::Canvas")<br>
+local box = as3.new("mx.containers::Canvas")<br>
 as3.call(box, "setStyle", "backgroundColor", "blue")
 </pre><br>
 
@@ -128,16 +128,16 @@ as3.call(box, "setStyle", "backgroundColor", "blue")
 <p>Returns the ActionScript getQualifiedClassName() for the given value</p>
 <br><b>Example</b><br>
 <pre>
-box = as3.new("mx.containers::Canvas")<br>
-type = as3.type(box) -- "mx.containers::Canvas"
+local box = as3.new("mx.containers::Canvas")<br>
+local type = as3.type(box) --> "mx.containers::Canvas"
 </pre><br>
 
 <br><h2>as3.namespacecall("package", "function"[, param1, ... paramN])</h2>
 <p>Call a namespace level function</p>
 <br><b>Example</b><br>
 <pre>
-v = as3.new("wrapperSuite.tests::TestWrapperHelper")<br>
-return as3.namespacecall("flash.utils", "getQualifiedClassName", v)
+local v = as3.new("wrapperSuite.tests::TestWrapperHelper")<br>
+return as3.namespacecall("flash.utils", "getQualifiedClassName", v) --> wrapperSuite.tests::TestWrapperHelper
 </pre><br>
 
 <br><h2>as3.trace(param1, ... paramN)</h2>
