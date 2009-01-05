@@ -9,16 +9,3 @@
 .flexProperties
 *.achacks.*
 swfbridge.log
-
-alchemy/glue.*
-alchemy/*.o
-alchemy/bin
-alchemy/lua_wrapper.as
-alchemy/lua_wrapper.swc
-alchemy/lua-alchemy.swc
-
-lua/src/*.o
-lua/src/liblua.a
-lua/src/lua
-lua/src/lua.l.bc
-lua/src/luac

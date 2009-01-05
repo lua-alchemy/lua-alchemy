@@ -1,0 +1,6 @@
+glue.*
+*.o
+bin
+lua_wrapper.as
+lua_wrapper.swc
+lua-alchemy.swc
