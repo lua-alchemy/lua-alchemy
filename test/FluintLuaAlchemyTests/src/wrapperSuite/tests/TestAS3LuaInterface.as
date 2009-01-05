@@ -362,71 +362,129 @@ package wrapperSuite.tests
           assertEquals(1, stack.length);
         }
     */
-      public function testAS3Type():void
-      {
-        // TODO: FIXME: Test all available AS3 types (including ones that wouldn't work)
-        var script:String = ( <![CDATA[
-          local ba = as3.new("flash.utils::ByteArray")
-          local s = as3.new("String")
-          return as3.type(ba), as3.type(s)
-          ]]> ).toString();
-        var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertTrue(stack[0]);
-        assertEquals("flash.utils::ByteArray", stack[1]);
-        assertEquals("String", stack[2]);
-        assertEquals(3, stack.length);
-      }
 
-      public function testAS3TypeNoArgs():void
-      {
-        var script:String = ( <![CDATA[
-          return as3.type()
-          ]]> ).toString();
-        var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertTrue(stack[0]);
-        assertEquals(null, stack[1]);
-        assertEquals(2, stack.length);
-      }
+    public function testAS3Type():void
+    {
+      // TODO: FIXME: Test all available AS3 types (including ones that wouldn't work)
+      var script:String = ( <![CDATA[
+        local ba = as3.new("flash.utils::ByteArray")
+        local s = as3.new("String")
+        return as3.type(ba), as3.type(s)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("flash.utils::ByteArray", stack[1]);
+      assertEquals("String", stack[2]);
+      assertEquals(3, stack.length);
+    }
 
-      public function testAS3TypeInvalid():void
-      {
-        var script:String = ( <![CDATA[
-          assert(as3.type(5) == nil)
-          ]]> ).toString();
-        var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertTrue(stack[0]);
-        assertEquals(1, stack.length);
-      }
+    public function testAS3TypeNoArgs():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.type()
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(null, stack[1]);
+      assertEquals(2, stack.length);
+    }
 
-      public function testAS3TypeInvalidUserdata():void
-      {
-        var script:String = ( <![CDATA[
-          assert(as3.type(newproxy()) == nil)
-          ]]> ).toString();
-        var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertTrue(stack[0]);
-        assertEquals(1, stack.length);
-      }
+    public function testAS3TypeInvalid():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.type(5) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
 
-      public function testAS3TypeInvalidUserdataMt():void
-      {
-        // Have to use debug library since common setmetatable works on tables only
-        var script:String = ( <![CDATA[
-          local value = newproxy()
-          debug.setmetatable(value, {})
-          assert(as3.type(value) == nil)
-          ]]> ).toString();
-        var stack:Array = lua_wrapper.luaDoString(luaState, script);
-        assertTrue(stack[0]);
-        assertEquals(1, stack.length);
-      }
+    public function testAS3TypeInvalidUserdata():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.type(newproxy()) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
 
-      /*
-          TODO public function testAS3Assign():void
-          {
-          }
-      */
+    public function testAS3TypeInvalidUserdataMt():void
+    {
+      // Have to use debug library since common setmetatable works on tables only
+      var script:String = ( <![CDATA[
+        local value = newproxy()
+        debug.setmetatable(value, {})
+        assert(as3.type(value) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
 
+    /*
+        TODO public function testAS3Assign():void
+        {
+        }
+    */
 
+    public function testAS3IsAS3Value():void
+    {
+      // TODO: FIXME: Test all available AS3 types (including ones that wouldn't work)
+      var script:String = ( <![CDATA[
+        local ba = as3.new("flash.utils::ByteArray")
+        local s = as3.new("String")
+        return as3.is_as3_value(ba), as3.is_as3_value(s)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertTrue(stack[1]);
+      assertTrue(stack[2]);
+      assertEquals(3, stack.length);
+    }
+
+    public function testAS3IsAS3ValueNoArgs():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.is_as3_value()
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(null, stack[1]);
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3IsAS3ValueInvalid():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.is_as3_value(5) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3IsAS3ValueInvalidUserdata():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.is_as3_value(newproxy()) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3IsAS3ValueInvalidUserdataMt():void
+    {
+      // Have to use debug library since common setmetatable works on tables only
+      var script:String = ( <![CDATA[
+        local value = newproxy()
+        debug.setmetatable(value, {})
+        assert(as3.is_as3_value(value) == nil)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
   }
 }

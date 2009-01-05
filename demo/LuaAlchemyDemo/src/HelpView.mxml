@@ -146,6 +146,14 @@ return as3.namespacecall("flash.utils", "getQualifiedClassName", v) --> wrapperS
 <pre>
 as3.trace("Hello from Lua Alchemy!")
 </pre><br>
+
+<br><h2>as3.is_as3_value(obj)</h2>
+<p>Returns true if object is as3 value. Returns nil otherwise</p>
+<br><b>Example</b><br>
+<pre>
+local box = as3.new("mx.containers::Canvas")<br>
+assert(as3.is_as3(box) == true)
+</pre><br>
 ]]>
     </mx:htmlText>
   </mx:TextArea>

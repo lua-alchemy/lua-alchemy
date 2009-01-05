@@ -391,37 +391,67 @@ static int as3_type(lua_State * L)
 {
   LCALL(L, stack);
 
-  void * userdata = NULL;
-
-  userdata = lua_touserdata(L, 1);
-
-  lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+  void * userdata = lua_touserdata(L, 1);
   if (userdata == NULL || !lua_getmetatable(L, 1))
   {
-    lua_pop(L, 1); /* Pop AS3LUA_METATABLE */
-    lua_pushnil(L);
-  }
-  else if (!lua_rawequal(L, -2, -1))
-  {
-    lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
     lua_pushnil(L);
   }
   else
   {
-    AS3LuaUserData * as3_userdata = NULL;
-    AS3_Val result = NULL;
-    AS3_Val params = NULL;
+    lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+    if (!lua_rawequal(L, -1, -2))
+    {
+      lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+      lua_pushnil(L);
+    }
+    else
+    {
+      AS3LuaUserData * as3_userdata = NULL;
+      AS3_Val result = NULL;
+      AS3_Val params = NULL;
 
-    lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+      lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
 
-    as3_userdata = (AS3LuaUserData *)userdata;
-    params = AS3_Array("AS3ValType", as3_userdata->value);
-    result = AS3_Call(getQualifiedClassName_method, NULL, params);
+      as3_userdata = (AS3LuaUserData *)userdata;
+      params = AS3_Array("AS3ValType", as3_userdata->value);
+      result = AS3_Call(getQualifiedClassName_method, NULL, params);
 
-    push_as3_to_lua_stack(L, result);
+      push_as3_to_lua_stack(L, result);
 
-    AS3_Release(result);
-    AS3_Release(params);
+      AS3_Release(result);
+      AS3_Release(params);
+    }
+  }
+
+  LRETURN(L, stack, 1);
+}
+
+/*
+* Return true if argument is AS3 value. Return nil otherwise
+* Lua example: as3.is_as3_value(v)
+*/
+static int as3_is_as3_value(lua_State * L)
+{
+  LCALL(L, stack);
+
+  void * userdata = lua_touserdata(L, 1);
+  if (userdata == NULL || !lua_getmetatable(L, 1))
+  {
+    lua_pushnil(L);
+  }
+  else
+  {
+    lua_getfield(L, LUA_REGISTRYINDEX, AS3LUA_METATABLE);
+    if (!lua_rawequal(L, -1, -2))
+    {
+      lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+      lua_pushnil(L);
+    }
+    else
+    {
+      lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
+      lua_pushboolean(L, TRUE);
+    }
   }
 
   LRETURN(L, stack, 1);
@@ -534,6 +564,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "trace", as3_trace },
   { "class2", as3_class2 },
   { "new2", as3_new2 },
+  { "is_as3_value", as3_is_as3_value },
 
   { NULL, NULL } /* The end */
 };
