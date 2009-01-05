@@ -434,8 +434,7 @@ static int as3_is_as3_value(lua_State * L)
 {
   LCALL(L, stack);
 
-  void * userdata = lua_touserdata(L, 1);
-  if (userdata == NULL || !lua_getmetatable(L, 1))
+  if (!lua_isuserdata(L, 1) || !lua_getmetatable(L, 1))
   {
     lua_pushnil(L);
   }
