@@ -49,11 +49,13 @@ print = function(...)<br>
 end<br>
 </pre>
 
-<br><h2>as3.yield()</h2>
-<p>Release control to Flash and return to this point on the next timer tick.  This currently doesn't allow UI updates, but does prevent the script from timing out over long operations.</p>
+<br><h2>as3.flyield()</h2>
+<p>Release control to Flash and return to this point on the next timer tick.
+This currently doesn't allow UI updates, but does prevent the script from timing out over long operations.
+Note this function is not related to Lua coroutines.</p>
 <br><b>Example</b><br>
 <pre>
-as3.yield()
+as3.flyield()
 </pre><br>
 
 <br><h2>as3.class("[package::]ClassName")</h2>

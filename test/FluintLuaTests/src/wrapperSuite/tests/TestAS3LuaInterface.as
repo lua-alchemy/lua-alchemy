@@ -287,10 +287,10 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-    public function testAS3Yield():void
+    public function testAS3FlYield():void
     {
       var script:String = ( <![CDATA[
-        as3.yield()
+        as3.flyield()
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 

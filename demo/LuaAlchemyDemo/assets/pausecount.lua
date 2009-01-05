@@ -22,18 +22,18 @@ end
 function delay(msec)
   local start = gettimer()
   repeat
-    as3.yield()
+    as3.flyield()
   until (gettimer() - start) >= msec
 end
 
 local count = 0
 while true do
   delay(1000)
-  
+
   if count > 1000000000 then
     count = 1
   end
-  
+
   if not pause then
     count = count + 1
     as3.set(label, "text", count)

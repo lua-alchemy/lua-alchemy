@@ -14,9 +14,9 @@
 
 /*
 * Release control to Flash and return to this point on the next timer tick
-* Lua example: as3.yield()
+* Lua example: as3.flyield()
 */
-static int as3_yield(lua_State * L)
+static int as3_flyield(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -519,7 +519,7 @@ static int as3_trace(lua_State * L)
 */
 static const luaL_reg AS3_LUA_LIB[] =
 {
-  { "yield", as3_yield },
+  { "flyield", as3_flyield },
   { "stage", as3_stage },
   { "class", as3_class },
   { "new", as3_new },

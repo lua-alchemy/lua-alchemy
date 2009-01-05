@@ -16,7 +16,7 @@ do
   loader.addEventListener(
       as3.package.flash.events.Event.COMPLETE,
       function(e)
-        as3.trace("COMPLETE")
+        as3.trace("FGC: COMPLETE")
         load_done, load_err = true, nil
       end,
       false, 0, true -- TODO: Do we really need the weak reference here?
@@ -24,7 +24,7 @@ do
   loader.addEventListener(
       as3.package("flash.events.IOErrorEvent").IO_ERROR,
       function(e)
-        as3.trace("IO_ERROR")
+        as3.trace("FGC: IO_ERROR")
         load_done, load_err = true, "IOError: "..as3.tolua(e.toString())
       end,
       false, 0, true -- TODO: Do we really need the weak reference here?
@@ -32,14 +32,14 @@ do
   loader.addEventListener(
       as3.package("flash.events.SecurityErrorEvent").SECURITY_ERROR,
       function(e)
-        as3.trace("SECURITY_ERROR")
+        as3.trace("FGC: SECURITY_ERROR")
         load_done, load_err = true, "SecurityError: "..as3.tolua(e.toString())
       end,
       false, 0, true -- TODO: Do we really need the weak reference here?
     )
 
   local init = function(filename)
-    as3.trace("BEGIN INIT", filename)
+    as3.trace("FGC: BEGIN INIT", filename)
 
     assert(load_done == true, "nested call detected")
 
@@ -47,24 +47,24 @@ do
 
     loader.load(as3.new2("flash.net", "URLRequest", filename))
 
-    as3.trace("END INIT")
+    as3.trace("FGC: END INIT")
   end
 
   local wait = function()
-    as3.trace("BEGIN WAIT")
+    as3.trace("FGC: BEGIN WAIT")
 
     while not load_done do
-      --for i = 1, 1000 do as3.yield() end
-      --as3.trace("* loaded:", loader.bytesLoaded, "total:", loader.bytesTotal, "type", as3.type(loader.data), "data", loader.data)
-      as3.yield() -- TODO: ?!?!?!
+      --for i = 1, 1000 do as3.flyield() end
+      --as3.trace("* FGC: loaded:", loader.bytesLoaded, "total:", loader.bytesTotal, "type", as3.type(loader.data), "data", loader.data)
+      as3.flyield()
       load_done = true -- TODO: Debugging, remove ASAP
     end
 
-    as3.trace("END WAIT")
+    as3.trace("FGC: END WAIT")
   end
 
   local cleanup = function()
-    as3.trace("BEGIN CLEANUP")
+    as3.trace("FGC: BEGIN CLEANUP")
 
     assert(load_done == true, "cleanup before done")
 
@@ -77,7 +77,7 @@ do
 
     load_done, load_err = true, nil
 
-    as3.trace("END CLEANUP")
+    as3.trace("FGC: END CLEANUP")
 
     return result, error
   end
