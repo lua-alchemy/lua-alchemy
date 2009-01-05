@@ -32,31 +32,40 @@ int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
 }
 
 /*
+* Take the foreign userdata at given Lua stack index
+* and convert it into an ActionScriptValue.
+* TODO: Wrap it into a black-box value.
+*/
+AS3_Val as3_value_from_foreign_userdata(lua_State * L, int index)
+{
+  return AS3_String("userdata");
+}
+
+/*
 * Take the Lua stack item at index i and convert it into an
 * ActionScript value.
 */
-AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
+AS3_Val get_as3_value_from_lua_stack_type(lua_State * L, int i, int type)
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
   LCALL(L, stack);
-  AS3_Val value;
 
-  int t = lua_type(L, i);
-  switch (t)
+  AS3_Val value;
+  switch (type)
   {
     case LUA_TSTRING:  /* strings */
-    {
-      size_t length = 0;
-      const char * str = lua_tolstring(L, i, &length);
-      if (str == NULL)  /* NOTE: This is unreachable. Assert instead */
       {
-        length = 6;
-        str = "(null)";
+        size_t length = 0;
+        const char * str = lua_tolstring(L, i, &length);
+        if (str == NULL)  /* NOTE: This is unreachable. Assert instead */
+        {
+          length = 6;
+          str = "(null)";
+        }
+        /* NOTE: Alchemy .5a truncates embedded zeroes in string regardless to the passed length */
+        value = AS3_StringN(str, length);
       }
-      /* NOTE: Alchemy .5a truncates embedded zeroes in string regardless to the passed length */
-      value = AS3_StringN(str, length);
-    }
       break;
 
     case LUA_TBOOLEAN:  /* booleans */
@@ -67,6 +76,7 @@ AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
       value = AS3_Number(lua_tonumber(L, i));
       break;
 
+    case LUA_TNONE: /* fall through */
     case LUA_TNIL:  /* nil */
       value = AS3_Null();
       break;
@@ -78,18 +88,18 @@ AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
         if (userdata == NULL || !lua_getmetatable(L, i))
         {
           lua_pop(L, 1); /* Pop AS3LUA_METATABLE */
-          value = AS3_String(lua_typename(L, t));
+          value = as3_value_from_foreign_userdata(L, i);
         }
         else if (!lua_rawequal(L, -2, -1))
         {
           lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
-          value = AS3_String(lua_typename(L, t));
+          value = as3_value_from_foreign_userdata(L, i);
         }
         else
         {
           lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
           AS3LuaUserData * userdata = (AS3LuaUserData *)lua_touserdata(L, i);
-      value = userdata->value;
+          value = userdata->value;
         }
       }
       break;
@@ -101,7 +111,7 @@ AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
     case LUA_TLIGHTUSERDATA: /* TODO: blackbox this type */
     case LUA_TTABLE: /* TODO: deal with this type */
     case LUA_TTHREAD: /* TODO: blackbox this type */
-      value = AS3_String(lua_typename(L, t));
+      value = AS3_String(lua_typename(L, type));
       break;
 
     default:  /* unreachable */
@@ -117,6 +127,11 @@ AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
   LCHECK_FN(L, stack, 0, fatal_error);
 
   return value;
+}
+
+AS3_Val get_as3_value_from_lua_stack(lua_State * L, int i)
+{
+  return get_as3_value_from_lua_stack_type(L, i, lua_type(L, i));
 }
 
 /*
