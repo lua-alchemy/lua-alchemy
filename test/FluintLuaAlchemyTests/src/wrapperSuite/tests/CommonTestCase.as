@@ -14,17 +14,17 @@ package wrapperSuite.tests
 
     override protected function tearDown():void
     {
-      trace("TestWraper::tearDown(): begin");
+      trace("CommonTestCase::tearDown(): begin");
       try
       {
         lua_wrapper.luaClose(luaState);
       }
       catch (errObject:Error)
       {
-        trace("TestWrapper::tearDown(): error " + errObject.message);
+        trace("CommonTestCase::tearDown(): error " + errObject.message);
         throw errObject;
       }
-      trace("TestWraper::tearDown(): end");
+      trace("CommonTestCase::tearDown(): end");
     }
   }
 }
