@@ -2,6 +2,7 @@ Code to build lua-alchemy.swc
 
 File Manifest
 -------------
+    lua51 - Lua 5.1.4 code
     wrapper - The alchemy specific wrapper around the Lua lib
               Builds: lua-alchemy-wrapper.swc
     lua-lib - Bundles Lua code to be used in lua-alchemy

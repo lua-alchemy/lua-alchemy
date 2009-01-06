@@ -3,7 +3,7 @@
 NAME=lua-alchemy
 WRAPPER=lua_wrapper
 PATH:=${ALCHEMY_HOME}/achacks:${PATH}
-LUA_SRC=../../lua/src
+LUA_SRC=../lua51/src
 PACKAGE_WRAPPER=luaAlchemy
 WRAPPER_SRC_DIR=./bin/src
 GG = gluegen
