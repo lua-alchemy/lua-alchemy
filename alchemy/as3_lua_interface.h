@@ -7,4 +7,6 @@
 
 void register_as3_lua_interface(lua_State * L);
 
+int as3_trace(lua_State * L); /* Exposed to be able to do debug dumps */
+
 #endif /* AS3_LUA_INTERFACE_H_ */

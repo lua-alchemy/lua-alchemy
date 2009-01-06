@@ -10,6 +10,13 @@
 #include "bridge_lua_c.h"
 #include "bridge_as3_lua.h"
 
+#ifdef DO_SPAM
+
+#include "bridge_as3_c.h"
+#include "as3_lua_interface.h"
+
+#endif /* DO_SPAM */
+
 typedef struct LuaFunctionCallbackData
 {
   lua_State * L;

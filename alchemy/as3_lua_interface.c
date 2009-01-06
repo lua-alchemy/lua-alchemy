@@ -502,8 +502,9 @@ static int as3_namespacecall(lua_State * L)
 * NOTE: This function has string concatenation overhead due to forced \n in sztrace().
 * If there is a fputs() analog, use it (and rewrite this function again, based on luaB_print).
 * Lua example: as3.trace("Hello", "from Lua Alchemy")
+* NOTE: This function made public to enable debugging logging from outer modules.
 */
-static int as3_trace(lua_State * L)
+int as3_trace(lua_State * L)
 {
   LCALL(L, stack);
   int i;
