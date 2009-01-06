@@ -24,9 +24,6 @@ typedef struct LuaFunctionCallbackData
   AS3_Val as3Function;
 } LuaFunctionCallbackData;
 
-#define AS3LUA_CALLBACKS "LuaAlchemy.callbacks"
-#define AS3LUA_CALLBACKMT "LuaAlchemy.cbMT"
-
 #define AS3LUA_CBFNINDEX (1)
 #define AS3LUA_CBSDATAINDEX (2)
 

@@ -20,8 +20,12 @@ typedef unsigned char BOOL;
 
 void sztrace(char *);
 
-#define AS3LUA_METATABLE "LuaAlchemy.as3"
+/* Put all Lua registry strings here to prevent collisions */
+#define AS3LUA_METATABLE  "LuaAlchemy.as3"
+#define AS3LUA_CALLBACKS  "LuaAlchemy.callbacks"
+#define AS3LUA_CALLBACKMT "LuaAlchemy.cbMT"
 
+/* TODO: Get this string from `git describe` */
 #define AS3LUA_VERSION "v0.1a"
 
 #endif /* LUA_ALCHEMY_H_ */
