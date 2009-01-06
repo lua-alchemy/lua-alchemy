@@ -68,10 +68,13 @@ package wrapperSuite.tests
       myHelper.count = 0;
 
       var script:String = ( <![CDATA[
-       as3.call(testHelper,
-                "addEventListener",
-                "TestWrapperIncrementEvent",
-                function () as3.set(testHelper, "count", as3.get(testHelper, "count") + 1) end)
+       as3.call(
+           testHelper,
+           "addEventListener",
+           "TestWrapperIncrementEvent",
+           function()
+             as3.set(testHelper, "count", as3.get(testHelper, "count") + 1)
+           end)
       ]]> ).toString();
 
       var stack:Array;
@@ -190,6 +193,7 @@ package wrapperSuite.tests
         end
         local as_object = create_as_object()
         local result = as3.call(as_object, "addThirteen", 5)
+        assert(type(result) == "number", "wrong result: "..tostring(result))
         result = result + 2
         return result
         ]]> ).toString();

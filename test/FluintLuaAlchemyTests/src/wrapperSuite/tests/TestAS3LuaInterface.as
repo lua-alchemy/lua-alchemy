@@ -351,13 +351,15 @@ package wrapperSuite.tests
       lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
       var script:String = ( <![CDATA[
+        assert(testHelper)
         as3.call(testHelper, "setNameAge", "Bubba Joe Bob Brain", 13)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
       assertTrue(stack[0]);
-      assertEquals("Name: Bubba Joe Bob Brain age: 13", myHelper.nameAge);
       assertEquals(1, stack.length);
+
+      assertEquals("Name: Bubba Joe Bob Brain age: 13", myHelper.nameAge);
     }
 
     /*
