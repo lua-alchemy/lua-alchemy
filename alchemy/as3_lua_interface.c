@@ -330,6 +330,8 @@ static int as3_call(lua_State * L)
 {
   LCALL(L, stack);
 
+  SPAM(("as3_call(): begin"));
+
   AS3LuaUserData * userdata = NULL;
   AS3_Val params;
   const char * function_name = NULL;
@@ -344,11 +346,37 @@ static int as3_call(lua_State * L)
 
   LCHECK(L, stack, 1);
 
+#ifdef DO_SPAM
+    /* TODO: Remove */
+    lua_pushcfunction(L, as3_trace);
+    lua_pushliteral(L, "AS3_CALL() ARGUMENTS");
+    dump_lua_stack(L, LBASE(L, 2));
+    lua_call(L, 2, 0);
+#endif /* DO_SPAM */
+
   params = create_as3_value_from_lua_stack(L, 3, LBASE(L, stack), FALSE);
 
   LCHECK(L, stack, 1);
 
+#ifdef DO_SPAM
+  {
+    SPAM(("as3_call(): object"));
+    AS3_Trace(userdata->value);
+    SPAM(("as3_call(): function name"));
+    sztrace((char *)function_name);
+    SPAM(("as3_call(): AS3 arguments (with format)"));
+    AS3_Val a = AS3_CallTS("join", params, "StrType", ";");
+    AS3_Trace(a);
+    AS3_Release(a);
+  }
+#endif /* DO_SPAM */
+
+  SPAM(("as3_call(): before call"));
+
   result = AS3_CallS(function_name, userdata->value, params);
+
+  SPAM(("as3_call(): after call"));
+
   /* TODO check for function call failure, make sure to relase params */
   if (LTOP(L, stack) == 0)
   {

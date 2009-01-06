@@ -171,10 +171,10 @@ AS3_Val create_as3_value_from_lua_stack(
     ret = AS3_Array("");
     for (i = start; i <= end; ++i)
     {
-      SPAM(("create_as3_value_from_lua_stack() + 1 begin"));
+      /*SPAM(("create_as3_value_from_lua_stack() + 1 begin"));*/
       value = get_as3_value_from_lua_stack(L, i);
       AS3_CallS("push", ret, AS3_Array("AS3ValType", value));
-      SPAM(("create_as3_value_from_lua_stack() + 1 end"));
+      /*SPAM(("create_as3_value_from_lua_stack() + 1 end"));*/
     }
   }
 

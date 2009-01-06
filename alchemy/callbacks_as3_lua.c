@@ -87,13 +87,32 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
       fatal_error("function callback not found"); /* Does not return */
     }
 
-    lua_rawgeti(L, -1, AS3LUA_CBFNINDEX);
+    lua_rawgeti(L, -1, AS3LUA_CBFNINDEX); /* push stored callback function */
+
+ #ifdef DO_SPAM
+  {
+    SPAM(("as3_lua_callback(): AS3 arguments"));
+    AS3_Val a = AS3_CallS("join", args, AS3_Undefined());
+    AS3_Trace(a);
+    AS3_Release(a);
+  }
+#endif /* DO_SPAM */
+
 
     /* TODO: Assert we have Lua function (or other callable object) on the top of the stack */
 
     LCHECK_FN(L, stack, 2 + 1, fatal_error);
 
     nargs = push_as3_array_to_lua_stack(L, args); /* push arguments */
+
+#ifdef DO_SPAM
+    /* TODO: Remove */
+    lua_pushcfunction(L, as3_trace);
+    dump_lua_stack(L, LBASE(L, stack) + 2 + 1);
+    lua_pushliteral(L, "ARGUMENTS");
+    lua_pushnumber(L, nargs);
+    lua_call(L, 3, 0);
+#endif /* DO_SPAM */
 
     LCHECK_FN(L, stack, 2 + 1 + nargs, fatal_error);
 

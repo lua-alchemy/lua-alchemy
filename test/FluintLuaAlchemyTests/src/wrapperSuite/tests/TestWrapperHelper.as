@@ -10,6 +10,7 @@ package wrapperSuite.tests
 
     public function TestWrapperHelper()
     {
+      trace("TestWrapperHelper::TestWrapperHelper");
     }
 
     public var string1:String;
@@ -21,11 +22,13 @@ package wrapperSuite.tests
     public var nameAge:String;
     public function setNameAge(name:String, age:int):void
     {
+      trace("TestWrapperHelper::setNameAge", name, age);
       nameAge = staticNameAge(name, age);
     }
 
     public static function staticNameAge(name:String, age:int):String
     {
+      trace("TestWrapperHelper::staticNameAge", name, age);
       return "Name: " + name + " age: " + age;
     }
 
@@ -39,6 +42,5 @@ package wrapperSuite.tests
     {
       dispatchEvent(new Event(TEST_WRAPPER_INCREMENT_EVENT));
     }
-
   }
 }
