@@ -22,7 +22,7 @@ do
   local make_callobj
   do
     local index = function(t, k)
-      return make_callobj(as3.get(getmetatable(t):value(), k))
+      return make_callobj(getmetatable(t):value(), k)
     end
 
     local newindex = function(t, k, v)
