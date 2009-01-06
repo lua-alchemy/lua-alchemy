@@ -1,0 +1,10 @@
+Alchemy specific code for lua-alchemy.
+
+* lua_wrapper.gg - Gluegen file to create interface to ActionScript
+* as3_lua_interface.c/h - The as3.xxx() interface and registration
+* bridge_as3_c.c/h - AS3<->C helper functions
+* bridge_as3_lua.c/h - AS3<->Lua helper functions
+* bridge_lua_c.c/h - Lua<->C helper functions
+* callbacks_as3_lua.c/h - Callback handling funcitons
+* lstack.c/h - The Lua stack helpers
+* lua-alchemy.c/h - Some common defines like BOOL

@@ -1,10 +1,11 @@
-Alchemy specific code for lua-alchemy.
+Code to build lua-alchemy.swc
 
-* lua_wrapper.gg - Gluegen file to create interface to ActionScript
-* as3_lua_interface.c/h - The as3.xxx() interface and registration
-* bridge_as3_c.c/h - AS3<->C helper functions
-* bridge_as3_lua.c/h - AS3<->Lua helper functions
-* bridge_lua_c.c/h - Lua<->C helper functions
-* callbacks_as3_lua.c/h - Callback handling funcitons
-* lstack.c/h - The Lua stack helpers
-* lua-alchemy.c/h - Some common defines like BOOL
+File Manifest
+-------------
+    wrapper - The alchemy specific wrapper around the Lua lib
+              Builds: lua-alchemy-wrapper.swc
+    lua-lib - Bundles Lua code to be used in lua-alchemy
+              Builds: lua-alchemy-lua-lib.swc
+    lua-alchemy - Wrapper and helper functions around lua-alchemy-wrapper.swc
+                  and lua-alchemy-lua-lib.swc.  The is the main library
+                  Builds: lua-alchemy.swc

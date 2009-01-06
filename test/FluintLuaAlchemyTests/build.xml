@@ -24,7 +24,7 @@
   <property name="debug.build.dir" location="${build.dir}/debug/"/>
   <property name="src.dir" location="src/"/>
   <property name="lib.dir" location="libs/"/>
-  <property name="alchemy.dir" location="../../alchemy"/>
+  <property name="alchemy.dir" location="../../alchemy/wrapper"/>
   <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
 
   <!-- files -->
