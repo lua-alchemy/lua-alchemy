@@ -238,7 +238,11 @@ static int as3_tolua(lua_State * L)
       AS3LuaUserData * as3_userdata = (AS3LuaUserData *)userdata;
 
       lua_pop(L, 1); /* Pop userdata metatable */
-      push_as3_to_lua_stack(L, as3_userdata->value);
+      if (push_as3_to_lua_stack_if_convertible(L, as3_userdata->value) == 0)
+      {
+        /* AS3 value is not convertible to native Lua. Reuse userdata. */
+        lua_pushvalue(L, i);
+      }
     }
   }
 

@@ -107,6 +107,17 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
+    public function testAS3ToLuaPassthrough():void
+    {
+      var script:String = ( <![CDATA[
+        v = as3.new("flash.utils::ByteArray")
+        assert(as3.tolua(v) == v)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
     public function testAS3ToLuaNoargs():void
     {
       var script:String = ( <![CDATA[
