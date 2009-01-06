@@ -20,7 +20,9 @@ AS3_Val create_as3_value_from_lua_stack(
     BOOL collapse_array
   );
 int push_as3_lua_userdata(lua_State * L, AS3_Val val);
+
 int push_as3_to_lua_stack(lua_State * L, AS3_Val val);
+int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val);
 
 int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array);
 

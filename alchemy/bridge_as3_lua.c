@@ -211,15 +211,15 @@ int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 
 /*
 * Given an ActionScript object, push it onto the Lua stack as a Lua native
-* type if a primitive class (String, Number, Boolean, int, null)
-* or push as userdata
+* type if a primitive class (String, Number, Boolean, int, null).
+* If object is not convertible to native Lua value, do not push anything (and return 0).
 */
-int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
+int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val)
 {
   LCALL(L, stack);
 
 #ifdef DO_SPAM
-  SPAM(("push_as3_to_lua_stack(): begin: value, type"));
+  SPAM(("push_as3_to_lua_stack_if_convertible(): begin: value, type"));
   AS3_Trace(val);
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)));
 #endif /* DO_SPAM */
@@ -256,11 +256,29 @@ int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
   }
   else
   {
+    SPAM(("push_as3_to_lua_stack_if_convertible(): not convertible"));
+    LRETURN(L, stack, 0);
+  }
+
+  SPAM(("push_as3_to_lua_stack_if_convertible(): end"));
+
+  LRETURN(L, stack, 1);
+}
+
+/*
+* Given an ActionScript object, push it onto the Lua stack as a Lua native
+* type if a primitive class (String, Number, Boolean, int, null)
+* or push as userdata
+*/
+int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
+{
+  LCALL(L, stack);
+
+  if (push_as3_to_lua_stack_if_convertible(L, val) == 0)
+  {
     SPAM(("push_as3_to_lua_stack(): defaulting to userdata"));
     push_as3_lua_userdata(L, val);
   }
-
-  SPAM(("push_as3_to_lua_stack(): end"));
 
   LRETURN(L, stack, 1);
 }
