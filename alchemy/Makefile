@@ -1,6 +1,7 @@
 all:
 	(cd lua51; make generic CFLAGS="-O2 -Wall -DLUA_USE_POSIX -DLUA_ANSI")
 	(cd wrapper; make)
+	(cd lua-lib; make)
 
 clean:
 	(cd wrapper; make clean)
@@ -11,3 +12,4 @@ clean:
 	rm lua/src/swfbridge.log
 	rm lua/src/*achacks*
 	rm -r lua/src/_sb_*
+	(cd lua-lib; make clean)

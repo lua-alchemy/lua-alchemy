@@ -10,11 +10,9 @@ File Manifest
     COPYRIGHT - Copyright for the lua-alchemy project
     HISTORY - Project history log
     README - This file describing the project
-    alchemy/ - Alchemy specific C and ActionScript code
+    alchemy/ - Builds lua-alchemy.swc
     benchmark/ - Lua benchmarks
     build/ - Build utility tools
     demo/ - Flash and Flex demos
     etc/ - Odds and ends of various usefulness
-    lua/ - Current version of Lua (5.1.4)
-    lua_lib/ - Lua Alchemy core Lua libraries
     test/ - Lua and ActionScript tests

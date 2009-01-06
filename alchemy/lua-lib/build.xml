@@ -29,7 +29,7 @@
   <property name="assets.dir" location="assets/"/>
   <property name="lib.dir" location="libs/"/>
   <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
-  <property name="build.tools.dir" location="../build"/>
+  <property name="build.tools.dir" location="../../build"/>
   <property name="assets.class.dir" location="${src.dir}/${assets.package.name}/"/>
   <property name="assets.class.as" location="${assets.class.dir}/${assets.class.name}.as"/>
 
