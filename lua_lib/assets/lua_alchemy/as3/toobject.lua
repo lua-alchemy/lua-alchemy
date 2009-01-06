@@ -58,6 +58,7 @@ do
 
   -- Detects recursion (raises error)
   -- Works with array part of table (as per ipairs() definition)
+  -- Converts 1-based Lua to 0-based ActionScript
   as3.toarray = function(t)
     return impl(t, {})
   end
