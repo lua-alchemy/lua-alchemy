@@ -30,7 +30,7 @@ package ${PACKAGE_NAME}
         _filesystemRoot = "builtin://";
       }
 
-      trace("LuaAssets: filesystem root is set to " + _filesystemRoot);
+      trace("${PACKAGE_NAME}::${ASSETS_CLASS_NAME}: filesystem root is set to " + _filesystemRoot);
     }
   }
 }
