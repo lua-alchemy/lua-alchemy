@@ -43,7 +43,9 @@ do
     end
 
     make_callobj = function(t, k)
-      assert(as3.is_as3_value(t), "as3 object expected")
+      if not as3.is_as3_value(t) then
+        error("as3 object expected, got "..(as3.type(t) or type(t)))
+      end
       return setmetatable(
           {},
           {
