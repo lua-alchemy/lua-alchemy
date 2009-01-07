@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<project name="lua-alchemy" default="build" basedir=".">
+
+  <property environment="env"/>
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
+
+  <fail>
+    <condition>
+      <not>
+        <isset property="env.FLEX_HOME" />
+      </not>
+    </condition>
+    Error!
+    You need to set FLEX_HOME environment variable (path to Flex SDK)
+    export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
+  </fail>
+
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+  <property name="main.class.name" value="LuaAlchemy"/>
+  <property name="main.package.name" value="luaAlchemy"/>
+
+  <!-- dirs -->
+
+  <property name="build.dir" location="build/"/>
+  <property name="release.build.dir" location="${build.dir}/release/"/>
+  <property name="debug.build.dir" location="${build.dir}/debug/"/>
+  <property name="src.dir" location="src/"/>
+  <property name="assets.dir" location="assets/"/>
+  <property name="lib.dir" location="libs/"/>
+  <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
+  <property name="build.tools.dir" location="../../build"/>
+
+  <property name="lua-wrapper.release.dir" location="../wrapper"/>
+  <property name="lua-wrapper.debug.dir" location="../wrapper"/>
+
+  <property name="lua-lib.release.dir" location="../lua-lib/build/release"/>
+  <property name="lua-lib.debug.dir" location="../lua-lib/build/release"/>
+
+  <!-- files -->
+  <property name="output.swc.name" value="lua-alchemy"/>
+  <property name="main.library.release.out" location="${release.build.dir}/${output.swc.name}.swc"/>
+  <property name="main.library.debug.out" location="${debug.build.dir}/${output.swc.name}.swc"/>
+
+  <description>
+    Lua Alchemy Library
+  </description>
+
+  <!-- =================================
+        target: build
+       ================================= -->
+  <target name="build"
+    depends="clear, init, compile.release, compile.debug"
+    description="--> Lua Alchemy Library">
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.release
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.release">
+    <compc target-player="10.0.0" debug="false" output="${main.library.release.out}"
+      include-classes="${main.package.name}.${main.class.name}">
+      <source-path path-element="${src.dir}" />
+      <compiler.include-libraries dir="${lua-wrapper.release.dir}" append="true">
+        <include name="*.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lua-lib.release.dir}" append="true">
+        <include name="*.swc" />
+      </compiler.include-libraries>
+    </compc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.debug
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.debug">
+    <compc target-player="10.0.0" debug="true" output="${main.library.debug.out}"
+      include-classes="${main.package.name}.${main.class.name}">
+      <source-path path-element="${src.dir}" />
+      <compiler.include-libraries dir="${lua-wrapper.release.dir}" append="true">
+        <include name="*.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lua-lib.release.dir}" append="true">
+        <include name="*.swc" />
+      </compiler.include-libraries>
+    </compc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: clear
+         - - - - - - - - - - - - - - - - - -->
+  <target name="clear">
+    <delete failonerror="false">
+      <fileset dir="${build.dir}" includes="**/*.*" />
+    </delete>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: init
+         - - - - - - - - - - - - - - - - - -->
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${release.build.dir}"/>
+    <mkdir dir="${debug.build.dir}"/>
+  </target>
+</project>

@@ -3,4 +3,4 @@ glue.*
 bin
 lua_wrapper.as
 lua_wrapper.swc
-lua-alchemy.swc
+lua-alchemy-wrapper.swc

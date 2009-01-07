@@ -1,6 +1,6 @@
 .SUFFIXES: .cpp .c .o
 
-NAME=lua-alchemy
+NAME=lua-alchemy-wrapper
 WRAPPER=lua_wrapper
 PATH:=${ALCHEMY_HOME}/achacks:${PATH}
 LUA_SRC=../lib/lua51/src
