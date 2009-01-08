@@ -26,7 +26,7 @@ do
     end
 
     local newindex = function(t, k, v)
-      as3.set(as3.get(getmetatable(t):value(), k), v)
+      as3.set(getmetatable(t):value(), k, v)
     end
 
     -- Enforcing dot notation for performance
