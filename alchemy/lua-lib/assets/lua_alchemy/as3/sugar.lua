@@ -202,7 +202,7 @@ pkgobj * newindex(key, value) ->
         --as3.trace("call begin")
 
         if
-          selfmt
+          selfmt == mt
           and ( -- Hack. Need to find out if self is our parent
               mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
             )
