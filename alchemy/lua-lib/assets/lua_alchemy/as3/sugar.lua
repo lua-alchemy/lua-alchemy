@@ -126,7 +126,9 @@ pkgobj * colon_call(pkgobj, ...) ->
 
 pkgobj * dot_call(...) ->
   if pkgobj.key == "new" then
-    as3.new2(pkgobj.namespace.."."..pkgobj.class, ...)
+    as3.new2(pkgobj.namespace, pkgobj.class, ...)
+  elseif pkgobj.key == "class" then
+    as3.class2(pkgobj.namespace, pkgobj.class, ...)
   else
     as3.namespacecall(pkgobj.namespace.."."..pkgobj.class, pkgobj.key, ...)
   end
@@ -196,8 +198,10 @@ pkgobj * newindex(key, value) ->
       end
 
       local call = function(t, self, ...)
-        local mt = getmetatable(t)
+        local mt = assert(getmetatable(t))
         local selfmt = getmetatable(self)
+
+        local key = mt.key_
 
         --as3.trace("call begin")
 
@@ -209,18 +213,22 @@ pkgobj * newindex(key, value) ->
         then
           -- colon call mode
           --as3.trace("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
-          return as3.call(as3.class2(mt.namespace_, mt.class_), mt.key_, ...)
+          return as3.call(as3.class2(mt.namespace_, mt.class_), key, ...)
         end
 
-        if mt.key_ ~= "new" then
-          -- dot call mode
-          --as3.trace("dot call", mt.namespace_, mt.class_, mt.key_)
-          return as3.namespacecall(mt.namespace_.."."..mt.class_, mt.key_, self, ...)
+        if key == "new" then
+          -- new object mode
+          --as3.trace("new call", mt.namespace_, mt.class_, mt.key_)
+          return as3.new2(mt.namespace_, mt.class_, ...)
+        elseif key == "class" then
+          -- class object mode
+          --as3.trace("class call", mt.namespace_, mt.class_, mt.key_)
+          return as3.class2(mt.namespace_, mt.class_, ...)
         end
 
-        -- new object mode
-        --as3.trace("new call", mt.namespace_, mt.class_, mt.key_)
-        return as3.new2(mt.namespace_, mt.class_, ...)
+        -- dot call mode
+        --as3.trace("dot call", mt.namespace_, mt.class_, mt.key_)
+        return as3.namespacecall(mt.namespace_.."."..mt.class_, key, self, ...)
       end
 
       local newindex = function(t, k, v)
