@@ -142,6 +142,7 @@ do
       end
     end
   end
+end
 
 --[[
 
@@ -178,9 +179,20 @@ pkgobj * newindex(key, value) ->
 
 --]]
 
+do
   do -- Patch for as3.package()
     local make_pkgobj
     do
+      local proxy_tag = newproxy()
+
+      local unproxy = function(o)
+        local mt = getmetatable(o)
+        if mt and mt[1] == proxy_tag then
+          o = mt:value()
+        end
+        return o
+      end
+
       -- Note this would not work as __eq metamethod, since metatables are different
       local pkgobj_equals = function(lhs, rhs)
         local lhsmt, rhsmt = getmetatable(lhs), getmetatable(rhs)
