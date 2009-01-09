@@ -17,6 +17,8 @@ callobj * tostring -> as3.call(callobj.value, "toString")
 
 local old_trace, old_call, old_tolua, old_type = as3.trace, as3.call, as3.tolua, as3.type
 
+local spam = as3.trace
+
 local proxy_tag = newproxy()
 
 local unproxy = function(o)
@@ -31,24 +33,24 @@ do
   local make_callobj
   do
     local index = function(t, k)
-      --as3.trace("callobj index", k)
+      --spam("callobj index", k)
       return make_callobj(getmetatable(t):value(), k)
     end
 
     local newindex = function(t, k, v)
-      --as3.trace("callobj newindex", k)
+      --spam("callobj newindex", k)
       as3.set(getmetatable(t):value(), k, v)
     end
 
     -- Enforcing dot notation for performance
     local call = function(t, ...)
       local mt = getmetatable(t) -- Note no value() call here
-      --as3.trace("callobj call", mt.obj_, mt.key_)
+      --spam("callobj call", mt.obj_, mt.key_)
       return as3.call(mt.obj_, mt.key_, ...)
     end
 
     local value = function(self)
-      --as3.trace("callobj value", self.value_ ~= nil, self.obj_, self.key_)
+      --spam("callobj value", self.value_ ~= nil, self.obj_, self.key_)
       if self.value_ == nil then
         self.value_ = as3.get(self.obj_, self.key_)
       end
@@ -128,7 +130,7 @@ do
       as3[name] = function(...)
         --[[
         if name ~= "trace" then
-          --as3.trace("[as3.sugar]", name, "args:", ...)
+          --spam("[as3.sugar]", name, "args:", ...)
         end
         --]]
         local n = select("#", ...)
@@ -230,7 +232,7 @@ do -- as3.package()
 
       local value = function(self)
         if self.value_ == nil then
-          --as3.trace("value", self.namespace_, self.class_, self.key_)
+          --spam("value", self.namespace_, self.class_, self.key_)
           self.value_ = as3.get(as3.class2(self.namespace_, self.class_), self.key_)
         end
         return self.value_
@@ -244,7 +246,7 @@ do -- as3.package()
 
         local key = mt.key_
 
-        --as3.trace("call begin")
+        --spam("call begin")
 
         if
           selfmt and selfmt[2] == pkgobj_proxy_tag
@@ -253,7 +255,7 @@ do -- as3.package()
             )
         then
           -- colon call mode
-          --as3.trace("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
+          --spam("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
           return as3.call(as3.class2(mt.namespace_, mt.class_), key, select(2, ...)) -- Eat self
         end
 
@@ -268,18 +270,18 @@ do -- as3.package()
         end
 
         -- dot call mode
-        --as3.trace("dot call", mt.namespace_, mt.class_, mt.key_)
+        --spam("dot call", mt.namespace_, mt.class_, mt.key_)
         return as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
       end
 
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
-        --as3.trace("newindex", getmetatable(t):path2(k))
+        --spam("newindex", getmetatable(t):path2(k))
         as3.set(as3.class2(getmetatable(t):path2()), k, v)
       end
 
       local index = function(t, k)
-        --as3.trace("index", getmetatable(t):path2(k))
+        --spam("index", getmetatable(t):path2(k))
         return make_pkgobj(getmetatable(t):path2(k))
       end
 
@@ -288,7 +290,6 @@ do -- as3.package()
         if namespace then
           path = tostring(namespace) .. "::" .. tostring(path)
         end
-        --old_trace("tostring", path)
         return path
       end
 
