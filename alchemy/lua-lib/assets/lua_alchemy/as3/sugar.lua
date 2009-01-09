@@ -257,14 +257,14 @@ do
         --as3.trace("call begin")
 
         if
-          selfmt == mt
+          selfmt[1] == proxy_tag
           and ( -- Hack. Need to find out if self is our parent
               mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
             )
         then
           -- colon call mode
           --as3.trace("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
-          return as3.call(as3.class2(mt.namespace_, mt.class_), key, ...)
+          return as3.call(as3.class2(mt.namespace_, mt.class_), key, select(2, ...)) -- Eat self
         end
 
         if key == "new" then
