@@ -12,12 +12,23 @@ obj * call -> error
 callobj * index -> callobj.value * index -> callobj
 callobj * newindex -> callobj.value * newindex -> as3.set
 callobj * as3.any -> as3.any(callobj.value, ...)
-callobj * call -> as3.call(callobj.value, callobj.key, ...)
+callobj * call -> as3.call(callobj.value, ...)
+callobj * tostring -> as3.call(callobj.value, "toString")
 
 --]]
 
+local old_trace, old_call, old_tolua, old_type = as3.trace, as3.call, as3.tolua, as3.type
+
 do
   local proxy_tag = newproxy()
+
+  local unproxy = function(o)
+    local mt = getmetatable(o)
+    if mt and mt[1] == proxy_tag then
+      o = mt:value()
+    end
+    return o
+  end
 
   local make_callobj
   do
@@ -42,6 +53,18 @@ do
       return self.value_
     end
 
+    local tostring_callobj = function(t) -- TODO: Untested. Ensure this works.
+      local str = old_tolua(old_call(unproxy(t), "toString"))
+      local tt = type(str)
+      if tt == "number" then
+        str = tostring(str)
+      elseif tt ~= "string" then
+        --old_trace("BAD1", tt, old_type(str))
+        str = "("..(old_type(t) or type(t))..")" -- TODO: Dump something meaningful!
+      end
+      return str
+    end
+
     make_callobj = function(t, k)
       if not as3.is_as3_value(t) then
         error("as3 object expected, got "..(as3.type(t) or type(t)))
@@ -60,17 +83,10 @@ do
             __index = index;
             __newindex = newindex;
             __call = call;
+            __tostring = tostring_callobj;
           }
         )
     end
-  end
-
-  local unproxy = function(o)
-    local mt = getmetatable(o)
-    if mt and mt[1] == proxy_tag then
-      o = mt:value()
-    end
-    return o
   end
 
   do -- Patch as3 metatable
@@ -83,6 +99,18 @@ do
     mt.__newindex = function(t, k, v)
       return as3.set(t, k, v)
     end
+
+    mt.__tostring = function(t)
+      local str = old_call(t, "toString")
+      local tt = type(str)
+      if tt == "number" then
+        str = tostring(str)
+      elseif tt ~= "string" then
+        --old_trace("BAD2", tt, old_type(str), type(str), type(t), old_type(t))
+        str = "("..(old_type(t) or type(t))..")" -- TODO: Dump something meaningful!
+      end
+      return str
+    end
   end
 
   do -- Patch methods
@@ -90,12 +118,17 @@ do
     {
       "release", "tolua", "get", "set", "assign",
       "call", "type", "namespacecall", "trace",
-      "class", "class2", "new", "new2"
+      "class", "class2", "new", "new2", "is_as3_value"
     }
 
     for _, name in ipairs(methods) do
       local old_fn = as3[name]
       as3[name] = function(...)
+        --[[
+        if name ~= "trace" then
+          --as3.trace("[as3.sugar]", name, "args:", ...)
+        end
+        --]]
         local n = select("#", ...)
         local args = {}
         for i = 1, n do
@@ -241,6 +274,15 @@ pkgobj * newindex(key, value) ->
         return make_pkgobj(getmetatable(t):path2(k))
       end
 
+      local tostring_pkgobj = function(t) -- TODO: This function always MUST return string!
+        local namespace, path = getmetatable(t):path2()
+        if namespace then
+          path = tostring(namespace) .. "::" .. tostring(path)
+        end
+        --old_trace("tostring", path)
+        return path
+      end
+
       make_pkgobj = function(...)
         local namespace, class, key = splitpath(...)
         return setmetatable(
@@ -259,6 +301,7 @@ pkgobj * newindex(key, value) ->
               __index = index;
               __newindex = newindex;
               __call = call;
+              __tostring = tostring_pkgobj;
             }
           )
       end
