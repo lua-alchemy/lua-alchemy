@@ -33,20 +33,24 @@ do
   local make_callobj
   do
     local index = function(t, k)
+      --as3.trace("callobj index", k)
       return make_callobj(getmetatable(t):value(), k)
     end
 
     local newindex = function(t, k, v)
+      --as3.trace("callobj newindex", k)
       as3.set(getmetatable(t):value(), k, v)
     end
 
     -- Enforcing dot notation for performance
     local call = function(t, ...)
       local mt = getmetatable(t) -- Note no value() call here
+      --as3.trace("callobj call", mt.obj_, mt.key_)
       return as3.call(mt.obj_, mt.key_, ...)
     end
 
     local value = function(self)
+      --as3.trace("callobj value", self.value_ ~= nil, self.obj_, self.key_)
       if self.value_ == nil then
         self.value_ = as3.get(self.obj_, self.key_)
       end
@@ -224,7 +228,7 @@ pkgobj * newindex(key, value) ->
 
       local value = function(self)
         if self.value_ == nil then
-          --as3.trace("value", self.namespace_, self.class_, self.key_, debug.traceback())
+          --as3.trace("value", self.namespace_, self.class_, self.key_)
           self.value_ = as3.get(as3.class2(self.namespace_, self.class_), self.key_)
         end
         return self.value_
@@ -268,6 +272,7 @@ pkgobj * newindex(key, value) ->
 
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
+        --as3.trace("newindex", getmetatable(t):path2(k))
         as3.set(getmetatable(t):value(), k, v)
       end
 
