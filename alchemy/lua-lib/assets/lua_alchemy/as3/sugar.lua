@@ -257,7 +257,7 @@ do
         --as3.trace("call begin")
 
         if
-          selfmt[1] == proxy_tag
+          selfmt and selfmt[1] == proxy_tag
           and ( -- Hack. Need to find out if self is our parent
               mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
             )
