@@ -230,8 +230,10 @@ pkgobj * newindex(key, value) ->
         return self.value_
       end
 
-      local call = function(t, self, ...)
+      local call = function(t, ...)
         local mt = assert(getmetatable(t))
+
+        local self = (...)
         local selfmt = getmetatable(self)
 
         local key = mt.key_
@@ -261,7 +263,7 @@ pkgobj * newindex(key, value) ->
 
         -- dot call mode
         --as3.trace("dot call", mt.namespace_, mt.class_, mt.key_)
-        return as3.namespacecall(mt.namespace_.."."..mt.class_, key, self, ...)
+        return as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
       end
 
       local newindex = function(t, k, v)
