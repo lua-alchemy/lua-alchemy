@@ -261,12 +261,23 @@ do -- as3.package()
 
         if key == "new" then
           -- new object mode
-          --as3.trace("new call", mt.namespace_, mt.class_, mt.key_)
-          return as3.new2(mt.namespace_, mt.class_, ...)
+          --spam("new call", mt.namespace_, mt.class_, mt.key_)
+          local result = as3.new2(mt.namespace_, mt.class_, ...)
+
+          -- Note it is impossible to create a new instance of null.
+          -- use as3.toas3(nil) for this.
+          -- TODO: Detect we did not wanted to actually create null instance.
+          assert(as3.type(result) ~= "null", "new failed")
+
+          --spam("created", as3.type(result), result)
+
+          return result
         elseif key == "class" then
           -- class object mode
-          --as3.trace("class call", mt.namespace_, mt.class_, mt.key_)
-          return as3.class2(mt.namespace_, mt.class_, ...)
+          --spam("class call", mt.namespace_, mt.class_, mt.key_)
+          local result = as3.class2(mt.namespace_, mt.class_, ...)
+          assert(as3.type(result) ~= "null", "new failed")
+          return result
         end
 
         -- dot call mode
