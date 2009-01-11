@@ -77,5 +77,16 @@ package wrapperSuite.tests
         assertTrue(stack[0]);
         assertEquals(18, stack[1]);
       }
+
+      public function testClassStatic():void
+      {
+        var script:String = ( <![CDATA[
+          -- TODO anyway we can drop need for .class() below?
+          return as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().TEST_WRAPPER_HELPER_EVENT)
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("TestWrapperHelperEvent", stack[1]);
+      }
   }
 }
