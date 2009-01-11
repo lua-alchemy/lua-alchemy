@@ -110,5 +110,20 @@ package wrapperSuite.tests
         assertTrue(stack[0]);
         assertEquals("Name: Bubba Joe Bob Brain age: 7", stack[1]);
       }
+
+      public function testClassSetStaticVar():void
+      {
+        TestWrapperHelper.staticString = "Some String"
+        var script:String = ( <![CDATA[
+          local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+          as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString = "A New String"
+          local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+          return oldStr, newStr
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("Some String", stack[1]);
+        assertEquals("A New String", stack[2]);
+      }
   }
 }

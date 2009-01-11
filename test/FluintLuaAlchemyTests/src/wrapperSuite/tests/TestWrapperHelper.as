@@ -47,5 +47,7 @@ package wrapperSuite.tests
     {
       dispatchEvent(new Event(TEST_WRAPPER_INCREMENT_EVENT));
     }
+
+    public static var staticString:String;
   }
 }
