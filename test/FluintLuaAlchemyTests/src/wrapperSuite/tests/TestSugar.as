@@ -1,7 +1,6 @@
 package wrapperSuite.tests
 {
   import luaAlchemy.LuaAlchemy;
-  import luaAlchemy.LuaAssets;
 
   import mx.containers.Canvas;
 
@@ -11,6 +10,7 @@ package wrapperSuite.tests
   {
       protected var myLuaAlchemy:LuaAlchemy;
       protected var canvas:Canvas = new Canvas();
+      protected static var v:TestWrapperHelper;
 
       override protected function setUp():void
       {
@@ -37,7 +37,7 @@ package wrapperSuite.tests
       public function testNewInstance():void
       {
         var script:String = ( <![CDATA[
-          v = as3.wrapperSuite.tests.TestWrapperHelper.new()
+          local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
           return as3.type(v)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
@@ -48,9 +48,9 @@ package wrapperSuite.tests
       public function testSetGetInstance():void
       {
         var script:String = ( <![CDATA[
-          v = as3.wrapperSuite.tests.TestWrapperHelper.new()
+          local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
           v.string2 = "hello"
-          return v.string2
+          return as3.tolua(v.string2)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
         assertTrue(stack[0]);
@@ -60,13 +60,24 @@ package wrapperSuite.tests
       public function testCallInstanceNoReturn():void
       {
         var script:String = ( <![CDATA[
-          v = as3.wrapperSuite.tests.TestWrapperHelper.new()
+          local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
           v.setNameAge("OldDude", 999)
-          return v.nameAge
+          return as3.tolua(v.nameAge)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
         assertTrue(stack[0]);
         assertEquals("Name: OldDude age: 999", stack[1]);
+      }
+
+      public function testCallInstanceReturnNumber():void
+      {
+        var script:String = ( <![CDATA[
+          local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
+          return v.addTwoNumbers(13, 5)
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals(18, stack[1]);
       }
   }
 }

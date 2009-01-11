@@ -26,6 +26,11 @@ package wrapperSuite.tests
       nameAge = staticNameAge(name, age);
     }
 
+    public function addTwoNumbers(n1:Number, n2:Number):Number
+    {
+      return n1 + n2;
+    }
+
     public static function staticNameAge(name:String, age:int):String
     {
       trace("TestWrapperHelper::staticNameAge", name, age);
