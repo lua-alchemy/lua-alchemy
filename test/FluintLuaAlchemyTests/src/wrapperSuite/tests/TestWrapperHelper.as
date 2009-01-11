@@ -49,5 +49,10 @@ package wrapperSuite.tests
     }
 
     public static var staticString:String;
+
+    public static function setStaticString(str:String):void
+    {
+      staticString = str;
+    }
   }
 }

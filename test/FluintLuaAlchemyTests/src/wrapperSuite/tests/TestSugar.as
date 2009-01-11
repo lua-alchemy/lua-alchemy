@@ -125,5 +125,20 @@ package wrapperSuite.tests
         assertEquals("Some String", stack[1]);
         assertEquals("A New String", stack[2]);
       }
+
+      public function testClassStaticFunctionNoReturn():void
+      {
+        TestWrapperHelper.staticString = "Start String"
+        var script:String = ( <![CDATA[
+          local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+          as3.package.wrapperSuite.tests.TestWrapperHelper.class().setStaticString("Totally different string")
+          local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+          return oldStr, newStr
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("Start String", stack[1]);
+        assertEquals("Totally different string", stack[2]);
+      }
   }
 }
