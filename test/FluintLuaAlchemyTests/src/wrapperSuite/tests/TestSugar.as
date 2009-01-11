@@ -88,5 +88,16 @@ package wrapperSuite.tests
         assertTrue(stack[0]);
         assertEquals("TestWrapperHelperEvent", stack[1]);
       }
+
+      public function testClassVar():void
+      {
+        var script:String = ( <![CDATA[
+          local v = as3.package.String.class()
+          return as3.type(v)
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("String", stack[1]);
+      }
   }
 }
