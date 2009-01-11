@@ -9,13 +9,11 @@ package wrapperSuite.tests
   public class TestSugar extends TestCase
   {
       protected var myLuaAlchemy:LuaAlchemy;
-      protected var canvas:Canvas = new Canvas();
-      protected static var v:TestWrapperHelper;
+      protected static var v:TestWrapperHelper; // Make sure the TestWrapperHelper is included so sugar can make it even when the other tests are compiled out
 
       override protected function setUp():void
       {
         myLuaAlchemy = new LuaAlchemy();
-        myLuaAlchemy.init(canvas);
       }
 
       override protected function tearDown():void

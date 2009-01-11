@@ -1,8 +1,6 @@
 -- Provides
 --   Syntax sugar support for as3 module
 --   as3.package()
--- Depends on
---   as3.canvas
 
 --[[
 
@@ -94,7 +92,7 @@ do
   end
 
   do -- Patch as3 metatable
-    local mt = debug.getmetatable(assert(as3.canvas))
+    local mt = debug.getmetatable(assert(as3.new("String")))
 
     mt.__index = function(t, k)
       return make_callobj(t, k)
