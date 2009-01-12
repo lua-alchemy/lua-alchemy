@@ -17,17 +17,17 @@ callobj * tostring -> as3.call(callobj.value, "toString")
 
 local old_trace, old_call, old_tolua, old_type = as3.trace, as3.call, as3.tolua, as3.type
 
-do
-  local proxy_tag = newproxy()
+local proxy_tag = newproxy()
 
-  local unproxy = function(o)
-    local mt = getmetatable(o)
-    if mt and mt[1] == proxy_tag then
-      o = mt:value()
-    end
-    return o
+local unproxy = function(o)
+  local mt = getmetatable(o)
+  if mt and mt[1] == proxy_tag then
+    o = mt:value()
   end
+  return o
+end
 
+do
   local make_callobj
   do
     local index = function(t, k)
@@ -177,19 +177,11 @@ pkgobj * newindex(key, value) ->
 
 --]]
 
-do
-  do -- Patch for as3.package()
+do -- as3.package()
+  do
     local make_pkgobj
     do
-      local proxy_tag = newproxy()
-
-      local unproxy = function(o)
-        local mt = getmetatable(o)
-        if mt and mt[1] == proxy_tag then
-          o = mt:value()
-        end
-        return o
-      end
+      local pkgobj_proxy_tag = newproxy()
 
       -- Note this would not work as __eq metamethod, since metatables are different
       local pkgobj_equals = function(lhs, rhs)
@@ -255,7 +247,7 @@ do
         --as3.trace("call begin")
 
         if
-          selfmt and selfmt[1] == proxy_tag
+          selfmt and selfmt[2] == pkgobj_proxy_tag
           and ( -- Hack. Need to find out if self is our parent
               mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
             )
@@ -306,6 +298,7 @@ do
             {},
             {
               proxy_tag;
+              pkgobj_proxy_tag;
 
               namespace_ = namespace;
               class_ = class;
