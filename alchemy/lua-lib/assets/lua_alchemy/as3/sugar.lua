@@ -275,7 +275,7 @@ do -- as3.package()
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
         --as3.trace("newindex", getmetatable(t):path2(k))
-        as3.set(getmetatable(t):value(), k, v)
+        as3.set(as3.class2(getmetatable(t):path2()), k, v)
       end
 
       local index = function(t, k)
