@@ -109,10 +109,21 @@ package wrapperSuite.tests
         assertEquals("String", stack[1]);
       }
 
-      public function testClassStaticFunctionWithReturn():void
+      public function testClassStaticFunctionWithReturnClass():void
       {
         var script:String = ( <![CDATA[
           local r = as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticNameAge("Bubba Joe Bob Brain", 7)
+          return as3.tolua(r)
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("Name: Bubba Joe Bob Brain age: 7", stack[1]);
+      }
+
+      public function testClassStaticFunctionWithReturnNoClass():void
+      {
+        var script:String = ( <![CDATA[
+          local r = as3.package.wrapperSuite.tests.TestWrapperHelper.staticNameAge("Bubba Joe Bob Brain", 7)
           return as3.tolua(r)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
