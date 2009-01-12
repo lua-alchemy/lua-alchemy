@@ -2,6 +2,7 @@ package luaAlchemy
 {
   import cmodule.lua_wrapper.CLibInit;
 
+  /** Class calls and initializes the Lua interpreter */
   public class LuaAlchemy
   {
     private static const _libInit:cmodule.lua_wrapper.CLibInit = new cmodule.lua_wrapper.CLibInit();
@@ -9,11 +10,20 @@ package luaAlchemy
 
     private var luaState:uint = 0;
 
+    /**
+    * Create and init() a new Lua interpreter
+    * @see init()
+    */
     public function LuaAlchemy()
     {
       init();
     }
 
+    /**
+    * Initialize the Lua interpreter.  If already initialized, it will be closed
+    * and then initialized.
+    * @see close()
+    */
     public function init():void
     {
       if (luaState != 0) close();
@@ -29,6 +39,7 @@ package luaAlchemy
       }
     }
 
+    /** Close the Lua interpreter and cleanup. */
     public function close():void
     {
       if (luaState != 0)
@@ -38,18 +49,40 @@ package luaAlchemy
       }
     }
 
+    /**
+    * Run the given file.  Returns an array of values represting
+    * the results of the call.  The first return value is true/false based on
+    * if the string is sucessfully run.  If sucessful, the remaining values
+    * are the Lua return values.  If failed, the second value is the error.
+    * Note at this time you can only run LuaAsset files.
+    * @param strValue The string to run.
+    * @return The Lua return call stack.
+    */
     public function doFile(strFileName:String):Array
     {
       if (luaState == 0) init();
       return lua_wrapper.doFile(luaState, strFileName);
     }
 
+    /**
+    * Run the given string.  Returns an array of values represting
+    * the results of the call.  The first return value is true/false based on
+    * if the string is sucessfully run.  If sucessful, the remaining values
+    * are the Lua return values.  If failed, the second value is the error.
+    * @param strValue The string to run.
+    * @return The Lua return call stack.
+    */
     public function doString(strValue:String):Array
     {
       if (luaState == 0) init();
       return lua_wrapper.luaDoString(luaState, strValue);
     }
 
+    /**
+    * Set a global Lua variable with the key/value pair.
+    * @param key The name of the new global variable
+    * @param value The value of the new global variable
+    */
     public function setGlobal(key:String, value:*):void
     {
       if (luaState == 0) init();
