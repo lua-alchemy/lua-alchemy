@@ -78,11 +78,20 @@ package wrapperSuite.tests
         assertEquals(18, stack[1]);
       }
 
-      public function testClassStatic():void
+      public function testClassStaticClass():void
       {
         var script:String = ( <![CDATA[
-          -- TODO anyway we can drop need for .class() below?
           return as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().TEST_WRAPPER_HELPER_EVENT)
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("TestWrapperHelperEvent", stack[1]);
+      }
+
+      public function testClassStaticNoClass():void
+      {
+        var script:String = ( <![CDATA[
+          return as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.TEST_WRAPPER_HELPER_EVENT)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
         assertTrue(stack[0]);
@@ -111,13 +120,28 @@ package wrapperSuite.tests
         assertEquals("Name: Bubba Joe Bob Brain age: 7", stack[1]);
       }
 
-      public function testClassSetStaticVar():void
+      public function testClassSetStaticVarClass():void
       {
         TestWrapperHelper.staticString = "Some String"
         var script:String = ( <![CDATA[
           local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
           as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString = "A New String"
           local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+          return oldStr, newStr
+        ]]> ).toString();
+        var stack:Array = myLuaAlchemy.doString(script);
+        assertTrue(stack[0]);
+        assertEquals("Some String", stack[1]);
+        assertEquals("A New String", stack[2]);
+      }
+
+      public function testClassSetStaticVarNoClass():void
+      {
+        TestWrapperHelper.staticString = "Some String"
+        var script:String = ( <![CDATA[
+          local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
+          as3.package.wrapperSuite.tests.TestWrapperHelper.staticString = "A New String"
+          local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
           return oldStr, newStr
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
