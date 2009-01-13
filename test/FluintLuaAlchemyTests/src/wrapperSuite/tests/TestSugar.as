@@ -190,5 +190,15 @@ package wrapperSuite.tests
       assertEquals("Start String", stack[1]);
       assertEquals("Totally different string", stack[2]);
     }
+
+    public function testNamespaceFunction():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.type(as3.package.flash.utils.getQualifiedClassName("foo"))
+      ]]> ).toString();
+      var stack:Array = myLuaAlchemy.doString(script);
+      assertTrue(stack[0]);
+      assertEquals("String", stack[1]);
+    }
   }
 }
