@@ -123,7 +123,7 @@ package wrapperSuite.tests
       public function testClassStaticFunctionWithReturnNoClass():void
       {
         var script:String = ( <![CDATA[
-          local r = as3.package.wrapperSuite.tests.TestWrapperHelper.staticNameAge("Bubba Joe Bob Brain", 7)
+          local r = as3.package.wrapperSuite.tests.TestWrapperHelper:staticNameAge("Bubba Joe Bob Brain", 7)
           return as3.tolua(r)
         ]]> ).toString();
         var stack:Array = myLuaAlchemy.doString(script);
@@ -181,7 +181,7 @@ package wrapperSuite.tests
         TestWrapperHelper.staticString = "Start String"
         var script:String = ( <![CDATA[
           local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
-          as3.package.wrapperSuite.tests.TestWrapperHelper.setStaticString("Totally different string")
+          as3.package.wrapperSuite.tests.TestWrapperHelper:setStaticString("Totally different string")
           local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
           return oldStr, newStr
         ]]> ).toString();
