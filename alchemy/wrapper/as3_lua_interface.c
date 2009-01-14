@@ -152,7 +152,7 @@ static int as3_new(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  AS3_Release(as_object); /* TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  /* AS3_Release(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
 
@@ -213,7 +213,7 @@ static int as3_new2(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  AS3_Release(as_object); /* TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  /* AS3_Release(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
   AS3_Release(params);
   AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
 
