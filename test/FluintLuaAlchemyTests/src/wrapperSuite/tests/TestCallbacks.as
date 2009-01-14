@@ -165,18 +165,6 @@ package wrapperSuite.tests
       assertEquals("hello there", ret[1]);
     }
 
-
-    public function testCreateCallbackInLua():void
-    {
-      var script:String = ( <![CDATA[
-        as3.new("Function", function() end) -- TODO: Does this make sense?
-        ]]> ).toString();
-
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertTrue(stack[0]);
-      assertEquals(1, stack.length);
-    }
-
     public function testCreateAndCallObject():void
     {
       var script:String = ( <![CDATA[
