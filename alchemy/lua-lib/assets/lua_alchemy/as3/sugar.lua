@@ -1,6 +1,7 @@
 -- Provides
 --   Syntax sugar support for as3 module
---   as3.package()
+--   as3.class()
+--   as3.namespace()
 
 --[[
 
@@ -133,9 +134,10 @@ end
 
 --[[
 
-as3.package * newindex -> error
-as3.package * index -> pkgobj(nil)
-as3.package * call(path) -> pkgobj(splitpath(path))
+as3.class * newindex -> error
+as3.class * index -> pkgobj(nil)
+as3.class * call(path) -> pkgobj/CLASS(splitpath(path))
+as3.namespace * call(path) -> pkgobj/NAMESPACE(splitpath(path))
 
 splitpath(path) -> namespace, class, key
 
@@ -146,16 +148,16 @@ pkgobj * index(key) ->
 
 pkgobj * as3.any -> as3.any(as3.get(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key)))
 
-pkgobj * colon_call(pkgobj, ...) ->
-  as3.call(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key, ...)
+pkgobj/NAMESPACE * dot_call(pkgobj, ...) ->
+  as3.namespacecall(pkgobj.namespace.."."..pkgobj.class, pkgobj.key, ...)
 
-pkgobj * dot_call(...) ->
+pkgobj/CLASS * dot_call(...) ->
   if pkgobj.key == "new" then
     as3.new2(pkgobj.namespace, pkgobj.class, ...)
   elseif pkgobj.key == "class" then
     as3.newclass2(pkgobj.namespace, pkgobj.class, ...)
   else
-    as3.namespacecall(pkgobj.namespace.."."..pkgobj.class, pkgobj.key, ...)
+    as3.call(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key, ...)
   end
 
 pkgobj * newindex(key, value) ->
@@ -166,8 +168,11 @@ pkgobj * newindex(key, value) ->
 
 --]]
 
-do -- as3.package()
+do -- as3.class(), as3.namespace()
   do
+    local CLASS = "class"
+    local NAMESPACE = "namespace"
+
     local make_pkgobj
     do
       local pkgobj_proxy_tag = newproxy()
@@ -206,6 +211,9 @@ do -- as3.package()
 
       local value = function(self)
         if self.value_ == nil then
+          if self.kind_ ~= CLASS then
+            error("namespace objects can not be resolved to actual value") -- TODO: Really?
+          end
           --spam("value", self.namespace_, self.class_, self.key_)
           self.value_ = as3.get(as3.newclass2(self.namespace_, self.class_), self.key_)
         end
@@ -215,59 +223,64 @@ do -- as3.package()
       local call = function(t, ...)
         local mt = assert(getmetatable(t))
 
-        local self = (...)
-        local selfmt = getmetatable(self)
-
         local key = mt.key_
 
-        --spam("call begin")
+        --spam("call begin", mt.kind_, mt.namespace_, mt.class_, mt.key_)
 
-        if
-          selfmt and selfmt[2] == pkgobj_proxy_tag
-          and ( -- Hack. Need to find out if self is our parent
-              mt.namespace_.."."..mt.class_ == selfmt.namespace_.."."..selfmt.class_.."."..selfmt.key_
-            )
-        then
-          -- colon call mode
-          --spam("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
-          return as3.call(as3.newclass2(mt.namespace_, mt.class_), key, select(2, ...)) -- Eat self
+        -- TODO: Colon call attempt gives really misleading error message. Improve it.
+
+        -- TODO: Actually it should be two separate call() implementations.
+        if mt.kind_ == CLASS then
+          if key == "new" then
+            -- new object mode
+            --spam("new call", mt.namespace_, mt.class_, mt.key_)
+            local result = as3.new2(mt.namespace_, mt.class_, ...)
+
+            -- Note it is impossible to create a new instance of null.
+            -- use as3.toas3(nil) for this.
+            -- TODO: Detect we did not wanted to actually create null instance
+            --       and remove this restriction.
+            assert(as3.type(result) ~= "null", "new2 failed")
+
+            --spam("created", as3.type(result), result)
+
+            return result
+          elseif key == "class" then
+            -- class object mode
+            --spam("class call", mt.namespace_, mt.class_, mt.key_)
+            local result = as3.newclass2(mt.namespace_, mt.class_, ...)
+            assert(as3.type(result) ~= "null", "newclass2 failed (class call)")
+            return result
+          end
+
+          -- dot call mode
+          --spam("dot call", mt.namespace_, mt.class_, mt.key_)
+          local classobj = as3.newclass2(mt.namespace_, mt.class_)
+          assert(as3.type(classobj) ~= "null", "newclass2 failed (static call)")
+          return as3.call(classobj, key, ...)
         end
 
-        if key == "new" then
-          -- new object mode
-          --spam("new call", mt.namespace_, mt.class_, mt.key_)
-          local result = as3.new2(mt.namespace_, mt.class_, ...)
+        assert(mt.kind_ == NAMESPACE)
 
-          -- Note it is impossible to create a new instance of null.
-          -- use as3.toas3(nil) for this.
-          -- TODO: Detect we did not wanted to actually create null instance.
-          assert(as3.type(result) ~= "null", "new failed")
-
-          --spam("created", as3.type(result), result)
-
-          return result
-        elseif key == "class" then
-          -- class object mode
-          --spam("class call", mt.namespace_, mt.class_, mt.key_)
-          local result = as3.newclass2(mt.namespace_, mt.class_, ...)
-          assert(as3.type(result) ~= "null", "new failed")
-          return result
-        end
-
-        -- dot call mode
-        --spam("dot call", mt.namespace_, mt.class_, mt.key_)
+        -- namespace call mode
+        --spam("namespace call", mt.namespace_, mt.class_, mt.key_)
         return as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
       end
 
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
-        --spam("newindex", getmetatable(t):path2(k))
-        as3.set(as3.newclass2(getmetatable(t):path2()), k, v)
+        --spam("newindex", getmetatable(t).kind_, getmetatable(t):path2(k))
+        local mt = getmetatable(t)
+        if mt.kind_ ~= CLASS then
+          error("namespace objects are read-only") -- TODO: Really?
+        end
+        as3.set(as3.newclass2(mt:path2()), k, v)
       end
 
       local index = function(t, k)
-        --spam("index", getmetatable(t):path2(k))
-        return make_pkgobj(getmetatable(t):path2(k))
+        --spam("index", getmetatable(t).kind_, getmetatable(t):path2(k))
+        local mt = getmetatable(t)
+        return make_pkgobj(mt.kind_, mt:path2(k))
       end
 
       local tostring_pkgobj = function(t) -- TODO: This function always MUST return string!
@@ -278,13 +291,15 @@ do -- as3.package()
         return path
       end
 
-      make_pkgobj = function(...)
+      make_pkgobj = function(pkgobj_kind, ...)
         local namespace, class, key = splitpath(...)
         return setmetatable(
             {},
             {
               proxy_tag;
               pkgobj_proxy_tag;
+
+              kind_ = pkgobj_kind;
 
               namespace_ = namespace;
               class_ = class;
@@ -303,21 +318,26 @@ do -- as3.package()
       end
     end
 
-    as3.package = setmetatable(
-        {},
-        {
-          __index = function(t, k)
-            return make_pkgobj(k)
-          end;
+    local make_pkgobj_table = function(pkgobj_kind)
+      return setmetatable(
+          {},
+          {
+            __index = function(t, k)
+              return make_pkgobj(pkgobj_kind, k)
+            end;
 
-          __call = function(t, ...)
-            return make_pkgobj(...)
-          end;
+            __call = function(t, ...)
+              return make_pkgobj(pkgobj_kind, ...)
+            end;
 
-          __newindex = function(t, k, v)
-            error("as3.package is read-only")
-          end;
-        }
-      )
+            __newindex = function(t, k, v)
+              error("attempted to write to a read-only table")
+            end;
+          }
+        )
+    end
+
+    as3.class = make_pkgobj_table(CLASS)
+    as3.namespace = make_pkgobj_table(NAMESPACE)
   end
 end

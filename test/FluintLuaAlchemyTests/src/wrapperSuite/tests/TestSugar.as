@@ -35,7 +35,7 @@ package wrapperSuite.tests
     public function testNewInstance():void
     {
       var script:String = ( <![CDATA[
-        local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
         return as3.type(v)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -46,7 +46,7 @@ package wrapperSuite.tests
     public function testSetGetInstance():void
     {
       var script:String = ( <![CDATA[
-        local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
         v.string2 = "hello"
         return as3.tolua(v.string2)
       ]]> ).toString();
@@ -58,7 +58,7 @@ package wrapperSuite.tests
     public function testCallInstanceNoReturn():void
     {
       var script:String = ( <![CDATA[
-        local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
         v.setNameAge("OldDude", 999)
         return as3.tolua(v.nameAge)
       ]]> ).toString();
@@ -70,7 +70,7 @@ package wrapperSuite.tests
     public function testCallInstanceReturnNumber():void
     {
       var script:String = ( <![CDATA[
-        local v = as3.package.wrapperSuite.tests.TestWrapperHelper.new()
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
         return v.addTwoNumbers(13, 5)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -81,7 +81,7 @@ package wrapperSuite.tests
     public function testClassStaticClass():void
     {
       var script:String = ( <![CDATA[
-        return as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().TEST_WRAPPER_HELPER_EVENT)
+        return as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.class().TEST_WRAPPER_HELPER_EVENT)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
       assertTrue(stack[0]);
@@ -91,7 +91,7 @@ package wrapperSuite.tests
     public function testClassStaticNoClass():void
     {
       var script:String = ( <![CDATA[
-        return as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.TEST_WRAPPER_HELPER_EVENT)
+        return as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.TEST_WRAPPER_HELPER_EVENT)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
       assertTrue(stack[0]);
@@ -101,7 +101,7 @@ package wrapperSuite.tests
     public function testClassVar():void
     {
       var script:String = ( <![CDATA[
-        local v = as3.package.String.class()
+        local v = as3.class.String.class()
         return as3.type(v)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -112,7 +112,7 @@ package wrapperSuite.tests
     public function testClassStaticFunctionWithReturnClass():void
     {
       var script:String = ( <![CDATA[
-        local r = as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticNameAge("Bubba Joe Bob Brain", 7)
+        local r = as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticNameAge("Bubba Joe Bob Brain", 7)
         return as3.tolua(r)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -123,7 +123,7 @@ package wrapperSuite.tests
     public function testClassStaticFunctionWithReturnNoClass():void
     {
       var script:String = ( <![CDATA[
-        local r = as3.package.wrapperSuite.tests.TestWrapperHelper:staticNameAge("Bubba Joe Bob Brain", 7)
+        local r = as3.class.wrapperSuite.tests.TestWrapperHelper.staticNameAge("Bubba Joe Bob Brain", 7)
         return as3.tolua(r)
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -135,9 +135,9 @@ package wrapperSuite.tests
     {
       TestWrapperHelper.staticString = "Some String"
       var script:String = ( <![CDATA[
-        local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
-        as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString = "A New String"
-        local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+        local oldStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+        as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticString = "A New String"
+        local newStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticString)
         return oldStr, newStr
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -150,9 +150,9 @@ package wrapperSuite.tests
     {
       TestWrapperHelper.staticString = "Some String"
       var script:String = ( <![CDATA[
-        local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
-        as3.package.wrapperSuite.tests.TestWrapperHelper.staticString = "A New String"
-        local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
+        local oldStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.staticString)
+        as3.class.wrapperSuite.tests.TestWrapperHelper.staticString = "A New String"
+        local newStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.staticString)
         return oldStr, newStr
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -165,9 +165,9 @@ package wrapperSuite.tests
     {
       TestWrapperHelper.staticString = "Start String"
       var script:String = ( <![CDATA[
-        local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
-        as3.package.wrapperSuite.tests.TestWrapperHelper.class().setStaticString("Totally different string")
-        local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+        local oldStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticString)
+        as3.class.wrapperSuite.tests.TestWrapperHelper.class().setStaticString("Totally different string")
+        local newStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.class().staticString)
         return oldStr, newStr
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -180,9 +180,9 @@ package wrapperSuite.tests
     {
       TestWrapperHelper.staticString = "Start String"
       var script:String = ( <![CDATA[
-        local oldStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
-        as3.package.wrapperSuite.tests.TestWrapperHelper:setStaticString("Totally different string")
-        local newStr = as3.tolua(as3.package.wrapperSuite.tests.TestWrapperHelper.staticString)
+        local oldStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.staticString)
+        as3.class.wrapperSuite.tests.TestWrapperHelper.setStaticString("Totally different string")
+        local newStr = as3.tolua(as3.class.wrapperSuite.tests.TestWrapperHelper.staticString)
         return oldStr, newStr
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
@@ -194,7 +194,7 @@ package wrapperSuite.tests
     public function testNamespaceFunction():void
     {
       var script:String = ( <![CDATA[
-        return as3.type(as3.package.flash.utils.getQualifiedClassName("foo"))
+        return as3.type(as3.namespace.flash.utils.getQualifiedClassName("foo"))
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
       assertTrue(stack[0]);
