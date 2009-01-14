@@ -57,18 +57,6 @@ do
       return self.value_
     end
 
-    local tostring_callobj = function(t) -- TODO: Untested. Ensure this works.
-      local str = old_tolua(old_call(unproxy(t), "toString"))
-      local tt = type(str)
-      if tt == "number" then
-        str = tostring(str)
-      elseif tt ~= "string" then
-        --old_trace("BAD1", tt, old_type(str))
-        str = "("..(old_type(t) or type(t))..")" -- TODO: Dump something meaningful!
-      end
-      return str
-    end
-
     make_callobj = function(t, k)
       if not as3.is_as3_value(t) then
         error("as3 object expected, got "..(as3.type(t) or type(t)))
@@ -87,7 +75,6 @@ do
             __index = index;
             __newindex = newindex;
             __call = call;
-            __tostring = tostring_callobj;
           }
         )
     end
