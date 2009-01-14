@@ -491,7 +491,7 @@ static int as3_is_as3_value(lua_State * L)
 /*
 * Call a namespace function
 * Can be used to call namespace functions
-* Lua example: v = as3.package("flash.utils", "getQualifiedClassName")
+* Lua example: v = as3.namespacecall("flash.utils", "getQualifiedClassName")
 */
 static int as3_namespacecall(lua_State * L)
 {
