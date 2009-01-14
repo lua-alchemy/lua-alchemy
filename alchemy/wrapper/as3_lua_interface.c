@@ -92,7 +92,7 @@ static int as3_class2(lua_State * L)
   classname = luaL_checkstring(L, 2);
 
   as_class = get_class2(namespacename, classname);
-  if (as3_class == NULL)
+  if (as_class == NULL)
   {
     luaL_error(L, "'package::ClassName' must be valid");
   }
@@ -164,7 +164,7 @@ static int as3_new2(lua_State * L)
   classname = luaL_checkstring(L, 2);
 
   as_class = get_class2(namespacename, classname);
-  if (as3_class == NULL)
+  if (as_class == NULL)
   {
     luaL_error(L, "'package::ClassName' must be valid");
   }
