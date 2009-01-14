@@ -52,12 +52,13 @@ static int as3_newclass(lua_State * L)
   AS3_Val as_class;
 
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
+  luaL_argcheck(L, classname != NULL, 1, LUA_QL("package::ClassName") " expected");
 
   as_class = get_class(classname);
-  luaL_argcheck(L, as_class != NULL, 1, "'package::ClassName' must be valid");
-
-  /* TODO check if get_class failed */
+  if (as_class == NULL)
+  {
+    return luaL_error(L, "newclass: invalid package::ClassName: " LUA_QL("%s"), classname);
+  }
 
   push_as3_lua_userdata(L, as_class);
 
@@ -94,7 +95,12 @@ static int as3_newclass2(lua_State * L)
   as_class = get_class2(namespacename, classname);
   if (as_class == NULL)
   {
-    luaL_error(L, "'package::ClassName' must be valid");
+    return luaL_error(
+        L,
+        "newclass2: invalid package::ClassName: " LUA_QL("%s::%s"),
+        namespacename,
+        classname
+      );
   }
 
   push_as3_lua_userdata(L, as_class);
@@ -118,15 +124,31 @@ static int as3_new(lua_State * L)
   AS3_Val as_object;
 
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, "'package::ClassName' expected");
+  luaL_argcheck(L, classname != NULL, 1, LUA_QL("package::ClassName") " expected");
 
   as_class = get_class(classname);
-  /* TODO error if as_class == null */
+  if (as_class == NULL)
+  {
+    return luaL_error(
+        L,
+        "invalid package::ClassName: " LUA_QL("%s"),
+        classname
+      );
+  }
 
   params = create_as3_value_from_lua_stack(L, 2, LTOP(L, stack), FALSE);
 
   as_object = AS3_New(as_class, params);
-  /* TODO error if as_object == null, make sure you free the class and params */
+  if (as_object == NULL)
+  {
+    AS3_Release(as_class);
+    AS3_Release(params);
+    return luaL_error(
+        L,
+        "failed to create object of type: " LUA_QL("%s"),
+        classname
+      );
+  }
 
   push_as3_lua_userdata(L, as_object);
 
@@ -166,13 +188,28 @@ static int as3_new2(lua_State * L)
   as_class = get_class2(namespacename, classname);
   if (as_class == NULL)
   {
-    luaL_error(L, "'package::ClassName' must be valid");
+    return luaL_error(
+        L,
+        "invalid package::ClassName: " LUA_QL("%s::%s"),
+        namespacename,
+        classname
+      );
   }
 
   params = create_as3_value_from_lua_stack(L, 3, LTOP(L, stack), FALSE);
 
   as_object = AS3_New(as_class, params);
-  /* TODO error if as_object == null, make sure you free the class and params */
+  if (as_object == NULL)
+  {
+    AS3_Release(as_class);
+    AS3_Release(params);
+    return luaL_error(
+        L,
+        "failed to create object of type: " LUA_QL("%s::%s"),
+        namespacename,
+        classname
+      );
+  }
 
   push_as3_lua_userdata(L, as_object);
 
