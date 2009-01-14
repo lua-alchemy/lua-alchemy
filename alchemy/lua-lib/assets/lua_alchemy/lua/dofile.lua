@@ -39,7 +39,9 @@ do
     if prefix == BUILTIN_PREFIX then
       res, err = old_loadfile(filename) -- Builtin prefix loaded with old loadfile
     elseif prefix then
-      res, err = as3.tolua(as3.file_get_contents(filename))
+      -- TODO: Uncomment this as soon as flyield() would be fixed.
+      res, err = nil, "as3.file_get_contents() disabled"
+      --res, err = as3.tolua(as3.file_get_contents(filename))
       if res ~= nil then
         res, err = loadstring(res, "@"..filename)
       end
