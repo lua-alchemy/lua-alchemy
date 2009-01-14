@@ -42,9 +42,9 @@ static int as3_stage(lua_State * L)
 /*
 * Return the requested class in package::ClassName form.
 * Can be used to call static class functions
-* Lua example: v = as3.class("flash.utils.ByteArray")
+* Lua example: v = as3.newclass("flash.utils.ByteArray")
 */
-static int as3_class(lua_State * L)
+static int as3_newclass(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -69,11 +69,11 @@ static int as3_class(lua_State * L)
 /*
 * Return the requested class in package::ClassName form.
 * Can be used to call static class functions
-* Lua example: v = as3.class2("flash.utils", "ByteArray")
+* Lua example: v = as3.newclass2("flash.utils", "ByteArray")
 * Namespace may be empty (pass nil, false or empty string)
 * NOTE: This function is intentionally not documented.
 */
-static int as3_class2(lua_State * L)
+static int as3_newclass2(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -638,7 +638,7 @@ static const luaL_reg AS3_LUA_LIB[] =
 {
   { "flyield", as3_flyield },
   { "stage", as3_stage },
-  { "class", as3_class },
+  { "newclass", as3_newclass },
   { "new", as3_new },
   { "release", as3_release },
   { "tolua", as3_tolua },
@@ -649,7 +649,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
   { "trace", as3_trace },
-  { "class2", as3_class2 },
+  { "newclass2", as3_newclass2 },
   { "new2", as3_new2 },
   { "is_as3_value", as3_is_as3_value },
   { "toas3", as3_toas3 },

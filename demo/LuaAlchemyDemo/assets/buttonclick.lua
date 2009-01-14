@@ -1,4 +1,4 @@
-local alertClass = as3.class("mx.controls::Alert")
+local alertClass = as3.newclass("mx.controls::Alert")
 local vbox = as3.new("mx.containers::VBox")
 local label = as3.new("mx.controls::Label")
 local input = as3.new("mx.controls::TextInput")

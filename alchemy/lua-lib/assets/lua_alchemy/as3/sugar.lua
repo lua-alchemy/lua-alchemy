@@ -122,7 +122,7 @@ do
     {
       "release", "tolua", "get", "set", "assign",
       "call", "type", "namespacecall", "trace",
-      "class", "class2", "new", "new2", "is_as3_value"
+      "newclass", "newclass2", "new", "new2", "is_as3_value"
     }
 
     for _, name in ipairs(methods) do
@@ -157,16 +157,16 @@ pkgobj * index(key) ->
   pkgobj.class = pkgobj.key
   pkgobj.key = key
 
-pkgobj * as3.any -> as3.any(as3.get(as3.class2(pkgobj.namespace, pkgobj.class), pkgobj.key)))
+pkgobj * as3.any -> as3.any(as3.get(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key)))
 
 pkgobj * colon_call(pkgobj, ...) ->
-  as3.call(as3.class2(pkgobj.namespace, pkgobj.class), pkgobj.key, ...)
+  as3.call(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key, ...)
 
 pkgobj * dot_call(...) ->
   if pkgobj.key == "new" then
     as3.new2(pkgobj.namespace, pkgobj.class, ...)
   elseif pkgobj.key == "class" then
-    as3.class2(pkgobj.namespace, pkgobj.class, ...)
+    as3.newclass2(pkgobj.namespace, pkgobj.class, ...)
   else
     as3.namespacecall(pkgobj.namespace.."."..pkgobj.class, pkgobj.key, ...)
   end
@@ -175,7 +175,7 @@ pkgobj * newindex(key, value) ->
   pkgobj.namespace = pkgobj.namespace.."."..pkgobj.class
   pkgobj.class = pkgobj.key
   pkgobj.key = key
-  as3.set(as3.class2(pkgobj.namespace, pkgobj.class), pkgobj.key, value)
+  as3.set(as3.newclass2(pkgobj.namespace, pkgobj.class), pkgobj.key, value)
 
 --]]
 
@@ -233,7 +233,7 @@ do -- as3.package()
       local value = function(self)
         if self.value_ == nil then
           --spam("value", self.namespace_, self.class_, self.key_)
-          self.value_ = as3.get(as3.class2(self.namespace_, self.class_), self.key_)
+          self.value_ = as3.get(as3.newclass2(self.namespace_, self.class_), self.key_)
         end
         return self.value_
       end
@@ -256,7 +256,7 @@ do -- as3.package()
         then
           -- colon call mode
           --spam("colon call", mt.namespace_, mt.class_, mt.key_, as3.tolua(...))
-          return as3.call(as3.class2(mt.namespace_, mt.class_), key, select(2, ...)) -- Eat self
+          return as3.call(as3.newclass2(mt.namespace_, mt.class_), key, select(2, ...)) -- Eat self
         end
 
         if key == "new" then
@@ -275,7 +275,7 @@ do -- as3.package()
         elseif key == "class" then
           -- class object mode
           --spam("class call", mt.namespace_, mt.class_, mt.key_)
-          local result = as3.class2(mt.namespace_, mt.class_, ...)
+          local result = as3.newclass2(mt.namespace_, mt.class_, ...)
           assert(as3.type(result) ~= "null", "new failed")
           return result
         end
@@ -288,7 +288,7 @@ do -- as3.package()
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
         --spam("newindex", getmetatable(t):path2(k))
-        as3.set(as3.class2(getmetatable(t):path2()), k, v)
+        as3.set(as3.newclass2(getmetatable(t):path2()), k, v)
       end
 
       local index = function(t, k)

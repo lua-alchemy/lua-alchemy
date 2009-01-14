@@ -58,7 +58,7 @@ Note this function is not related to Lua coroutines.</p>
 as3.flyield()
 </pre><br>
 
-<br><h2>as3.class("[package::]ClassName")</h2>
+<br><h2>as3.newclass("[package::]ClassName")</h2>
 <p>Return the requested class in package::ClassName form.
 The return can be used to call static class functions or get/set static properties</p>
 <br><p><b>Note: </b>Only classes that have been included in the demo can be created.  At the very least
@@ -66,7 +66,7 @@ all of mx.containers and mx.controls has been included along with all the top le
 all flash objects get.</p>
 <br><b>Example</b><br>
 <pre>
-local v = as3.class("flash.utils:ByteArray")
+local v = as3.newclass("flash.utils:ByteArray")
 </pre><br>
 
 <br><h2>as3.new("[package::]ClassName[, param1,... paramN]")</h2>

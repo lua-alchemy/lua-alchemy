@@ -7,7 +7,7 @@ package wrapperSuite.tests
 
   public class TestAS3LuaInterface extends CommonTestCase
   {
-    /* TODO: Test New, New2, Class and Class2 with bad arguments */
+    /* TODO: Test New, New2, NewClass and NewClass2 with bad arguments */
 
     public function testAS3NewArray():void
     {
@@ -141,7 +141,7 @@ package wrapperSuite.tests
     public function testAS3Class():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class("String")
+        v = as3.newclass("String")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -151,10 +151,10 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-    public function testAS3Class2StringNil():void
+    public function testAS3NewClass2StringNil():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class2(nil, "String")
+        v = as3.newclass2(nil, "String")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -164,10 +164,10 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-    public function testAS3Class2StringFalse():void
+    public function testAS3NewClass2StringFalse():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class2(false, "String")
+        v = as3.newclass2(false, "String")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -177,10 +177,10 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-    public function testAS3Class2StringEmptyString():void
+    public function testAS3NewClass2StringEmptyString():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class2("", "String")
+        v = as3.newclass2("", "String")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -193,7 +193,7 @@ package wrapperSuite.tests
     public function testAS3ClassByteArray():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class("flash.utils::ByteArray")
+        v = as3.newclass("flash.utils::ByteArray")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -202,10 +202,10 @@ package wrapperSuite.tests
       assertEquals(2, stack.length);
     }
 
-    public function testAS3Class2ByteArray():void
+    public function testAS3NewClass2ByteArray():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class2("flash.utils", "ByteArray")
+        v = as3.newclass2("flash.utils", "ByteArray")
         return v
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -288,7 +288,7 @@ package wrapperSuite.tests
     public function testAS3CallStaticNameAge():void
     {
       var script:String = ( <![CDATA[
-        v = as3.class("wrapperSuite.tests::TestWrapperHelper")
+        v = as3.newclass("wrapperSuite.tests::TestWrapperHelper")
         return as3.call(v, "staticNameAge", "Jessie James", 127)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
