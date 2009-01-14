@@ -172,19 +172,6 @@ do -- as3.package()
     do
       local pkgobj_proxy_tag = newproxy()
 
-      -- Note this would not work as __eq metamethod, since metatables are different
-      local pkgobj_equals = function(lhs, rhs)
-        local lhsmt, rhsmt = getmetatable(lhs), getmetatable(rhs)
-        --[[as3.trace(
-            "eq",
-            lhsmt.namespace_, lhsmt.class_, lhsmt.key_,
-            rhsmt.namespace_, rhsmt.class_, rhsmt.key_
-          )--]]
-        return lhsmt.namespace_ == rhsmt.namespace_
-           and lhsmt.class_ == rhsmt.class_
-           and lhsmt.key_ == rhsmt.key_
-      end
-
       local splitpath = function(...) -- TODO: Test this well!
         -- TODO: Huge overhead, but simple. Rewrite.
 
