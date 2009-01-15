@@ -1,34 +1,44 @@
-local box = as3.new("mx.containers::Canvas")
+-- Creates a 20x20 blue box and moves it around randomly
 
-as3.set(box, "width", 20)
-as3.set(box, "height", 20)
-as3.set(box, "x", as3.get(canvas, "width") - 20)
-as3.set(box, "y", as3.get(canvas, "height") - 20)
-as3.call(box, "setStyle", "backgroundColor", "blue")
-
-as3.call(canvas, "addChild", box)
-
-local move = as3.new("mx.effects::Move")
-as3.set(move, "target", box)
-as3.set(move, "duration", 5000)
-
-function movebox()
-  as3.call(move, "end")
-  as3.set(move, "xTo", math.random(0, as3.get(canvas, "width") - 20))
-  as3.set(move, "yTo", math.random(0, as3.get(canvas, "height") - 20))
-  as3.call(move, "play")
+-- returns a random (x,y) location for the box within the canvas
+function randomBoxLocation()
+  return math.random(0, as3.tolua(canvas.width) - 20),
+         math.random(0, as3.tolua(canvas.height) - 20)
 end
 
+-- Create the blue box and add it to the canvas
+local box = as3.class.mx.containers.Canvas.new()
+box.width = 20
+box.height = 20
+box.x, box.y = randomBoxLocation()
+box.setStyle("backgroundColor", "blue")
+
+canvas.addChild(box)
+
+-- Create a move tween for the box
+local move = as3.class.mx.effects.Move.new()
+move.target = box
+move.duration = 5000
+
+-- function to handle moving the box on event calls
+function movebox()
+  move["end"]() -- end is a keyword in Lua so we can't call move.end()
+  move.xTo, move.yTo = randomBoxLocation()
+  move.play()
+end
+
+-- start moving the box at the beginning
 movebox()
 
-local timer = as3.new("flash.utils::Timer", 5000)
-as3.call(timer, "addEventListener", "timer", movebox)
-as3.call(timer, "start")
+-- Create and start the timer to move the box every 5 seconds
+local timer = as3.class.flash.utils.Timer.new(5000)
+timer.addEventListener(as3.class.flash.events.TimerEvent.TIMER, movebox)
+timer.start()
 
-_G.finalize_ = debug.setmetatable(newproxy(),
-{
- __gc = function()
-  as3.call(timer, "stop")
-  timer = nil
- end
-})
+-- Stop the timer when LuaAlchemy#close() is called
+as3.on_close(
+  function(e)
+    timer.stop()
+    timer.removeEventListener(as3.class.flash.events.TimerEvent.TIMER, movebox)
+    timer = nil
+  end)
