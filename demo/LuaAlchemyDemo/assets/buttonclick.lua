@@ -1,19 +1,18 @@
-local alertClass = as3.newclass("mx.controls::Alert")
-local vbox = as3.new("mx.containers::VBox")
-local label = as3.new("mx.controls::Label")
-local input = as3.new("mx.controls::TextInput")
-local button = as3.new("mx.controls::Button")
+local vbox = as3.class.mx.containers.VBox.new()
+local label = as3.class.mx.controls.Label.new()
+local input = as3.class.mx.controls.TextInput.new()
+local button = as3.class.mx.controls.Button.new()
 
-as3.set(label, "text", "Name:")
+label.text = "Name:"
 
-as3.set(button, "label", "Say Hello");
-as3.call(button, "addEventListener", "click",
+button.label = "Say Hello"
+button.addEventListener(as3.class.flash.events.MouseEvent.CLICK,
   function (e)
-      as3.call(alertClass, "show", "Hello " .. as3.get(input, "text"), as3.type(e))
+      as3.class.mx.controls.Alert.show("Hello " .. as3.tolua(input.text), as3.type(e))
   end, false, 0, true) -- set useWeakReference=true so listener doesn't keep button reference
 
-as3.call(vbox, "addChild", label)
-as3.call(vbox, "addChild", input)
-as3.call(vbox, "addChild", button)
+vbox.addChild(label)
+vbox.addChild(input)
+vbox.addChild(button)
 
-as3.call(canvas, "addChild", vbox)
+canvas.addChild(vbox)
