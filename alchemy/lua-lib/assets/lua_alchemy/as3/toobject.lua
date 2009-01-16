@@ -30,7 +30,7 @@ do
   end
 
   -- Detects recursion (raises error)
-  -- Does not support other nonstring keys (raises error)
+  -- Does not support non-string keys (raises error)
   -- Numeric keys are *not* converted to strings
   as3.toobject = function(t)
     return impl(t, {})
