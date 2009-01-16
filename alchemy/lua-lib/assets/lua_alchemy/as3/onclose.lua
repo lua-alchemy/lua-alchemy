@@ -1,5 +1,5 @@
 -- Provides
---   as3.on_close()
+--   as3.onclose()
 
 do
   local obj, list
@@ -19,7 +19,7 @@ do
     end;
   }
 
-  as3.on_close = function(fn)
+  as3.onclose = function(fn)
     assert(type(fn) == "function", "function expected")
 
     if not obj then

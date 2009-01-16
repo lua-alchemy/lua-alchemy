@@ -11,7 +11,7 @@ old_dofile("builtin://lua_alchemy/as3/sugar.lua")
 --old_dofile("builtin://lua_alchemy/as3/file_get_contents.lua")
 
 old_dofile("builtin://lua_alchemy/as3/toobject.lua")
-old_dofile("builtin://lua_alchemy/as3/on_close.lua")
+old_dofile("builtin://lua_alchemy/as3/onclose.lua")
 old_dofile("builtin://lua_alchemy/as3/print.lua")
 
 old_dofile("builtin://lua_alchemy/lua/dofile.lua")

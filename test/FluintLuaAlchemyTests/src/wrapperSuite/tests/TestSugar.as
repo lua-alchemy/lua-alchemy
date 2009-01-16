@@ -200,5 +200,23 @@ package wrapperSuite.tests
       assertTrue(stack[0]);
       assertEquals("String", stack[1]);
     }
+
+    public function testOnClose():void
+    {
+      TestWrapperHelper.staticString = "Start String"
+      var script:String = ( <![CDATA[
+        as3.onclose(
+          function()
+            as3.class.wrapperSuite.tests.TestWrapperHelper.staticString = "Closed"
+          end)
+      ]]> ).toString();
+      var stack:Array = myLuaAlchemy.doString(script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length)
+      assertEquals("Start String", TestWrapperHelper.staticString);
+
+      myLuaAlchemy.close()
+      assertEquals("Closed", TestWrapperHelper.staticString);
+    }
   }
 }

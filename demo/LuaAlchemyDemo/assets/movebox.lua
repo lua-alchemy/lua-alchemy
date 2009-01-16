@@ -36,7 +36,7 @@ timer.addEventListener(as3.class.flash.events.TimerEvent.TIMER, movebox)
 timer.start()
 
 -- Stop the timer when LuaAlchemy#close() is called
-as3.on_close(
+as3.onclose(
   function(e)
     timer.stop()
     timer.removeEventListener(as3.class.flash.events.TimerEvent.TIMER, movebox)

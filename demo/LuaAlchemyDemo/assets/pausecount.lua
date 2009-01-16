@@ -54,7 +54,7 @@ while true do
 end
 
 -- Remove the button event listener when Lua is closed
-as3.on_close(
+as3.onclose(
   function(e)
     button.removeEventListener(as3.class.flash.events.MouseEvent.CLICK, pause_count)
   end)
