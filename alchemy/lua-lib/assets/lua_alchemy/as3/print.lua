@@ -1,7 +1,7 @@
 -- Provides
 --   as3.prints()
 --   as3.printu()
---   as3.make_printer()
+--   as3.makeprinter()
 -- Depends on
 --   sugar
 
@@ -30,7 +30,7 @@ end
 
 do
   -- Creates print function which does output to given AS3 object text property.
-  as3.make_printer = function(obj)
+  as3.makeprinter = function(obj)
     return function(...)
       obj.text = obj.text .. as3.prints(...) .. "\n"
     end
