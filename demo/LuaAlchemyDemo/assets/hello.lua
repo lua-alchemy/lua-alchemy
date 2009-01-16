@@ -1,3 +1,4 @@
-local label = as3.new("mx.controls::Label")
-as3.set(label, "text", "Hello World")
-as3.call(canvas, "addChild", label)
+-- Create a hello world label
+local label = as3.class.mx.controls.Label.new()
+label.text = "Hello World"
+canvas.addChild(label)
