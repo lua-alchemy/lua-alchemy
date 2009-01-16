@@ -1,6 +1,5 @@
 -- Provides
 --   as3.prints()
---   as3.printu()
 --   as3.makeprinter()
 -- Depends on
 --   sugar
@@ -17,14 +16,6 @@ do
      t[i] = tostring(select(i, ...))
    end
    return table.concat(t, "\t")
-  end
-end
-
-do
-  -- In print-like way appends concatenated arguments plus a newline.
-  -- NOTE: This would make sense once it is rewritten to C (hopefully).
-  as3.printu = function(obj, ...)
-    obj.text = as3.tolua(obj.text) .. as3.prints(...) .. "\n"
   end
 end
 
