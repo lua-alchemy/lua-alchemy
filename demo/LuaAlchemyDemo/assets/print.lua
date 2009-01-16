@@ -1,13 +1,5 @@
--- Override print to go to canvas
-
-print = function(...)
- local n = select("#", ...)
- local t = {}
- for i = 1, n do
-   t[i] = tostring(select(i, ...))
- end
- output.text = as3.tolua(output.text) .. table.concat(t, "\t") .. "\n"
-end
+-- Override print so results can be displayed in canvas
+print = as3.makeprinter(output)
 
 -- Test print function
 print("Hello from Lua")

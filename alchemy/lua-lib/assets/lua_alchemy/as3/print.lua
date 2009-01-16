@@ -24,7 +24,7 @@ do
   -- In print-like way appends concatenated arguments plus a newline.
   -- NOTE: This would make sense once it is rewritten to C (hopefully).
   as3.printu = function(obj, ...)
-    obj.text = obj.text .. as3.prints(...) .. "\n"
+    obj.text = as3.tolua(obj.text) .. as3.prints(...) .. "\n"
   end
 end
 
@@ -32,7 +32,7 @@ do
   -- Creates print function which does output to given AS3 object text property.
   as3.makeprinter = function(obj)
     return function(...)
-      obj.text = obj.text .. as3.prints(...) .. "\n"
+      obj.text = as3.tolua(obj.text) .. as3.prints(...) .. "\n"
     end
   end
 end

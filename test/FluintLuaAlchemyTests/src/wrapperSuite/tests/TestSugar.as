@@ -219,6 +219,24 @@ package wrapperSuite.tests
       assertEquals("Closed", TestWrapperHelper.staticString);
     }
 
+    public function testMakePrinter():void
+    {
+      var printer:Object = new Object();
+      printer.text = "First line\n";
+      myLuaAlchemy.setGlobal("printer", printer);
+
+      var script:String = ( <![CDATA[
+        print = as3.makeprinter(printer)
+        print("Second line")
+      ]]> ).toString();
+      var stack:Array = myLuaAlchemy.doString(script);
+
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+
+      assertEquals("First line\nSecond line\n", printer.text);
+    }
+
     // TODO test as3.filegetcontents(file) when loaded by default
 
     // TODO test with and without strict

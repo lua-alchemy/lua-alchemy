@@ -1,13 +1,7 @@
 -- Create a dynamic AS3 object with some methods that increment values
 
 -- Override print so results can be displayed in canvas
-print = function(...)
- local t = {...}
- for k,v in pairs(t) do
-   t[k] = tostring(v)
- end
- output.text = as3.tolua(output.text) .. table.concat(t,"\t") .. "\n"
-end
+print = as3.makeprinter(output)
 
 -- Increment function
 local inc = function(self, n)
