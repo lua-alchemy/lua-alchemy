@@ -59,7 +59,7 @@ do
     end
 
     make_callobj = function(t, k)
-      if not as3.is_as3_value(t) then
+      if not as3.isas3value(t) then
         error("as3 object expected, got "..(as3.type(t) or type(t)))
       end
       return setmetatable(
@@ -110,7 +110,7 @@ do
     {
       "release", "tolua", "get", "set", "assign",
       "call", "type", "namespacecall", "trace",
-      "newclass", "newclass2", "new", "new2", "is_as3_value"
+      "newclass", "newclass2", "new", "new2", "isas3value"
     }
 
     for _, name in ipairs(methods) do

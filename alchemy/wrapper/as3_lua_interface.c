@@ -497,9 +497,9 @@ static int as3_type(lua_State * L)
 
 /*
 * Return true if argument is AS3 value. Return nil otherwise
-* Lua example: as3.is_as3_value(v)
+* Lua example: as3.isas3value(v)
 */
-static int as3_is_as3_value(lua_State * L)
+static int as3_isas3value(lua_State * L)
 {
   LCALL(L, stack);
 
@@ -688,7 +688,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "trace", as3_trace },
   { "newclass2", as3_newclass2 },
   { "new2", as3_new2 },
-  { "is_as3_value", as3_is_as3_value },
+  { "isas3value", as3_isas3value },
   { "toas3", as3_toas3 },
 
   { NULL, NULL } /* The end */

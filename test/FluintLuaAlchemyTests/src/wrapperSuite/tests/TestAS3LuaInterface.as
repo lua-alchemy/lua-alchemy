@@ -447,7 +447,7 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         local ba = as3.new("flash.utils::ByteArray")
         local s = as3.new("String")
-        return as3.is_as3_value(ba), as3.is_as3_value(s)
+        return as3.isas3value(ba), as3.isas3value(s)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -459,7 +459,7 @@ package wrapperSuite.tests
     public function testAS3IsAS3ValueNoArgs():void
     {
       var script:String = ( <![CDATA[
-        return as3.is_as3_value()
+        return as3.isas3value()
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -470,7 +470,7 @@ package wrapperSuite.tests
     public function testAS3IsAS3ValueInvalid():void
     {
       var script:String = ( <![CDATA[
-        assert(as3.is_as3_value(5) == nil)
+        assert(as3.isas3value(5) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -480,7 +480,7 @@ package wrapperSuite.tests
     public function testAS3IsAS3ValueInvalidUserdata():void
     {
       var script:String = ( <![CDATA[
-        assert(as3.is_as3_value(newproxy()) == nil)
+        assert(as3.isas3value(newproxy()) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -493,7 +493,7 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         local value = newproxy()
         debug.setmetatable(value, {})
-        assert(as3.is_as3_value(value) == nil)
+        assert(as3.isas3value(value) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
