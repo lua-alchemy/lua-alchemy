@@ -1,5 +1,5 @@
 -- Provides
---   as3.file_get_contents()
+--   as3.filegetcontents()
 -- Depends on
 --   sugar
 
@@ -82,7 +82,7 @@ do
     return result, error
   end
 
-  as3.file_get_contents = function(filename)
+  as3.filegetcontents = function(filename)
     init(filename)
 
     wait()

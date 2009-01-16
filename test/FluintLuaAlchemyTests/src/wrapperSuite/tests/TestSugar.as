@@ -218,5 +218,9 @@ package wrapperSuite.tests
       myLuaAlchemy.close()
       assertEquals("Closed", TestWrapperHelper.staticString);
     }
+
+    // TODO test as3.filegetcontents(file) when loaded by default
+
+    // TODO test with and without strict
   }
 }

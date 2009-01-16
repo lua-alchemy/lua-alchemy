@@ -3,7 +3,7 @@
 --   dofile()
 -- Depends on
 --   _LUA_ALCHEMY_FILESYSTEM_ROOT
---   as3.file_get_contents()
+--   as3.filegetcontents()
 
 do
   local BUILTIN_PREFIX = "builtin://"
@@ -40,8 +40,8 @@ do
       res, err = old_loadfile(filename) -- Builtin prefix loaded with old loadfile
     elseif prefix then
       -- TODO: Uncomment this as soon as flyield() would be fixed.
-      res, err = nil, "as3.file_get_contents() disabled"
-      --res, err = as3.tolua(as3.file_get_contents(filename))
+      res, err = nil, "as3.filegetcontents() disabled"
+      --res, err = as3.tolua(as3.filegetcontents(filename))
       if res ~= nil then
         res, err = loadstring(res, "@"..filename)
       end

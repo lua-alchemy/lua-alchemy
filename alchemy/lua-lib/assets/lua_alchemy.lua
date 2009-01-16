@@ -8,7 +8,7 @@ local old_print, old_dofile, old_loadfile = print, dofile, loadfile
 old_dofile("builtin://lua_alchemy/as3/sugar.lua")
 
 -- TODO: Uncomment this as soon as flyield() would be fixed.
---old_dofile("builtin://lua_alchemy/as3/file_get_contents.lua")
+--old_dofile("builtin://lua_alchemy/as3/filegetcontents.lua")
 
 old_dofile("builtin://lua_alchemy/as3/toobject.lua")
 old_dofile("builtin://lua_alchemy/as3/onclose.lua")
