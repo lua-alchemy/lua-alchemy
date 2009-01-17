@@ -8,28 +8,23 @@
   <mx:Script>
     <![CDATA[
       import mx.controls.Alert;
-      import luaAlchemy.lua_wrapper;
-      import cmodule.lua_wrapper.CLibInit;
+      import luaAlchemy.LuaAlchemy;
 
       // Extra imports to expose stuff to Lua
       import mx.effects.Move;
       import mx.containers.*;
       import mx.controls.*;
 
-      private var luaState:uint;
+      private var lua:LuaAlchemy;
 
       private function onCreationComplete():void
       {
-        const libInitializer:CLibInit = new CLibInit();
+        LuaAssets.init(LuaAlchemy.libInit);
 
-        luaAlchemy.LuaAssets.init(libInitializer);
-        LuaAssets.init(libInitializer);
+        lua = new LuaAlchemy(LuaAssets.filesystemRoot());
+        lua.setGlobal("CANVAS", luaCanvas);
 
-        luaState = lua_wrapper.luaInitilizeState();
-        lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_CANVAS", luaCanvas);
-        lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", LuaAssets.filesystemRoot());
-
-        var stack:Array = lua_wrapper.doFile(luaState, "builtin://init.lua");
+        var stack:Array = lua.doFile("builtin://init.lua");
         if (stack.shift() == false)
         {
           Alert.show(
