@@ -11,33 +11,46 @@ package luaAlchemy
     private static const _luaAssetInit:* = LuaAssets.init(libInit);
 
     private var luaState:uint = 0;
+    private var vfsRoot:String = "builtin://";
 
     /**
     * Create and init() a new Lua interpreter
+    * @param virtualFilesystemRoot The root of virtual file system (default "builtin://")
     * @see init()
     */
-    public function LuaAlchemy()
+    public function LuaAlchemy(virtualFilesystemRoot:* = null)
     {
-      init();
+      init(virtualFilesystemRoot);
     }
 
     /**
     * Initialize the Lua interpreter.  If already initialized, it will be closed
     * and then initialized.
+    * @param virtualFilesystemRoot The new root of virtual file system (optional)
     * @see close()
     */
-    public function init():void
+    public function init(virtualFilesystemRoot:* = null):void
     {
-      if (luaState != 0) close();
+      if (luaState != 0)
+      {
+        close();
+      }
+
+      if (virtualFilesystemRoot)
+      {
+        // Note this can not be changed once state is created
+        vfsRoot = virtualFilesystemRoot;
+      }
+
       luaState = lua_wrapper.luaInitilizeState();
 
-      lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", LuaAssets.filesystemRoot());
+      lua_wrapper.setGlobal(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot);
 
       var stack:Array = lua_wrapper.doFile(luaState, "builtin://lua_alchemy.lua");
       if (stack.shift() == false)
       {
         close();
-        throw new Error("LuaAlchemy.init() failed to call 'lua_alchemy.lua': " + stack.toString());
+        throw new Error("LuaAlchemy.init() to call 'lua_alchemy.lua' failed: " + stack.toString());
       }
     }
 
@@ -62,7 +75,10 @@ package luaAlchemy
     */
     public function doFile(strFileName:String):Array
     {
-      if (luaState == 0) init();
+      if (luaState == 0)
+      {
+        init();
+      }
       return lua_wrapper.doFile(luaState, strFileName);
     }
 
@@ -76,7 +92,10 @@ package luaAlchemy
     */
     public function doString(strValue:String):Array
     {
-      if (luaState == 0) init();
+      if (luaState == 0)
+      {
+        init();
+      }
       return lua_wrapper.luaDoString(luaState, strValue);
     }
 
@@ -87,7 +106,10 @@ package luaAlchemy
     */
     public function setGlobal(key:String, value:*):void
     {
-      if (luaState == 0) init();
+      if (luaState == 0)
+      {
+        init();
+      }
       lua_wrapper.setGlobal(luaState, key, value);
     }
   }
