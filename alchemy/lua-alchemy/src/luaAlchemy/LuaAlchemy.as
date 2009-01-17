@@ -5,8 +5,10 @@ package luaAlchemy
   /** Class calls and initializes the Lua interpreter */
   public class LuaAlchemy
   {
-    private static const _libInit:cmodule.lua_wrapper.CLibInit = new cmodule.lua_wrapper.CLibInit();
-    private static const _luaAssetInit:* = LuaAssets.init(_libInit);
+    /** Lua assets initializer. Exposed to allow user's assets exposure to Lua */
+    public static const libInit:cmodule.lua_wrapper.CLibInit = new cmodule.lua_wrapper.CLibInit();
+
+    private static const _luaAssetInit:* = LuaAssets.init(libInit);
 
     private var luaState:uint = 0;
 
