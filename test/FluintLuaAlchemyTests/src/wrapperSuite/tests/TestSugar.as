@@ -237,15 +237,25 @@ package wrapperSuite.tests
       assertEquals("First line\nSecond line\n", printer.text);
     }
 
-		public function testChainSugarCalls():void
-		{
+    public function testChainSugarCalls():void
+    {
       var script:String = ( <![CDATA[
         return as3.class.String.new("Test Chain").toUpperCase().toLowerCase()
       ]]> ).toString();
       var stack:Array = myLuaAlchemy.doString(script);
       assertTrue(stack[0]);
       assertEquals("test chain", stack[1]);
-		}
+    }
+
+    public function testChainSugarCallsOnGet():void
+    {
+      var script:String = ( <![CDATA[
+        return as3.class.Array.new().length.toString()
+      ]]> ).toString();
+      var stack:Array = myLuaAlchemy.doString(script);
+      assertTrue(stack[0]);
+      assertEquals("0", stack[1]);
+    }
 
     // TODO test as3.filegetcontents(file) when loaded by default
 
