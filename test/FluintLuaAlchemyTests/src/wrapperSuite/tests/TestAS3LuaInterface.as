@@ -669,15 +669,15 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         local i = 3
-        local f = function(p) assert(type(p) == "number") i = i + p; return 42 end
+        local f = function(p) assert(type(as3.tolua(p)) == "number") i = i + as3.tolua(p); return 42 end
         local v = as3.toas3(f)
         assert(v)
         assert(as3.type(v):match("^Function%-%d+$"))
         -- TODO: Wrong! Value must be unboxed! (Or must it?)
-        assert(as3.tolua(v) == v)
-        --assert(as3.tolua(v) == f)
+        assert(v == v)
+        --assert(v == f)
         assert(i == 3)
-        assert(as3.call(v, "call", v, 7) == 42)
+        assert(as3.tolua(as3.call(v, "call", v, 7)) == 42)
         assert(i == 10)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
@@ -692,10 +692,10 @@ package wrapperSuite.tests
         local v = as3.toas3(
             function(a, b, c)
               called = true
-              as3.trace("arguments", a, b, c)
-              assert(a == 42)
-              assert(b == nil)
-              assert(c == "Lua Alchemy")
+              as3.trace("arguments", as3.tolua(a), as3.tolua(b), as3.tolua(c))
+              assert(as3.tolua(a) == 42)
+              assert(as3.tolua(b) == nil)
+              assert(as3.tolua(c) == "Lua Alchemy")
               return c, a, b
             end
           )
@@ -703,11 +703,11 @@ package wrapperSuite.tests
         assert(as3.type(v):match("^Function%-%d+$"))
         local r = as3.call(v, "call", v, 42, nil, "Lua Alchemy")
         assert(called, "function must be called")
-        as3.trace("ZZZ2", as3.call(r, "join"), r, type(r), tostring(r), as3.type(r))
+        as3.trace("ZZZ2", as3.tolua(as3.call(r, "join")), r, type(r), tostring(r), as3.type(r))
         assert(as3.type(r) == "Array")
-        assert(as3.get(r, 0) == "Lua Alchemy")
-        assert(as3.get(r, 1) == 42)
-        assert(as3.get(r, 2) == nil)
+        assert(as3.tolua(as3.get(r, 0)) == "Lua Alchemy")
+        assert(as3.tolua(as3.get(r, 1)) == 42)
+        assert(as3.tolua(as3.get(r, 2)) == nil)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);
@@ -786,5 +786,48 @@ package wrapperSuite.tests
       assertTrue(stack[0]);
       assertEquals(1, stack.length);
     }
+
+    public function testAS3CallReturnsAS3Type():void
+    {
+      var script:String = ( <![CDATA[
+        local r1 = as3.new("flash.geom::Rectangle", 0, 0, 10, 10)
+				local contains = as3.call(r1, "contains", 1, 1)
+				return as3.type(contains), type(contains)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+      assertEquals("Boolean", stack[1]);
+      assertEquals("userdata", stack[2]);
+    }
+
+    public function testAS3GetReturnsAS3Type():void
+    {
+      var script:String = ( <![CDATA[
+        r1 = as3.new("flash.geom::Rectangle", 0, 0, 10, 10)
+				left = as3.get(r1, "left")
+				return as3.type(left), type(left)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+      assertEquals("int", stack[1]);
+      assertEquals("userdata", stack[2]);
+    }
+
+    public function testAS3NamespaceCallReturnsAS3Type():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.new("wrapperSuite.tests::TestWrapperHelper")
+        local namespace = as3.namespacecall("flash.utils", "getQualifiedClassName", v)
+				return as3.type(namespace), type(namespace)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("String", stack[1]);
+      assertEquals("userdata", stack[2]);
+    }
+
+
   }
 }

@@ -24,7 +24,7 @@ int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
   for (i = 0; i < len; i++)
   {
     cur = AS3_Get(array, AS3_Int(i));
-    push_as3_to_lua_stack(L, cur);
+    push_as3_lua_userdata(L, cur);
     AS3_Release(cur);
   }
 

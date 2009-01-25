@@ -73,7 +73,7 @@ package wrapperSuite.tests
            "addEventListener",
            "TestWrapperIncrementEvent",
            function()
-             as3.set(testHelper, "count", as3.get(testHelper, "count") + 1)
+             as3.set(testHelper, "count", as3.tolua(as3.get(testHelper, "count")) + 1)
            end)
       ]]> ).toString();
 
@@ -174,13 +174,13 @@ package wrapperSuite.tests
                obj,
                "addThirteen",
                function(n)
-                 return n + 13
+                 return as3.tolua(n) + 13
                end
              )
            return obj
         end
         local as_object = create_as_object()
-        local result = as3.call(as_object, "addThirteen", 5)
+        local result = as3.tolua(as3.call(as_object, "addThirteen", 5))
         assert(type(result) == "number", "wrong result: "..tostring(result))
         result = result + 2
         return result
@@ -249,6 +249,36 @@ package wrapperSuite.tests
       assertEquals("error is ignored", stack[1]);
       assertEquals(2, stack.length);
     }
+
+    public function testCallbackGetsAS3Type():void
+    {
+      var script:String = ( <![CDATA[
+        local create_as_object = function()
+           local obj = as3.new("Object")
+           as3.set(
+               obj,
+               "addThirteen",
+               function(n)
+								 assert(type(n) == "userdata", "n better be Lua userdata")
+								 assert(as3.type(n) == "int", "n better be AS3 int")
+                 return as3.tolua(n) + 13
+               end
+             )
+           return obj
+        end
+        local as_object = create_as_object()
+        local result = as3.tolua(as3.call(as_object, "addThirteen", 5))
+        return result
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      trace(stack);
+
+      assertTrue(stack[0]);
+      assertEquals(18, stack[1]);
+      assertEquals(2, stack.length);
+    }
+
   }
 }
 

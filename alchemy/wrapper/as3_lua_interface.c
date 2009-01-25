@@ -290,7 +290,7 @@ static int as3_tolua(lua_State * L)
 
 /*
 * Return the requested property of a given ActionScript object.  The value
-* is returned as a Lua type if possible (see push_as3_to_lua_stack)
+* is always returned as an AS3 type
 * Lua example: as3.get(v, "text")
 */
 static int as3_get(lua_State * L)
@@ -309,7 +309,7 @@ static int as3_get(lua_State * L)
   val = AS3_GetS(userdata->value, property);
   /* TODO check for AS3_GetS successful */
 
-  push_as3_to_lua_stack(L, val);
+  push_as3_lua_userdata(L, val);
 
   AS3_Release(val);
 
@@ -364,7 +364,8 @@ static int as3_assign(lua_State * L)
 }
 
 /*
-* Call a function on a given ActionScript object
+* Call a function on a given ActionScript object.
+* Any return data is returned as an AS3 object
 * Lua example: as3.call(v, "myFunction", "param1", param2, ...)
 */
 static int as3_call(lua_State * L)
@@ -435,7 +436,7 @@ static int as3_call(lua_State * L)
   AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", result)));
 #endif /* DO_SPAM */
 
-  push_as3_to_lua_stack(L, result);
+  push_as3_lua_userdata(L, result);
 
 #ifdef DO_SPAM
   /* TODO: Remove */
