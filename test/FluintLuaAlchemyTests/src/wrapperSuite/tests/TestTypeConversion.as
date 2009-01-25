@@ -264,7 +264,7 @@ package wrapperSuite.tests
 
         private function passThroughTest(asValIn:*, luaVal:String, asValOut:*):void
         {
-          lua_wrapper.setGlobal(luaState, "myValue", asValIn);
+          lua_wrapper.setGlobalLuaValue(luaState, "myValue", asValIn);
 
           var script:String = ( <![CDATA[
             if myValue ~= ]]> ) + luaVal + ( <![CDATA[ then
@@ -333,7 +333,7 @@ package wrapperSuite.tests
 
         public function testAS3PassThroughNumberNaN():void
         {
-          lua_wrapper.setGlobal(luaState, "myValue", 0/0);
+          lua_wrapper.setGlobalLuaValue(luaState, "myValue", 0/0);
 
           var script:String = ( <![CDATA[
             assert(type(myValue) == "number")

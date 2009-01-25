@@ -362,6 +362,36 @@ package wrapperSuite.tests
       assertEquals("Name: Bubba Joe Bob Brain age: 13", myHelper.nameAge);
     }
 
+    public function testAS3SetGlobalRemainsAS3Type():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobal(luaState, "testGlobal", "Hello there");
+
+      var script:String = ( <![CDATA[
+        return as3.type(testGlobal), type(testGlobal)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+			assertEquals("String", stack[1])
+			assertEquals("userdata", stack[2])
+    }
+
+    public function testAS3SetGlobalLuaValue():void
+    {
+      var myHelper:TestWrapperHelper = new TestWrapperHelper();
+      lua_wrapper.setGlobalLuaValue(luaState, "testGlobal", "Hello there");
+
+      var script:String = ( <![CDATA[
+        return as3.type(testGlobal), type(testGlobal)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+
+      assertTrue(stack[0]);
+			assertEquals(null, stack[1])
+			assertEquals("string", stack[2])
+    }
+
     /*
         // TODO: as3.stage() currently returns AS3 void. Fix this
         public function testAS3Stage():void

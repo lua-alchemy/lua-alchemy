@@ -227,6 +227,12 @@ public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS
 
 public function setGlobal(luaState:(lua_State *)uint, key:String, value:(AS3_Val)*):void
 {
+  push_as3_lua_userdata(luaState, value);
+  lua_setglobal(luaState, key);
+}
+
+public function setGlobalLuaValue(luaState:(lua_State *)uint, key:String, value:(AS3_Val)*):void
+{
   push_as3_to_lua_stack(luaState, value);
   lua_setglobal(luaState, key);
 }

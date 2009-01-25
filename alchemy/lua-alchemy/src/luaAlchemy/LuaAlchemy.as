@@ -101,6 +101,7 @@ package luaAlchemy
 
     /**
     * Set a global Lua variable with the key/value pair.
+    *	The value is never converted to a Lua native type.
     * @param key The name of the new global variable
     * @param value The value of the new global variable
     */
@@ -111,6 +112,21 @@ package luaAlchemy
         init();
       }
       lua_wrapper.setGlobal(luaState, key, value);
+    }
+
+    /**
+    * Set a global Lua variable with the key/value pair.
+    * The value is converted to a native Lua type if possible.
+    * @param key The name of the new global variable
+    * @param value The value of the new global variable
+    */
+    public function setGlobalLuaValue(key:String, value:*):void
+    {
+      if (luaState == 0)
+      {
+        init();
+      }
+      lua_wrapper.setGlobalLuaValue(luaState, key, value);
     }
   }
 }
