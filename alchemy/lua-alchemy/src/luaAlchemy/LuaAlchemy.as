@@ -1,6 +1,7 @@
 package luaAlchemy
 {
   import cmodule.lua_wrapper.CLibInit;
+  import flash.utils.ByteArray;
 
   /** Class calls and initializes the Lua interpreter */
   public class LuaAlchemy
@@ -127,6 +128,16 @@ package luaAlchemy
         init();
       }
       lua_wrapper.setGlobalLuaValue(luaState, key, value);
+    }
+
+    /**
+    * Supply a ByteArray as a file in Lua
+    * @param name The name of the file within Lua
+    * @param data The contents of the file
+    */
+    public function supplyFile(name:String, data:ByteArray):void
+    {
+      libInit.supplyFile(name, data);
     }
   }
 }
