@@ -791,8 +791,8 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         local r1 = as3.new("flash.geom::Rectangle", 0, 0, 10, 10)
-				local contains = as3.call(r1, "contains", 1, 1)
-				return as3.type(contains), type(contains)
+        local contains = as3.call(r1, "contains", 1, 1)
+        return as3.type(contains), type(contains)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
@@ -805,8 +805,8 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         r1 = as3.new("flash.geom::Rectangle", 0, 0, 10, 10)
-				left = as3.get(r1, "left")
-				return as3.type(left), type(left)
+        left = as3.get(r1, "left")
+        return as3.type(left), type(left)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
@@ -820,7 +820,7 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         local v = as3.new("wrapperSuite.tests::TestWrapperHelper")
         local namespace = as3.namespacecall("flash.utils", "getQualifiedClassName", v)
-				return as3.type(namespace), type(namespace)
+        return as3.type(namespace), type(namespace)
         ]]> ).toString();
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       assertTrue(stack[0]);

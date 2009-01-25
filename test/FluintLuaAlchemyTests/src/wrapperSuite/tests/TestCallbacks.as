@@ -259,8 +259,8 @@ package wrapperSuite.tests
                obj,
                "addThirteen",
                function(n)
-								 assert(type(n) == "userdata", "n better be Lua userdata")
-								 assert(as3.type(n) == "int", "n better be AS3 int")
+                 assert(type(n) == "userdata", "n better be Lua userdata")
+                 assert(as3.type(n) == "int", "n better be AS3 int")
                  return as3.tolua(n) + 13
                end
              )
