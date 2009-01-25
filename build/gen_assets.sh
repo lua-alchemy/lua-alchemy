@@ -8,21 +8,9 @@ ASSETS_CLASS_NAME=$2
 ASSETS_PREFIX=$3
 PACKAGE_NAME=$4
 
-function usage {
+if [ -z "$FILESYSTEM_ROOT" -o -z "$ASSETS_CLASS_NAME" -o -z "$ASSETS_PREFIX" ]; then
   echo "Usage: $0 filesystem_root assets_class_name assets_prefix [package_name] < in_file > out_file" 1>&2
-  exit
-}
-
-if [ -z "$FILESYSTEM_ROOT" ]; then
-  usage
-fi
-
-if [ -z "$ASSETS_CLASS_NAME" ]; then
-  usage
-fi
-
-if [ -z "$ASSETS_PREFIX" ]; then
-  usage
+  exit 1
 fi
 
 # NOTE: Package name may be empty
@@ -34,7 +22,7 @@ ASSETS_PREFIX=$(echo $ASSETS_PREFIX | sed -e 's/\/*$//')/
 
 if [ ! -d "$FILESYSTEM_ROOT" ]; then
   echo "Filesystem root must be a directory `$FILESYSTEM_ROOT`" 1>&2
-  exit
+  exit 1
 fi
 
 nl='${NL}'
