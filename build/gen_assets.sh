@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # TODO: Bake in precompiled byte-code instead of sources!
 #       (But do that in the build script, not here)

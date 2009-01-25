@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 open test/FluintLuaAlchemyTests/build/debug/FluintLuaAlchemyTests.swf
 open demo/LuaAlchemyDemo/build/debug/LuaAlchemyDemo.swf
