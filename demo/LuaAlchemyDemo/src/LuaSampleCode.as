@@ -23,6 +23,9 @@ package
     [Embed(source="../assets/createasobject.lua", mimeType="application/octet-stream")]
     private static var _createASObjectLuaClass:Class;
 
+    [Embed(source="../assets/settimeout.lua", mimeType="application/octet-stream")]
+    private static var _setTimeoutLuaClass:Class;
+
     [Embed(source="../assets/pausecount.lua", mimeType="application/octet-stream")]
     private static var _pauseCountLuaClass:Class;
 
@@ -33,6 +36,7 @@ package
         {label:"Moving Box", asset:_moveBoxLuaClass},
         {label:"Button Click", asset:_buttonClickLuaClass},
         {label:"Create AS Object", asset:_createASObjectLuaClass},
+        {label:"Namespace Call setTimeout()", asset:_setTimeoutLuaClass},
         //{label:"Pause Count with FlYield", asset:_pauseCountLuaClass}, TODO as3.flyield() not working as expected
     ];
 
