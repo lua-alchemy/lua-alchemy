@@ -4,7 +4,7 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class CommonTestCaseWrapper extends TestCase
+  public class CommonTestCaseWrapper extends BaseTestCase
   {
     protected var luaState:uint;
 
