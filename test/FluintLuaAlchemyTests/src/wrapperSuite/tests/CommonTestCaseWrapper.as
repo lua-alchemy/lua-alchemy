@@ -28,10 +28,10 @@ package wrapperSuite.tests
       trace("CommonTestCaseWrapper::tearDown(): end");
     }
 
-    protected function doString(script:String, expected:Array):void
+    protected function doString(script:String, expected:Array, verifyLength:Boolean = true):void
     {
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      checkLuaResult(expected, stack);
+      checkLuaResult(expected, stack, verifyLength);
     }
 
   }
