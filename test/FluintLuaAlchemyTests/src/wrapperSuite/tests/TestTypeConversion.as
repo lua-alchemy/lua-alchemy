@@ -38,9 +38,8 @@ package wrapperSuite.tests
         end
 
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      assertTrue(stack[0]);
-      assertEquals(1, stack.length);
+
+      doString(script, [true]);
     }
 
     public function testBooleanToLuaType():void
@@ -54,14 +53,8 @@ package wrapperSuite.tests
           as3.tolua(bt),
           as3.tolua(bf)
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertTrue(stack[0]);
-      assertEquals(true, stack[1]);
-      assertEquals(true, stack[2]);
-      assertEquals(true, stack[3]);
-      assertEquals(false, stack[4]);
-      assertEquals(5, stack.length);
+      doString(script, [true, true, true, true, false]);
     }
 
         /* TODO: Move type conversion tests to a separate suite */
@@ -71,11 +64,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return ""
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals("", stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, ""]);
         }
 
         public function testAS3StringCommon():void
@@ -83,11 +73,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return "Lua Alchemy"
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals("Lua Alchemy", stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, "Lua Alchemy"]);
         }
 
     /*
@@ -110,11 +97,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return true
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(true, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, true]);
         }
 
         public function testAS3False():void
@@ -122,11 +106,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return false
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(false, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, false]);
         }
 
         public function testAS3NumberInteger():void
@@ -134,11 +115,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return 42
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(42, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, 42]);
         }
 
         public function testAS3NumberPI():void
@@ -146,11 +124,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return math.pi
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(Math.PI, stack[1]); // Note this is implementation specific. Compare with epsilon.
-          assertEquals(2, stack.length);
+          doString(script, [true, Math.PI]); // Note this is implementation specific. Compare with epsilon.
         }
 
         public function testAS3NumberPosInf():void
@@ -158,11 +133,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return 1/0
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(1/0, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, 1/0]);
         }
 
         public function testAS3NumberNegInf():void
@@ -170,11 +142,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return -1/0
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(-1/0, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, -1/0]);
         }
 
         public function testAS3NumberNaN():void
@@ -194,11 +163,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return nil
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(null, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, null]);
         }
 
         public function testAS3UserdataForeign():void
@@ -206,11 +172,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return newproxy()
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals("userdata", stack[1]); // TODO: Should return black-box object, not string.
-          assertEquals(2, stack.length);
+          doString(script, [true, "userdata"]); // TODO: stack[1] Should return black-box object, not string.
         }
 
         public function testAS3UserdataAS3():void
@@ -219,11 +182,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return as3.new("Number")
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(0, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, 0]);
         }
 
         public function testAS3Table():void
@@ -231,11 +191,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return {1}
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals("table", stack[1]); // TODO: Should return black-box object, not string.
-          assertEquals(2, stack.length);
+          doString(script, [true, "table"]); // TODO: stack[1] Should return black-box object, not string.
         }
 
         public function testAS3Function():void
@@ -255,11 +212,8 @@ package wrapperSuite.tests
           var script:String = ( <![CDATA[
             return coroutine.create(function() end)
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals("thread", stack[1]); // TODO: Should return black-box object, not string.
-          assertEquals(2, stack.length);
+          doString(script, [true, "thread"]); // TODO: stack[1] Should return black-box object, not string.
         }
 
         private function passThroughTest(asValIn:*, luaVal:String, asValOut:*):void
@@ -273,11 +227,8 @@ package wrapperSuite.tests
             end
             return myValue
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(asValOut, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, asValOut]);
         }
 
         // TODO: Test all supported AS3 types in that manner!
@@ -368,11 +319,8 @@ package wrapperSuite.tests
             end
             return myValue
             ]]> ).toString();
-          var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-          assertTrue(stack[0]);
-          assertEquals(myHelper, stack[1]);
-          assertEquals(2, stack.length);
+          doString(script, [true, myHelper]);
         }
   }
 }
