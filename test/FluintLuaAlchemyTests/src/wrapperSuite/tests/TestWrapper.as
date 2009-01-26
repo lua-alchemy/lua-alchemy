@@ -14,29 +14,6 @@ package wrapperSuite.tests
       super();
     }
 
-    private function checkDoStringResult(expected:Array, actual:Array):void
-    {
-      assertEquals("stack length", expected.length, actual.length);
-      for (var i:int = 0; i < expected.length; ++i)
-      {
-        if (i == 0)
-        {
-          assertEquals("success code", expected[i], actual[i]);
-        }
-        else
-        {
-          assertEquals("return value #" + i, expected[i], actual[i]);
-        }
-      }
-    }
-
-    // TODO: Reuse!
-    private function doString(script:String, expected:Array):void
-    {
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-      checkDoStringResult(expected, stack);
-    }
-
     public function testCreateCloseContext():void
     {
       var luaState:uint = lua_wrapper.luaInitilizeState();
