@@ -5,44 +5,47 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestLuaAlchemyInterface extends TestCase
+  public class TestLuaAlchemyInterface extends CommonLuaAlchemyTestCase
   {
-    protected var myLuaAlchemy:LuaAlchemy;
-
-    override protected function setUp():void
-    {
-      myLuaAlchemy = new LuaAlchemy();
-    }
-
-    override protected function tearDown():void
-    {
-      trace("TestLuaAlchemyInterface::tearDown(): begin");
-      try
-      {
-        myLuaAlchemy.close();
-        myLuaAlchemy = null;
-      }
-      catch (errObject:Error)
-      {
-        trace("TestLuaAlchemyInterface::tearDown(): error " + errObject.message);
-        throw errObject;
-      }
-      trace("TestLuaAlchemyInterface::tearDown(): end");
-    }
-
     public function testInit():void
     {
-      assertTrue(false);
+      var scriptInit:String = ( <![CDATA[
+        iTest = 5 -- intentionally a global so available to next script
+        ]]> ).toString();
+      var scriptAdd:String = ( <![CDATA[
+        return iTest + 5
+        ]]> ).toString();
+
+      myLuaAlchemy.doString(scriptInit);
+      doString(scriptAdd, [true, 10]);
+
+      myLuaAlchemy.init();
+      doString(scriptAdd, [false], false);
     }
 
-    public function testClose():void
+    public function testCloseAndAutoInit():void
     {
-      assertTrue(false);
+      var scriptInit:String = ( <![CDATA[
+        iTest = 5 -- intentionally a global so available to next script
+        ]]> ).toString();
+      var scriptAdd:String = ( <![CDATA[
+        return iTest + 5
+        ]]> ).toString();
+
+      myLuaAlchemy.doString(scriptInit);
+      doString(scriptAdd, [true, 10]);
+
+      myLuaAlchemy.close();
+      doString(scriptAdd, [false], false);
     }
 
     public function testDoString():void
     {
-      assertTrue(false);
+      var script:String = ( <![CDATA[
+        return "Test doString"
+        ]]> ).toString();
+
+      doString(script, [true, "Test doString"])
     }
 
     public function testDoFile():void
@@ -63,12 +66,24 @@ package wrapperSuite.tests
 
     public function testSetGlobal():void
     {
-      assertTrue(false);
+      myLuaAlchemy.setGlobal("hello", "Hello There");
+
+      var script:String = ( <![CDATA[
+        return hello, as3.type(hello), type(hello)
+        ]]> ).toString();
+
+      doString(script, [true, "Hello There", "String", "userdata"])
     }
 
     public function testSetGlobalLuaValue():void
     {
-      assertTrue(false);
+      myLuaAlchemy.setGlobalLuaValue("hello", "Hello There");
+
+      var script:String = ( <![CDATA[
+        return hello, as3.type(hello), type(hello)
+        ]]> ).toString();
+
+      doString(script, [true, "Hello There", null, "string"])
     }
 
   }
