@@ -1,6 +1,5 @@
 package wrapperSuite.tests
 {
-  import luaAlchemy.LuaAlchemy;
   import flash.utils.ByteArray;
 
   import net.digitalprimates.fluint.tests.TestCase;
