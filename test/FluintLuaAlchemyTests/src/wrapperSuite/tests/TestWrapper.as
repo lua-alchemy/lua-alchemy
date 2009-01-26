@@ -34,11 +34,7 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
       ]]> ).toString();
 
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
-
-      trace(stack.toString());
-      assertTrue(stack[0]);
-      assertEquals(1, stack.length);
+      doString(script, [true]);
     }
 
     public function testSyntaxError():void
@@ -46,11 +42,8 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         bad code here
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertFalse(stack[0]);
-      assertEquals("luaDoString:2: '=' expected near 'code'", stack[1]);
-      assertEquals(2, stack.length);
+      doString(script, [false, "luaDoString:2: '=' expected near 'code'"]);
     }
 
     public function testRuntimeErrorString():void
@@ -58,11 +51,8 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         error("my runtime error")
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertFalse(stack[0]);
-      assertEquals("luaDoString:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tluaDoString:2: in main chunk", stack[1]);
-      assertEquals(2, stack.length);
+      doString(script, [false, "luaDoString:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tluaDoString:2: in main chunk"]);
     }
 
     public function testRuntimeErrorNonstring():void
@@ -70,11 +60,9 @@ package wrapperSuite.tests
       var script:String = ( <![CDATA[
         error({})
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      assertFalse(stack[0]);
-      assertEquals("table", stack[1]); // TODO: Should be a black-boxed object
-      assertEquals(2, stack.length);
+      // TODO: stack[1] Should be a black-boxed object
+      doString(script, [false, "table"]);
     }
 
     // Note: it seems that you can not override once supplied file in Alchemy
@@ -90,18 +78,14 @@ package wrapperSuite.tests
       libInitializer.supplyFile("myFileDoFileNoError.lua", luaAsset);
       var stack:Array = lua_wrapper.doFile(luaState, "myFileDoFileNoError.lua");
 
-      assertTrue(stack[0]);
-      assertEquals(42, stack[1]);
-      assertEquals(2, stack.length);
+      checkLuaResult([true, 42], stack);
     }
 
     public function testDoFileNoFile():void
     {
       var stack:Array = lua_wrapper.doFile(luaState, "no such file");
 
-      assertFalse(stack[0]);
-      assertEquals("cannot open no such file: No such file or directory", stack[1]);
-      assertEquals(2, stack.length);
+      checkLuaResult([false, "cannot open no such file: No such file or directory"], stack);
     }
 
     public function testDoFileSyntaxError():void
@@ -115,9 +99,7 @@ package wrapperSuite.tests
       libInitializer.supplyFile("myFileSyntaxError.lua", luaAsset);
       var stack:Array = lua_wrapper.doFile(luaState, "myFileSyntaxError.lua");
 
-      assertFalse(stack[0]);
-      assertEquals("myFileSyntaxError.lua:2: '=' expected near 'code'", stack[1]);
-      assertEquals(2, stack.length);
+      checkLuaResult([false, "myFileSyntaxError.lua:2: '=' expected near 'code'"], stack);
     }
 
     public function testDoFileRuntimeErrorString():void
@@ -131,9 +113,7 @@ package wrapperSuite.tests
       libInitializer.supplyFile("myFileRuntimeErrorString.lua", luaAsset);
       var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorString.lua");
 
-      assertFalse(stack[0]);
-      assertEquals("myFileRuntimeErrorString.lua:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tmyFileRuntimeErrorString.lua:2: in main chunk", stack[1]);
-      assertEquals(2, stack.length);
+      checkLuaResult([false, "myFileRuntimeErrorString.lua:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tmyFileRuntimeErrorString.lua:2: in main chunk"], stack);
     }
 
     public function testDoFileRuntimeErrorTable():void
@@ -147,9 +127,8 @@ package wrapperSuite.tests
       libInitializer.supplyFile("myFileRuntimeErrorTable.lua", luaAsset);
       var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorTable.lua");
 
-      assertFalse(stack[0]);
-      assertEquals("table", stack[1]); // TODO: Should be a black-boxed object
-      assertEquals(2, stack.length);
+      // TODO: stack[1] Should be a black-boxed object
+      checkLuaResult([false, "table"], stack);
     }
   }
 }
