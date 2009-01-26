@@ -4,9 +4,10 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class CommonTestCase extends TestCase
+  public class CommonTestCaseWrapper extends TestCase
   {
     protected var luaState:uint;
+
     override protected function setUp():void
     {
       luaState = lua_wrapper.luaInitilizeState();
@@ -14,17 +15,17 @@ package wrapperSuite.tests
 
     override protected function tearDown():void
     {
-      trace("CommonTestCase::tearDown(): begin");
+      trace("CommonTestCaseWrapper::tearDown(): begin");
       try
       {
         lua_wrapper.luaClose(luaState);
       }
       catch (errObject:Error)
       {
-        trace("CommonTestCase::tearDown(): error " + errObject.message);
+        trace("CommonTestCaseWrapper::tearDown(): error " + errObject.message);
         throw errObject;
       }
-      trace("CommonTestCase::tearDown(): end");
+      trace("CommonTestCaseWrapper::tearDown(): end");
     }
   }
 }

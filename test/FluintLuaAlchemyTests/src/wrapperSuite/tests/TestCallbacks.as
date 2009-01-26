@@ -5,7 +5,7 @@ package wrapperSuite.tests
   import flash.utils.ByteArray;
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestCallbacks extends CommonTestCase
+  public class TestCallbacks extends CommonTestCaseWrapper
   {
     public function testLuaAddEventListener():void
     {

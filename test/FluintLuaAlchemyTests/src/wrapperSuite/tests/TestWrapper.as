@@ -7,7 +7,7 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestWrapper extends CommonTestCase
+  public class TestWrapper extends CommonTestCaseWrapper
   {
     public function TestWrapper()
     {

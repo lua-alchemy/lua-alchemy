@@ -5,7 +5,7 @@ package wrapperSuite.tests
   import flash.utils.ByteArray;
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestAS3LuaInterface extends CommonTestCase
+  public class TestAS3LuaInterface extends CommonTestCaseWrapper
   {
     /* TODO: Test New, New2, NewClass and NewClass2 with bad arguments */
 

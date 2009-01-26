@@ -5,7 +5,7 @@ package wrapperSuite.tests
   import flash.utils.ByteArray;
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestTypeConversion extends CommonTestCase
+  public class TestTypeConversion extends CommonTestCaseWrapper
   {
     public function testAS3ToLuaTolerantToNativeTypesAndIsVariadic():void
     {
