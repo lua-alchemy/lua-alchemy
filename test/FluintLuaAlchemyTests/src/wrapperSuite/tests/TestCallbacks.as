@@ -18,13 +18,11 @@ package wrapperSuite.tests
                 "TestWrapperHelperEvent",
                 function () as3.call(testHelper, "setNameAge", "Timmy", 99) end)
       ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
+      doString(script, [true]);
+
+      assertEquals(null, myHelper.nameAge);
       myHelper.sendEvent();
-
-      assertTrue(stack[0]);
-      assertEquals(1, stack.length);
-
       assertEquals("Name: Timmy age: 99", myHelper.nameAge);
     }
 
@@ -185,13 +183,8 @@ package wrapperSuite.tests
         result = result + 2
         return result
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      trace(stack);
-
-      assertTrue(stack[0]);
-      assertEquals(20, stack[1]);
-      assertEquals(2, stack.length);
+      doString(script, [true, 20]);
     }
 
     public function testCreateAndCallObjectErrorNonstring():void
@@ -212,13 +205,8 @@ package wrapperSuite.tests
         as3.call(as_object, "error")
         return "error is ignored"
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      trace(stack);
-
-      assertTrue(stack[0]);
-      assertEquals("error is ignored", stack[1]);
-      assertEquals(2, stack.length);
+      doString(script, [true, "error is ignored"]);
     }
 
     public function testCreateAndCallObjectErrorString():void
@@ -241,14 +229,9 @@ package wrapperSuite.tests
         as3.call(as_object, "error")
         return "error is ignored"
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      trace(stack);
-
-      assertTrue(stack[0]);
-      assertEquals("error is ignored", stack[1]);
-      assertEquals(2, stack.length);
-    }
+      doString(script, [true, "error is ignored"]);
+   }
 
     public function testCallbackGetsAS3Type():void
     {
@@ -270,13 +253,8 @@ package wrapperSuite.tests
         local result = as3.tolua(as3.call(as_object, "addThirteen", 5))
         return result
         ]]> ).toString();
-      var stack:Array = lua_wrapper.luaDoString(luaState, script);
 
-      trace(stack);
-
-      assertTrue(stack[0]);
-      assertEquals(18, stack[1]);
-      assertEquals(2, stack.length);
+      doString(script, [true, 18]);
     }
 
   }
