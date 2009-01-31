@@ -1,1 +1,92 @@
-v0.1a -- initial release
+Lua Alchemy v0.2a
+-----------------
+
+Changes since v0.1a:
+
+1. Added Lua sugar for AS3 interface:
+  http://code.google.com/p/lua-alchemy/wiki/LuaToAS3Sugar
+
+2. New Lua as3 module functions:
+2.1. Implemented in C:
+  as3.isas3value(v) -- return true if argument is as3 value
+  as3.toas3(v) -- converts argument to AS3 value
+
+  See also: http://code.google.com/p/lua-alchemy/wiki/LuaToAS3LowLevel
+
+2.2. Implemented in Lua:
+  as3.onclose(fn) -- calls callback when state is closed
+  as3.toobject(v) -- converts table to Object
+  as3.toarray(v) -- converts table to Array
+  as3.prints(...) -- print-like argument concatenation
+  as3.makeprinter(obj) -- factory for functions to print on AS3 UI objects
+
+  See also: http://code.google.com/p/lua-alchemy/wiki/LuaToAS3Extended
+
+3. Changes in as3 Lua module functions:
+  as3.tolua() is now variadic and passes through Lua values, also it
+              now accepts nil and no arguments
+
+  as3.type() now accepts nil and no arguments
+
+  as3.yield() was renamed to as3.flyield() to avoid confusion with
+coroutine.yield()
+
+  as3.class() was renamed to as3.newclass() to give way to sugar's as3.class.
+
+4. Changes in Lua core library functions:
+  In Lua Alchemy some Lua core library function are overridden by default.
+  (If you wish, you're free to disable this override).
+
+  loadfile() and dofile() are changed to be able to load files,
+embedded into current SWF.
+
+  print() is changed to output to trace.
+
+5. Changes in AS3 interface to Lua Alchemy:
+  Lua as3 module functions no longer convert their arguments to Lua values.
+  Use as3.tolua() explicitly if you need such conversion.
+
+  lua_wrapper.setGlobal() doesn't do autoconversion to Lua type.
+  Added lua_wrapper.setGlobalLuaValue() to do this.
+
+  Added lua_wrapper.doFile() to run Lua file, added with Alchemy's
+supplyFile().
+
+  Added lua_wrapper.supplyFile() wrapper on Alchemy's supply file.
+
+  Added utility to automatically embed and supply files in specified
+directory on build.
+  See new Rapid demo for example.
+
+  Introduced LuaAlchemy class to be used instead of lua_wrapper
+low-level interface.
+
+  See also: http://code.google.com/p/lua-alchemy/wiki/As3ToLuaInterface
+
+6. Demo changes:
+  Added MiniDemo as a minimalistic Lua Alchemy example
+
+  Added Rapid demo featuring auto asset adder -- as an example
+  for rapid development setup with Lua Alchemy
+
+  Removed demo help page in favor of using the wiki
+
+7. Other changes:
+  Building Lua with -O2, posix and ansi
+
+  Setting _LUA_ALCHEMY Lua global variable with Lua Alchemy version
+
+  Provided optional global environment protection (off by default)
+  to aid with development in Lua.
+  See http://code.google.com/p/lua-alchemy/wiki/LuaGlobalEnvironmentProtection
+
+  A lot of internal implementation and tests refactoring and tuning
+
+  Also updated documentation:
+  http://code.google.com/p/lua-alchemy/wiki/
+
+Lua Alchemy v0.1a
+-----------------
+
+Initial release
+
