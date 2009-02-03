@@ -84,6 +84,5 @@ package wrapperSuite.tests
 
       doString(script, [true, "Hello There", null, "string"])
     }
-
   }
 }

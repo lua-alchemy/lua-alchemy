@@ -33,6 +33,5 @@ package wrapperSuite.tests
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       checkLuaResult(expected, stack, verifyLength);
     }
-
   }
 }
