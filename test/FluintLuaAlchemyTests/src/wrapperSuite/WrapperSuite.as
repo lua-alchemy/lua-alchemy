@@ -14,6 +14,7 @@ package wrapperSuite
       addTestCase(new TestCallbacks());
       addTestCase(new TestSugar());
       addTestCase(new TestLuaAlchemyInterface());
+      addTestCase(new TestStrictness());
     }
   }
 }
