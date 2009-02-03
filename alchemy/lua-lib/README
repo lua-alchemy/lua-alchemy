@@ -3,5 +3,15 @@ Lua Alchemy core Lua libraries
     assets/
         lua_alchemy/
             as3/ -- Lua-side extensions as3 module
+                filegetcontents.lua -- as3.filegetcontents() (broken due to flyield() problems)
+                onclose.lua -- as3.onclose()
+                print.lua -- as3.prints(), as3.makeprinter()
+                sugar.lua -- as3.class, as3.package, as3 object sugar
+                toobject.lua -- as3.toobject(), as3.toarray()
+
             lua/ -- Lua-side extensions to Lua core libraries
+                dofile.lua -- Overload {load,do}file() to support embedded files
+                print.lua -- Overload print() to use trace()
+                strict.lua -- Global Environment Protection (off by default)
+
         lua_alchemy.lua -- File to load whole core library at once
