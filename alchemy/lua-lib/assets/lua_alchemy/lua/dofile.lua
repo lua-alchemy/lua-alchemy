@@ -59,6 +59,8 @@ do
         if res == nil then
           -- TODO: Tune this message
           err = err .. "\nalso failed load from builtin:\n" .. err2
+        else
+          err = nil
         end
       end
     end
