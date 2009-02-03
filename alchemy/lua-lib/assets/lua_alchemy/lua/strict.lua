@@ -30,6 +30,7 @@ is_declared = function(name)
   return declared[name] == true
 end
 
+-- Note this function is intentionally not documented
 get_declared_iter_ = function()
   return pairs(declared)
 end
