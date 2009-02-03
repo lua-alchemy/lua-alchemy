@@ -8,6 +8,10 @@
 do
   local BUILTIN_PREFIX = "builtin://"
 
+  if is_declared and not is_declared('_LUA_ALCHEMY_FILESYSTEM_ROOT') then -- Strict module compatibility
+    declare('_LUA_ALCHEMY_FILESYSTEM_ROOT')
+  end
+
   local filesystem_root = _G["_LUA_ALCHEMY_FILESYSTEM_ROOT"] or BUILTIN_PREFIX
   local filesystem_prefix = filesystem_root:match("^([a-z_-]+://)")
   if not filesystem_prefix then
