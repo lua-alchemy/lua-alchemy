@@ -58,9 +58,7 @@ package wrapperSuite.tests
       myLuaAlchemy.supplyFile("myFileDoFileNoError.lua", luaAsset);
       var stack:Array = myLuaAlchemy.doFile("myFileDoFileNoError.lua");
 
-      assertTrue(stack[0]);
-      assertEquals(42, stack[1]);
-      assertEquals(2, stack.length);
+      checkLuaResult([true, 42], stack);
     }
 
     public function testSetGlobal():void
