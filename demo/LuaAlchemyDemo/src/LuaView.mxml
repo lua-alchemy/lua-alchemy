@@ -3,6 +3,7 @@
   creationComplete="onCreationComplete()">
   <mx:Script>
     <![CDATA[
+      import mx.events.CloseEvent;
       import mx.effects.Move;
       import mx.containers.*;
       import mx.controls.*;
@@ -26,6 +27,8 @@
 
       //File types which we want the user to open
       private static const FILE_TYPES:Array = [new FileFilter("All Files", "*.*")];
+
+      private var isCodeChanged:Boolean = false;
 
       private function onCreationComplete():void
       {
@@ -64,7 +67,7 @@
 
         var success:Boolean = stack.shift();
         outputTA.setStyle("color", success ? "black" : "red");
-        outputTA.text = outputTA.text + 
+        outputTA.text = outputTA.text +
           (success ? "\n=== Return values ===\n" : "\n=== Error ===\n") +
           stack.join("\n") + "\n";
       }
@@ -89,6 +92,7 @@
         var data:ByteArray = fr.data;
         luaCodeTA.text = data.readUTFBytes(data.bytesAvailable);
         fr = null;
+        isCodeChanged = false;
       }
 
       private function onLoadError(e:IOErrorEvent):void
@@ -115,6 +119,7 @@
       {
         trace("File Saved");
         fr = null;
+        isCodeChanged = false;
       }
 
       private function onSaveError(e:IOErrorEvent):void
@@ -122,6 +127,28 @@
         trace("Error Saving File : " + e.text);
         fr = null;
       }
+
+      private function onSampleChanged(event:Event):void
+      {
+        if (isCodeChanged)
+        {
+          Alert.show("Are you sure you want change the code without saving your changes?", "Abandon Changes?", Alert.YES + Alert.NO, this, onSampleChangedAlertClosed);
+        }
+        else
+        {
+          luaCodeTA.text = sampleCodeCB.selectedItem.code;
+        }
+      }
+
+      private function onSampleChangedAlertClosed(event:CloseEvent):void
+      {
+        if (event.detail==Alert.YES)
+        {
+          luaCodeTA.text = sampleCodeCB.selectedItem.code;
+          isCodeChanged = false;
+        }
+      }
+
 
       /**
       * When you compile in the Flex library statically, the linker only includes
@@ -247,12 +274,12 @@
         <mx:ComboBox id="sampleCodeCB"
           dataProvider="{LuaSampleCode.sampleCode}"
           labelField="label"
-            toolTip="Select code samples to show in the code area below when 'Show' is clicked."/>
-        <mx:Button label="Show" toolTip="Show the selected sample code."
-          click="luaCodeTA.text = sampleCodeCB.selectedItem.code"/>
+          change="onSampleChanged(event)"
+          toolTip="Select code samples to show in the code area below when 'Show' is clicked."/>
     </mx:HBox>
     <mx:TextArea id="luaCodeTA" width="100%" height="100%" condenseWhite="false"
-      paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" wordWrap="false"/>
+      paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" wordWrap="false"
+      change="isCodeChanged = true"/>
     <mx:HBox horizontalAlign="center">
       <mx:Button id="runBtn" label="Run!" click="onRunClicked(event)" toolTip="Run the Lua code"/>
       <mx:Button label="Reset" click="resetLua()" toolTip="Reset the Lua Context"
