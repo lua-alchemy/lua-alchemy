@@ -92,6 +92,7 @@ do
       return as3.set(t, k, v)
     end
 
+--[[
     mt.__tostring = function(t)
       local str = old_call(t, "toString")
       local tt = type(str)
@@ -103,6 +104,7 @@ do
       end
       return str
     end
+--]]
   end
 
   do -- Patch methods
@@ -312,7 +314,7 @@ do -- as3.class(), as3.namespace()
               __index = index;
               __newindex = newindex;
               __call = call;
-              __tostring = tostring_pkgobj;
+              --__tostring = tostring_pkgobj;
             }
           )
       end
