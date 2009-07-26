@@ -96,7 +96,7 @@
       version-major="${swf.version.major}"
       version-minor="${swf.version.minor}"
       version-revision="${swf.version.revision}"
-      application="${swf.application}}"
+      application="${swf.application}"
       swf="${swf.swf}"
       bgcolor="${swf.bgcolor}"
       output="${release.build.dir}" />
@@ -116,7 +116,7 @@
       version-major="${swf.version.major}"
       version-minor="${swf.version.minor}"
       version-revision="${swf.version.revision}"
-      application="${swf.application}}"
+      application="${swf.application}"
       swf="${swf.swf}"
       bgcolor="${swf.bgcolor}"
       output="${debug.build.dir}" />
