@@ -382,7 +382,6 @@ static int as3_call(lua_State * L)
   lua_pushnil(L); /* Hack to ensure we're not at empty stack */
 
   userdata = check_as3userdata(L, 1);
-
   function_name = lua_tostring(L, 2);
   luaL_argcheck(L, function_name != NULL, 2, "'function_name' expected");
 
