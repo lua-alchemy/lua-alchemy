@@ -2,6 +2,9 @@
  * Author: Alexander Gladysh <agladysh@gmail.com>
  */
 #include "lstack.h"
+#include "bridge_lua_c.h"
+
+#include "lua-alchemy.h" /* TODO: Remove! */
 
 int dump_lua_stack(lua_State * L, int base)
 {
@@ -14,46 +17,32 @@ int dump_lua_stack(lua_State * L, int base)
   else
   {
     int pos = 0;
-    int have_tostring = 0;
     luaL_Buffer b;
 
-    lua_getglobal(L, "tostring"); /* TODO: Reuse luaB_tostring() instead */
-    have_tostring = lua_isfunction(L, -1);
+    lua_pushcfunction(L, luaB_tostring);
 
     luaL_buffinit(L, &b);
 
     for (pos = top; pos > 0; --pos)
     {
-      if (pos == base)
-      {
-        luaL_addstring(&b, "-- base --\n");
-      }
-      luaL_addstring(&b, "[");
+      luaL_addstring(&b, (pos != base) ? "[" : "{");
       lua_pushinteger(L, pos);
       luaL_addvalue(&b);
-      luaL_addstring(&b, "] - ");
+      luaL_addstring(&b, (pos != base) ? "] - " : "} -");
       luaL_addstring(&b, luaL_typename(L, pos));
       luaL_addstring(&b, " - `");
 
-      /* Call lua's tostring on value */
-      if (have_tostring)
-      {
-        lua_pushvalue(L, top + 1);
-        lua_pushvalue(L, pos);
-        lua_call(L, 1, 1);
-      }
-      else
-      {
-        lua_pushvalue(L, pos);
-        lua_tostring(L, -1);
-      }
+      /* Call luaB_tostring() on value */
+      lua_pushvalue(L, top + 1);
+      lua_pushvalue(L, pos);
+      lua_call(L, 1, 1);
 
       luaL_addvalue(&b);
       luaL_addstring(&b, "'\n");
     }
 
     luaL_pushresult(&b);
-    lua_remove(L, -2); /* Pop tostring() */
+    lua_remove(L, -2); /* Pop luaB_tostring() */
     if (lua_gettop(L) != top + 1)
     {
       /* Note: Can't use macros here, since macros use this function */
