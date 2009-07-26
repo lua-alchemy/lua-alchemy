@@ -164,10 +164,12 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
 
 #ifdef DO_SPAM
     /* TODO: Remove */
+    /*
     lua_pushcfunction(L, as3_trace);
     lua_pushliteral(L, "STACK");
     dump_lua_stack(L, results_base);
     lua_call(L, 2, 0);
+    */
 #endif /* DO_SPAM */
 
     res = create_as3_value_from_lua_stack(L, results_base + 1, LTOP(L, stack), TRUE);
