@@ -32,5 +32,11 @@ package wrapperSuite.tests
       var stack:Array = myLuaAlchemy.doString(script);
       checkLuaResult(expected, stack, verifyLength);
     }
+
+    protected function doFile(file:String, expected:Array, verifyLength:Boolean = true):void
+    {
+      var stack:Array = myLuaAlchemy.doFile(file);
+      checkLuaResult(expected, stack, verifyLength);
+    }
   }
 }
