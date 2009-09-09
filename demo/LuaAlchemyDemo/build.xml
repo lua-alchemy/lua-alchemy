@@ -11,7 +11,7 @@
       </not>
     </condition>
     Error!
-    You need to set FLEX_HOME environement variable (path to Flex SDK)
+    You need to set FLEX_HOME environment variable (path to Flex SDK)
     export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
   </fail>
 
