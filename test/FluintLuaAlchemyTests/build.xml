@@ -11,7 +11,7 @@
       </not>
     </condition>
     Error!
-    You need to set FLEX_HOME environement variable (path to Flex SDK)
+    You need to set FLEX_HOME environment variable (path to Flex SDK)
     export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
   </fail>
 
@@ -111,7 +111,7 @@
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
-        <include name="fluint_v1.swc" />
+        <include name="fluint-1.1.1.swc" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
         <include name="lua-alchemy.swc" />
@@ -127,7 +127,7 @@
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
-        <include name="fluint_v1.swc" />
+        <include name="fluint-1.1.1.swc" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />
