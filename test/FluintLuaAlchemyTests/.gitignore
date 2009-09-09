@@ -1,3 +1,4 @@
 bin-*
 build
 html-template
+src/LuaAssets.as

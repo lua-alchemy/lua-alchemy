@@ -18,12 +18,20 @@ if [ -z "${LUA_NUCLEO_LUA}" ]; then
   echo "LUA_NUCLEO_LUA missing" 1>&2
 fi
 
+if [ -z "${LUA_NUCLEO_LUA_TEST}" ]; then
+  echo "LUA_NUCLEO_LUA_TEST missing" 1>&2
+fi
+
 if [ -z "${DEST_ROOT}" ]; then
   echo "DEST_ROOT missing" 1>&2
 fi
 
 if [ -z "${DEST}" ]; then
   echo "DEST missing" 1>&2
+fi
+
+if [ -z "${TESTDEST}" ]; then
+  echo "TESTDEST missing" 1>&2
 fi
 
 if [ -z "${DEST_VERSION_PATH}" ]; then
@@ -42,9 +50,11 @@ LUA_NUCLEO_OLD_VERSION=$(cat "${DEST_VERSION_PATH}" || echo "(unknown)")
 echo "Updating from ${LUA_NUCLEO_OLD_VERSION} to ${LUA_NUCLEO_NEW_VERSION}"
 
 CMD="rsync -auv --delete ${LUA_NUCLEO_LUA}/ ${DEST}/"
+CMDTEST="rsync -auv --delete ${LUA_NUCLEO_LUA_TEST}/ ${TESTDEST}/"
 
 echo "About to run"
 echo "    ${CMD}"
+echo "    ${CMDTEST}"
 read -p "Are you sure? [y/N] "
 if [ "${REPLY}" != "y" ]; then
   echo "Cancelled"
@@ -54,6 +64,7 @@ fi
 # TODO: Add error-handling!
 
 ${CMD}
+${CMDTEST}
 
 echo "Updating VERSION file"
 echo ${LUA_NUCLEO_NEW_VERSION} >${DEST_VERSION_PATH}
