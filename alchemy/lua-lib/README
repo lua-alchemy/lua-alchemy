@@ -15,3 +15,8 @@ Lua Alchemy core Lua libraries
                 strict.lua -- Global Environment Protection (off by default)
 
         lua_alchemy.lua -- File to load whole core library at once
+
+        lua-nucleo/ -- Files from lua-nucleo library: http://github.com/lua-nucleo/lua-nucleo/
+
+        etc/
+          lua-nucleo/ -- Scripts to update lua-nucleo (see README there)

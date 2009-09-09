@@ -19,7 +19,12 @@ package wrapperSuite.tests
     //
     public function testLuaAlchemyDoesNotPolluteGlobals() : void
     {
-      var stack:Array = lua_wrapper.doFile(luaState, "builtin://lua_alchemy/lua/strict.lua");
+      // Lua Alchemy's strict module uses lua-nucleo's one,
+      // so it needs to be able to dofile() properly.
+      var stack:Array = lua_wrapper.doFile(luaState, "builtin://lua_alchemy/lua/dofile.lua");
+      checkLuaResult([true], stack);
+
+      stack = lua_wrapper.doFile(luaState, "builtin://lua_alchemy/lua/strict.lua");
       checkLuaResult([true], stack);
 
       stack = lua_wrapper.doFile(luaState, "builtin://lua_alchemy.lua");

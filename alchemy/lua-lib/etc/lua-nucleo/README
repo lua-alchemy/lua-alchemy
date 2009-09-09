@@ -1,0 +1,7 @@
+Scripts to update lua-nucleo library snapshot
+
+To be used by Lua Alchemy developers.
+
+    VERSION -- current version of lua-nucleo
+    config.sh.example -- copy this as config.sh and tailor to your system
+    update.sh -- run this to do the update
