@@ -22,7 +22,14 @@ do
   end
 end
 
+-- Remove trailing and leading whitespace from string.
+-- From Programming in Lua 2 20.4
+local trim = function(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 return
 {
   make_concatter = make_concatter;
+  trim = trim;
 }

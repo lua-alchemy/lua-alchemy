@@ -18,34 +18,7 @@ local run_tests = assert(assert(assert(loadfile('lua-nucleo/suite.lua'))()).run_
 -- TODO: Also preserve random number generator's seed
 --       (save it and restore between suites)
 
-local tests_pr =
-{
-  'suite';
-  'strict';
-  'import';
-  --
-  'tserialize-basic';
-  'tserialize-recursive';
-  'tserialize-metatables';
-  'tserialize-autogen';
-  --
-  'tdeepequals-basic-types';
-  'tdeepequals-basic-tables';
-  'tdeepequals-recursive';
-  'tdeepequals-userdata-functions-threads';
-  'tdeepequals-autogen';
-  --
-  'table-utils';
-  'table';
-  --
-  'coro';
-  'functional';
-  'algorithm';
-  'math';
-  'string';
-  --
-  'util/anim/interpolator';
-}
+local tests_pr = assert(assert(loadfile('test/all-tests.lua'))())
 
 local strict_mode = false
 local n = 1

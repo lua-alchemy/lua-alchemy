@@ -298,6 +298,8 @@ local run_tests = function(names, strict_mode)
       print("["..err.stage.."]", err.name, err.err)
     end
   end
+
+  return nok, errs
 end
 
 return

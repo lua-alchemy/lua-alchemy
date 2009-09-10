@@ -33,7 +33,10 @@ local empty_table,
       tiinsert_args,
       timap_inplace,
       timap_sliding,
+      tiwalk,
+      tiwalker,
       tequals,
+      tiunique,
       table_utils_imports
       = import 'lua-nucleo/table-utils.lua'
       {
@@ -50,7 +53,10 @@ local empty_table,
         'tiinsert_args',
         'timap_inplace',
         'timap_sliding',
-        'tequals'
+        'tiwalk',
+        'tiwalker',
+        'tequals',
+        'tiunique'
       }
 
 --------------------------------------------------------------------------------
@@ -949,6 +955,159 @@ test "tequals-recursion-self" (function()
   t[t] = t
 
   ensure_equals("recursion-self", tequals(t, t), true)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tiwalk"
+
+--------------------------------------------------------------------------------
+
+test "tiwalk-empty-noargs" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local r = tiwalk(fn, t)
+  ensure_equals("function not called", c, 0)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalk-empty-args" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local r = tiwalk(fn, t, 42)
+  ensure_equals("function not called", c, 0)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalk-counter-noargs" (function()
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, nil)
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local r = tiwalk(fn, t)
+  ensure_equals("function called", c, 3)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalk-counter-args" (function()
+  local k = { }
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, k)
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local r = tiwalk(fn, t, k)
+  ensure_equals("function called", c, 3)
+  ensure_equals("returned nil", r, nil)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tiwalker"
+
+--------------------------------------------------------------------------------
+
+test "tiwalker-empty-noargs" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local r = tiwalker(fn)(t)
+  ensure_equals("function not called", c, 0)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalker-empty-args" (function()
+  local c = 0
+  local fn = function() c = c + 1 end
+  local t = { }
+  local r = tiwalker(fn)(t, 42)
+  ensure_equals("function not called", c, 0)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalker-counter-noargs" (function()
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, nil)
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local r = tiwalker(fn)(t)
+  ensure_equals("function called", c, 3)
+  ensure_equals("returned nil", r, nil)
+end)
+
+test "tiwalker-counter-args" (function()
+  local k = { }
+  local c = 0
+  local fn = function(a, b)
+    c = c + 1
+    ensure_equals("check a", a, c * 10)
+    ensure_equals("check b", b, nil) -- Arguments not passed through
+    return a + c
+  end
+  local t = { 10, 20, 30, ["a"] = 42 }
+  local r = tiwalker(fn)(t, k)
+  ensure_equals("function called", c, 3)
+  ensure_equals("returned nil", r, nil)
+end)
+
+--------------------------------------------------------------------------------
+
+test:group "tiunique"
+
+--------------------------------------------------------------------------------
+
+test "tiunique-empty" (function()
+  ensure_tequals("empty", tiunique({ }), { })
+end)
+
+test "tiunique-single" (function()
+  ensure_tequals("simple", tiunique({ [1] = 42 }), { [1] = 42 })
+end)
+
+test "tiunique-hole" (function()
+  ensure_tequals("hole ignored", tiunique({ [42] = 1 }), { })
+end)
+
+test "tiunique-hash" (function()
+  ensure_tequals("hash ignored", tiunique({ ["a"] = 42 }), { })
+end)
+
+test "tiunique-duplicate" (function()
+  ensure_tequals("duplicate", tiunique({ [1] = 42, [2] = 42 }), { [1] = 42 })
+end)
+
+test "tiunique-duplicate-hash" (function()
+  ensure_tequals(
+      "duplicate hash ignored",
+      tiunique({ [1] = 42, ["a"] = 42 }),
+      { [1] = 42 }
+    )
+end)
+
+test "tiunique-recursive" (function()
+  local t = { }
+  t[1] = t
+  ensure_tequals("recursive", tiunique(t), t)
+end)
+
+test "tiunique-many" (function()
+  local k = { }
+  local t = { [1] = 42, [2] = 42, a = k, [k] = 42 }
+
+   ensure_tequals("many", tiunique(t), { [1] = 42 })
 end)
 
 --------------------------------------------------------------------------------

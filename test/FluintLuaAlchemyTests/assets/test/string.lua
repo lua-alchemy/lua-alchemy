@@ -17,10 +17,12 @@ local ensure,
       }
 
 local make_concatter,
+      trim,
       string_imports
       = import 'lua-nucleo/string.lua'
       {
-        'make_concatter'
+        'make_concatter',
+        'trim'
       }
 
 --------------------------------------------------------------------------------
@@ -63,6 +65,20 @@ test "make_concatter-embedded-zeroes" (function()
   cat "a" "\0" "bc\0" "def\0"
 
   ensure_equals("concat", concat(), "a\0bc\0def\0")
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "trim"
+
+test "trim-basic" (function()
+  ensure_equals("empty string", trim(""), "")
+  ensure_equals("none", trim("a"), "a")
+  ensure_equals("left", trim(" b"), "b")
+  ensure_equals("right", trim("c "), "c")
+  ensure_equals("both", trim(" d "), "d")
+  ensure_equals("middle", trim("e f"), "e f")
+  ensure_equals("many", trim("\t \t    \tg  \th\t    \t "), "g  \th")
 end)
 
 --------------------------------------------------------------------------------
