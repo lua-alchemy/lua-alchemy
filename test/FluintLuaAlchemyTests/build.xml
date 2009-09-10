@@ -35,6 +35,8 @@
   <property name="assets.class.dir" location="${src.dir}/${assets.package.name}/"/>
   <property name="assets.class.as" location="${assets.class.dir}/${assets.class.name}.as"/>
 
+  <property name="fluint.swc" value="fluint-1.1.1-gettests.swc"/>
+
   <!-- files -->
   <property name="main.application" location="${src.dir}/FlexTestRunner.mxml"/>
   <property name="output.swf.name" value="FluintLuaAlchemyTests"/>
@@ -132,7 +134,7 @@
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
-        <include name="fluint-1.1.1.swc" />
+        <include name="${fluint.swc}" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
         <include name="lua-alchemy.swc" />
@@ -148,7 +150,7 @@
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
-        <include name="fluint-1.1.1.swc" />
+        <include name="{fluint.swc}" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />

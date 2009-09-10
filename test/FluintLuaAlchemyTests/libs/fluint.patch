@@ -1,0 +1,27 @@
+diff --git a/fluint/src/main/flex/net/digitalprimates/fluint/tests/TestCase.as b/fluint/src/main/flex/net/digitalprimates/fluint/tests/TestCase.as
+index 4036b97..4269f21 100644
+--- a/fluint/src/main/flex/net/digitalprimates/fluint/tests/TestCase.as
++++ b/fluint/src/main/flex/net/digitalprimates/fluint/tests/TestCase.as
+@@ -29,6 +29,7 @@ package net.digitalprimates.fluint.tests {
+ 	import flash.utils.*;
+ 	
+ 	import mx.collections.CursorBookmark;
++	import mx.collections.ICollectionView;
+ 	import mx.collections.IViewCursor;
+ 	import mx.collections.Sort;
+ 	import mx.collections.SortField;
+@@ -89,6 +90,14 @@ package net.digitalprimates.fluint.tests {
+ 		private var testCollection:XMLListCollection;
+ 
+         /**
++        * Gets the collection of test cases. Used for integration with FlexUnit4
++        * AG: ADDED from current SVN head
++        */
++    public function getTests():ICollectionView {
++         return testCollection;
++    }
++
++        /**
+          * @private
+          */
+ 		private var cursor:IViewCursor;
