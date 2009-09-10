@@ -231,7 +231,7 @@ package wrapperSuite.tests
         ]]> ).toString();
 
       doString(script, [true, "error is ignored"]);
-   }
+    }
 
     public function testCallbackGetsAS3Type():void
     {
@@ -256,7 +256,5 @@ package wrapperSuite.tests
 
       doString(script, [true, 18]);
     }
-
   }
 }
-
