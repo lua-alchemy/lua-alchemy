@@ -1,6 +1,7 @@
 -- Provides
 --   as3.toobject()
 --   as3.toarray()
+--   as3.args_toarray()
 
 do
   local function impl(t, visited) -- TODO: Must not crash. Return nil, error
@@ -63,3 +64,17 @@ do
     return impl(t, {})
   end
 end
+
+do
+  -- Preserves embedded nils
+  -- TODO: Document and test this!
+  as3.argstoarray = function(...)
+    local a = as3.new2(nil, "Array")
+    local n = select("#", ...)
+    for i = 1, n do
+      a.push(as3.toarray( (select(i, ...)) ))
+    end
+    return a
+  end
+end
+
