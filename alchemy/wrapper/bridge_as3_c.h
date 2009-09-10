@@ -21,5 +21,6 @@ void initialize_as3_constants();
 AS3_Val get_class(const char * as_namespaceclass_path);
 AS3_Val get_class2(const char * as_namespace_path, const char * as_class_path);
 BOOL is_null(AS3_Val val);
+AS3_Malloced_Str get_string_bytes(AS3_Val str, size_t * size_in_bytes);
 
 #endif /* BRIDGE_AS3_C_H_ */

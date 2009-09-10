@@ -121,3 +121,26 @@ BOOL is_null(AS3_Val val)
   return result;
 }
 
+/*
+* Get a string and its size in bytes from given AS3 string.
+* To push to Lua multibyte string, you should know not its length
+* (as in str.length), but its size in bytes.
+* You may pass NULL as size_in_bytes.
+* It is up to you to call free() on returned pointer.
+*/
+AS3_Malloced_Str get_string_bytes(AS3_Val strValue, size_t * size_in_bytes)
+{
+  AS3_Malloced_Str str = AS3_StringValue(strValue);
+  if (size_in_bytes != NULL)
+  {
+    /*
+    * Note strlen() not mbstrlen().
+    * We should get size in bytes, not in characters.
+    */
+    /*
+    * TODO: UGLY HACK! Support embedded zeroes somehow.
+    */
+    *size_in_bytes = strlen(str);
+  }
+  return str;
+}

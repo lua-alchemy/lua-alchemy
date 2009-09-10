@@ -179,8 +179,14 @@ public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS
 
   SPAM(("luaDoString(): begin"));
 
+  /*
+  * TODO: Note that use of get_string_bytes here effectively denies
+  *       loading of bytecode -- as it currently does not support
+  *       strings with embedded zeroes.
+  */
   int status = 0;
-  AS3_Malloced_Str str = AS3_StringValue(strValue);
+  size_t length = 0;
+  AS3_Malloced_Str str = get_string_bytes(strValue, &length);
   AS3_Val res;
 
   lua_pushboolean(L, 1); /* Placeholder for execution status */
@@ -188,7 +194,7 @@ public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS
   status = luaL_loadbuffer(
       L,
       str,
-      AS3_IntValue(AS3_GetS(strValue, "length")),
+      length,
       "=luaDoString" /* TODO: Pass chunk name as an optional argument */
     );
 

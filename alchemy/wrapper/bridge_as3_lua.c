@@ -235,11 +235,11 @@ int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val)
   else if (AS3_InstanceOf(val, String_class))
   {
     /* TODO: Release?! */
-    AS3_Val lengthVal = AS3_GetS(val, "length");
-    size_t length = AS3_IntValue(lengthVal);
-    AS3_Malloced_Str str = AS3_StringValue(val);
+    size_t length = 0;
+    AS3_Malloced_Str str = get_string_bytes(val, &length);
 
     lua_pushlstring(L, str, length);
+
     free(str);
   }
   else if (AS3_InstanceOf(val, Boolean_class))
