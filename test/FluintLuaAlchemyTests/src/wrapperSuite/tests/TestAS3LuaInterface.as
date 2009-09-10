@@ -784,6 +784,92 @@ package wrapperSuite.tests
       doString(script, [true, "String","userdata"]);
     }
 
+    public function testToStringSanity():void // Sanity check
+    {
+      var str:String = ( <![CDATA[Привет!]]> ).toString();
+      assertEquals("Привет!", str);
+    }
 
+    public function testAS3ToLuaMultibyteStringLua():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.tolua("Привет!")
+        assert(v == "Привет!")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("Привет!", stack[1]);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3ToLuaMultibyteStringAS3CreatedInLua():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.new("String", "Привет!")
+        assert(as3.tolua(v) == "Привет!")
+        return v
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("Привет!", stack[1]);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3ToLuaMultibyteStringAS3():void
+    {
+      lua_wrapper.setGlobal(luaState, "HELLO", "Привет!");
+      var script:String = ( <![CDATA[
+        assert(as3.tolua(HELLO) == "Привет!", "HELLO is corrupted")
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals(1, stack.length);
+    }
+
+    public function testAS3ToLuaMultibyteStringPassThroughSimple():void
+    {
+      lua_wrapper.setGlobal(luaState, "HELLO", "Привет!");
+      var script:String = ( <![CDATA[
+        return as3.tolua(HELLO)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("tolua", "Привет!", stack[1]);
+
+      assertEquals(2, stack.length);
+    }
+
+    public function testAS3ToLuaMultibyteStringPassThroughComplex():void
+    {
+      lua_wrapper.setGlobal(luaState, "HELLO", "Привет!");
+      var script:String = ( <![CDATA[
+        return "Привет!", HELLO, as3.tolua(HELLO)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("Plain Lua", "Привет!", stack[1]);
+      assertEquals("Passthrough", "Привет!", stack[2]);
+      assertEquals("tolua", "Привет!", stack[3]);
+
+      assertEquals(4, stack.length);
+    }
+
+    public function testAS3ToLuaMultibyteStringToAS3PassThrough():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.toas3("Привет!")
+        assert(as3.tolua(v) == "Привет!")
+        return v, as3.tolua(v)
+        ]]> ).toString();
+      var stack:Array = lua_wrapper.luaDoString(luaState, script);
+      assertTrue(stack[0]);
+      assertEquals("Привет!", stack[1]);
+      assertEquals("Привет!", stack[2]);
+
+      assertEquals(3, stack.length);
+    }
   }
 }

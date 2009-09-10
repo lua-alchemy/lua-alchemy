@@ -43,6 +43,17 @@ package wrapperSuite.tests
       doString(script, [true, "Name: OldDude age: 999"]);
     }
 
+    public function testCallInstanceNoReturnMultibyte():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
+        v.setNameAge("Александр Сергеевич ПУШКИН", 38)
+        return as3.tolua(v.nameAge)
+      ]]> ).toString();
+
+      doString(script, [true, "Name: Александр Сергеевич ПУШКИН age: 38"]);
+    }
+
     public function testCallInstanceReturnNumber():void
     {
       var script:String = ( <![CDATA[

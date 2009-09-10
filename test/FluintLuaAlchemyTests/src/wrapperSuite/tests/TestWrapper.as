@@ -130,5 +130,13 @@ package wrapperSuite.tests
       // TODO: stack[1] Should be a black-boxed object
       checkLuaResult([false, "table"], stack);
     }
+
+    public function testReturnMultibyteString():void
+    {
+      var script:String = ( <![CDATA[
+        return "Привет!" -- Hello!
+        ]]> ).toString();
+      doString(script, [ true, "Привет!" ]);
+    }
   }
 }
