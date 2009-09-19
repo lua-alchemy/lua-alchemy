@@ -5,8 +5,11 @@
 dofile('lua-nucleo/strict.lua')
 dofile('lua-nucleo/import.lua')
 
+math.randomseed(12345)
+
 local make_suite = select(1, ...)
 assert(type(make_suite) == "function")
+
 
 local ensure,
       ensure_equals

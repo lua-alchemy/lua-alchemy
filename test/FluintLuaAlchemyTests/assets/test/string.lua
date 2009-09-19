@@ -18,11 +18,13 @@ local ensure,
 
 local make_concatter,
       trim,
+      escape_string,
       string_imports
       = import 'lua-nucleo/string.lua'
       {
         'make_concatter',
-        'trim'
+        'trim',
+	'escape_string'
       }
 
 --------------------------------------------------------------------------------
@@ -79,6 +81,17 @@ test "trim-basic" (function()
   ensure_equals("both", trim(" d "), "d")
   ensure_equals("middle", trim("e f"), "e f")
   ensure_equals("many", trim("\t \t    \tg  \th\t    \t "), "g  \th")
+end)
+
+--------------------------------------------------------------------------------
+
+test:tests_for "escape_string"
+
+test "escape_string-minimal"(
+function ()
+  ensure_equals("Equal strings",escape_string("simple str without wrong chars"),"simple str without wrong chars")
+  ensure_equals("escaped str",escape_string(string.char(0)..string.char(1)),"%00%01")
+
 end)
 
 --------------------------------------------------------------------------------

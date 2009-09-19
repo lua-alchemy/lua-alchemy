@@ -27,6 +27,7 @@ return
   'algorithm';
   'math';
   'string';
+  'args';
   --
   'util/anim/interpolator';
 }

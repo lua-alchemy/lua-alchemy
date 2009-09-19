@@ -28,8 +28,18 @@ local trim = function(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+local escape_string = function(str)
+  return str:gsub(
+      "[%c]",
+      function(c)
+        return ("%%%02X"):format(c:byte())
+      end
+    )
+end
+
 return
 {
+  escape_string = escape_string;
   make_concatter = make_concatter;
   trim = trim;
 }

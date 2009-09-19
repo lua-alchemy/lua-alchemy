@@ -13,12 +13,13 @@ assert(type(make_suite) == "function")
 
 local check_ok  = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 local test = make_suite("syntetic basic tests")
 
---------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------
+test "nil param" (function() check_ok(nil) end)
+test "complex nil param" (function() check_ok(nil, "a", nil, nil) end)
 test "1" (function() check_ok() end)
 test "2" (function() check_ok(true) end)
 test "3" (function() check_ok(false) end)
@@ -45,6 +46,6 @@ test "19" (function() check_ok({ ["1"] = "str", [1] = "num" }) end)
 test "20" (function() check_ok({ [true] = true }) end)
 test "21" (function() check_ok({ [true] = true, [false] = false, 1 }) end)
 
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
-assert (test:run())
+assert(test:run())
