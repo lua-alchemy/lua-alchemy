@@ -8,6 +8,18 @@ package wrapperSuite.tests
   {
     protected function checkLuaResult(expected:Array, actual:Array, verifyLength:Boolean = true):void
     {
+      // Special case to enhance readability of Lua error reporting
+      if (
+        expected.length > 0 &&
+        expected[0] == true &&
+        actual.length > 1 &&
+        actual[0] == false
+      )
+      {
+        actual.shift();
+        fail("Lua error: " + actual.join("\n"));
+      }
+
       if (verifyLength)
       {
         assertEquals("stack length", expected.length, actual.length);
