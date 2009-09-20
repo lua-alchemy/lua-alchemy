@@ -165,7 +165,10 @@ public function doFile(luaState:(lua_State *)uint, strFileName:(AS3_Val)*):(AS3_
   return res;
 }
 
-public function luaDoString(luaState:(lua_State *)uint, strValue:(AS3_Val)*):(AS3_Val)Array
+public function luaDoString(
+    luaState:(lua_State *)uint,
+    strValue:(AS3_Val)*
+  ):(AS3_Val)Array
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
