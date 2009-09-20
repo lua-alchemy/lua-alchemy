@@ -8,9 +8,9 @@ typedef unsigned char BOOL;
 #define FALSE (0)
 
 /* Uncomment this to get a lot of debug traces */
-/*/
+/*
 #define DO_SPAM 1
-/**/
+*/
 
 #ifdef DO_SPAM
   #define SPAM(a) sztrace a
