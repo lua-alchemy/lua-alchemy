@@ -5,21 +5,24 @@ Changes since v0.2a:
 
 1. Fixed multibyte string handling.
 
-2. Added bindings for running pure Lua tests
+2. Fixed memory leak in create_as3_value_from_lua_stack.
+   That affects doString() and doFile().
+
+3. Added bindings for running pure Lua tests
    properly in the test GUI.
 
-3. Added current lua-nucleo library snapshot.
+4. Added current lua-nucleo library snapshot.
    See http://github.com/lua-nucleo/lua-nucleo
    Not documented, but useful.
    Added lua-nucleo tests as native Lua Alchemy tests.
 
-4. Added as3.argstoarray() to convert argument list to array.
+5. Added as3.argstoarray() to convert argument list to array.
    Need a separate function to handle nils inside list properly.
 
-5. Added recommended git pre-commit hook.
+6. Added recommended git pre-commit hook.
    See lua-alchemy/etc/git/pre-commit
 
-6. Other minor fixes and tuning.
+7. Other minor fixes and tuning.
 
 Lua Alchemy v0.2a
 -----------------
