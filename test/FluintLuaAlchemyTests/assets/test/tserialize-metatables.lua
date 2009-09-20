@@ -10,32 +10,11 @@ assert(type(make_suite) == "function")
 
 local check_ok = import 'test/lib/tserialize-test-utils.lua' { 'check_ok' }
 
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 local test = make_suite("metatables test")
 
----------------------------------------------------------------------------
-
-test "Collectgarbage" (function()
-  local changed = 0
-  local mt = {__gc = function() changed = 1 end}
-  local tbl1 = {}
-  debug.setmetatable(tbl1, mt)
-  local tbl2 = {}
-  debug.setmetatable(tbl2, mt)
-  local u={tbl1, tbl2}
-  check_ok(u)
-  tbl1 = nil
-  tbl2 = nil
-  u = nil
-  local now = collectgarbage("count")
-  local prev = 0
-  while prev ~= now do
-    collectgarbage("collect")
-    prev, now = now, collectgarbage("count")
-  end
-  assert(changed == 1,"Garbage not collected!!!")
-end)
+--------------------------------------------------------------------------------
 
 test "1" (function()
   local a = { 1, 2 }
@@ -67,6 +46,6 @@ test "3" (function()
   check_ok(a)
 end)
 
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-assert(test:run())
+assert (test:run())
