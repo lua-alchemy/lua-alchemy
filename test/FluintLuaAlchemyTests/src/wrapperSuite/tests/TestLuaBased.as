@@ -85,13 +85,41 @@ package wrapperSuite.tests
       myLuaAlchemy = new LuaAlchemy(LuaAssets.filesystemRoot());
     }
 
+    // WARNING: There should be at least one passing "static" test method,
+    //          or fluint would not work properly.
+    // TODO: There should be more elegant workaround!
     public function testDummy():void
     {
-      //  This test is to ensure test UI works correctly.
-      //  It seems that there should be at least one
-      //  test method on the time the base class is constructed.
-      //  TODO: There should be more elegant workaround!
       trace("Dummy");
+    }
+
+    public function testMathRandomSanity():void
+    {
+      //  Based on actual bug scenario.
+      var script:String = ( <![CDATA[
+        math.randomseed(12345)
+
+        for i = 1, 1e6 do
+          local a, b, c =
+            math.random(),
+            math.random(2 ^ 29),
+            math.random()
+
+          if a < 0 or a >= 1 then
+            error(i .. " bad a "..a)
+          end
+
+          if b < 1 or b > (2 ^ 29) or b % 1 ~= 0 then
+            error(i .. " bad b "..b)
+          end
+
+          if c < 0 or c >= 1 then
+            error(i .. " bad c "..c)
+          end
+        end
+      ]]> ).toString();
+
+      doString(script, [true]);
     }
   }
 }
