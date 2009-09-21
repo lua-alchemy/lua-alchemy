@@ -150,7 +150,7 @@
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
-        <include name="{fluint.swc}" />
+        <include name="${fluint.swc}" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />
