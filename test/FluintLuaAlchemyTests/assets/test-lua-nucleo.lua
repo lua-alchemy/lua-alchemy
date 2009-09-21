@@ -27,8 +27,21 @@ for i = 1, #all_tests do
   tests["testLuaNucleo" .. name] = protectcallback(function()
     local nok, errs = run_tests({ name }, strict_mode)
     -- TODO: Enhance error reporting
-    assert(#errs == 0, "suite run failed, see logs")
-    assert(nok > 0, "empty suite detected")
+    assert((nok + #errs) > 0, "empty suite detected")
+    if #errs > 0 then
+      local buf = { "Lua Nucleo test suite ", name, " run failed:\n" }
+      for i, err in ipairs(errs) do
+        buf[#buf + 1] = "["
+        buf[#buf + 1] = err.stage
+        buf[#buf + 1] = "] "
+        buf[#buf + 1] = err.name
+        buf[#buf + 1] = " "
+        buf[#buf + 1] = err.err
+        buf[#buf + 1] = "\n"
+      end
+
+      error(table.concat(buf, ""))
+    end
   end)
 end
 
