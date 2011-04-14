@@ -642,7 +642,7 @@ package wrapperSuite.tests
         local f = function(p) assert(type(as3.tolua(p)) == "number") i = i + as3.tolua(p); return 42 end
         local v = as3.toas3(f)
         assert(v)
-        assert(as3.type(v):match("^Function%-%d+$"))
+        assert(as3.type(v):match("^Function.*$"))
         -- TODO: Wrong! Value must be unboxed! (Or must it?)
         assert(v == v)
         --assert(v == f)
@@ -662,21 +662,25 @@ package wrapperSuite.tests
             function(a, b, c)
               called = true
               as3.trace("arguments", as3.tolua(a), as3.tolua(b), as3.tolua(c))
-              assert(as3.tolua(a) == 42)
-              assert(as3.tolua(b) == nil)
-              assert(as3.tolua(c) == "Lua Alchemy")
+              assert(as3.tolua(a) == 42, "bad a")
+              assert(as3.tolua(b) == nil, "bad b")
+              assert(as3.tolua(c) == "Lua Alchemy", "bad c")
               return c, a, b
             end
           )
 
-        assert(as3.type(v):match("^Function%-%d+$"))
+        assert(
+            as3.type(v):match("^Function.*$"), "bad v type: " .. as3.type(v)
+          )
         local r = as3.call(v, "call", v, 42, nil, "Lua Alchemy")
         assert(called, "function must be called")
-        as3.trace("ZZZ2", as3.tolua(as3.call(r, "join")), r, type(r), tostring(r), as3.type(r))
-        assert(as3.type(r) == "Array")
-        assert(as3.tolua(as3.get(r, 0)) == "Lua Alchemy")
-        assert(as3.tolua(as3.get(r, 1)) == 42)
-        assert(as3.tolua(as3.get(r, 2)) == nil)
+        assert(
+            as3.type(r) == "Array",
+            "bad as3.type(r) " .. as3.type(r)
+          )
+        assert(as3.tolua(as3.get(r, 0)) == "Lua Alchemy", "bad r[0]")
+        assert(as3.tolua(as3.get(r, 1)) == 42, "bad r[1]")
+        assert(as3.tolua(as3.get(r, 2)) == nil, "bad r[2]")
         ]]> ).toString();
 
       doString(script, [true]);
