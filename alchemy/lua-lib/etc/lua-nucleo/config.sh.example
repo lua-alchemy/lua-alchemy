@@ -1,9 +1,0 @@
-#! /bin/bash
-
-LUA_NUCLEO_ROOT="${HOME}/projects/lua-nucleo"
-DEST_ROOT="${HOME}/projects/lua-alchemy/alchemy/lua-lib"
-
-LUA_NUCLEO_LUA="${LUA_NUCLEO_ROOT}/lua-nucleo"
-DEST="${DEST_ROOT}/assets/lua-nucleo"
-DEST_VERSION_PATH="${DEST_ROOT}/etc/lua-nucleo/VERSION"
-TESTDEST="${DEST_ROOT}/test/FluintLuaAlchemyTests/assets/lua-nucleo"
