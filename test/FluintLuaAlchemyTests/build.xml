@@ -44,7 +44,6 @@
   <property name="main.application.debug.out" location="${debug.build.dir}/${output.swf.name}.swf"/>
 
   <!-- wrapper -->
-  <property name="template" value="express-installation" />
   <property name="output.html.name" value="${output.swf.name}.html"/>
   <property name="output.debug.html" location="${debug.build.dir}/${output.html.name}"/>
   <property name="output.release.html" location="${release.build.dir}/${output.html.name}"/>
@@ -91,7 +90,6 @@
          - - - - - - - - - - - - - - - - - -->
   <target name="make.release.wrapper">
     <html-wrapper
-      template="${template}"
       history="true"
       width="${swf.width}"
       height="${swf.height}"
@@ -111,7 +109,6 @@
          - - - - - - - - - - - - - - - - - -->
   <target name="make.debug.wrapper">
     <html-wrapper
-      template="${template}"
       history="true"
       width="${swf.width}"
       height="${swf.height}"
