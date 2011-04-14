@@ -1,5 +1,17 @@
-Lua Alchemy v0.2.1a
--------------------
+Lua Alchemy v0.2.2 (work in progress)
+-------------------------------------
+
+Changes since v0.2.1a:
+
+1. Dropped "a" suffix from version name. We're mature enough
+   for at least a beta.
+
+2. Dropped lua-nucleo from the official distribution. Not everyone needs it.
+   If you need help bundling it (or any other module) with Lua Alchemy yourself,
+   please create a ticket / post to mailing list to get help.
+
+Lua Alchemy v0.2.1a (never officially released)
+-----------------------------------------------
 
 Changes since v0.2a:
 
