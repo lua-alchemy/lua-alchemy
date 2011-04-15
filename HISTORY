@@ -10,6 +10,8 @@ Changes since v0.2.1a:
    If you need help bundling it (or any other module) with Lua Alchemy yourself,
    please create a ticket / post to mailing list to get help.
 
+3. Fixed a couple of memory leaks in Lua/AS3 bridge.
+
 Lua Alchemy v0.2.1a (never officially released)
 -----------------------------------------------
 
