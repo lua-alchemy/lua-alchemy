@@ -62,7 +62,7 @@ static int as3_newclass(lua_State * L)
 
   push_as3_lua_userdata(L, as_class);
 
-  AS3_Release(as_class);
+  SAFE_RELEASE(as_class);
 
   LRETURN(L, stack, 1);
 }
@@ -105,7 +105,7 @@ static int as3_newclass2(lua_State * L)
 
   push_as3_lua_userdata(L, as_class);
 
-  AS3_Release(as_class);
+  SAFE_RELEASE(as_class);
 
   LRETURN(L, stack, 1);
 }
@@ -141,8 +141,8 @@ static int as3_new(lua_State * L)
   as_object = AS3_New(as_class, params);
   if (as_object == NULL)
   {
-    AS3_Release(as_class);
-    AS3_Release(params);
+    SAFE_RELEASE(as_class);
+    SAFE_RELEASE(params);
     return luaL_error(
         L,
         "failed to create object of type: " LUA_QL("%s"),
@@ -152,9 +152,9 @@ static int as3_new(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  /* AS3_Release(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
-  AS3_Release(params);
-  AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
+  /* SAFE_RELEASE(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  SAFE_RELEASE(params);
+  SAFE_RELEASE(as_class); /* TODO might want to store classes in a table to save loading again */
 
   LRETURN(L, stack, 1);
 }
@@ -201,8 +201,8 @@ static int as3_new2(lua_State * L)
   as_object = AS3_New(as_class, params);
   if (as_object == NULL)
   {
-    AS3_Release(as_class);
-    AS3_Release(params);
+    SAFE_RELEASE(as_class);
+    SAFE_RELEASE(params);
     return luaL_error(
         L,
         "failed to create object of type: " LUA_QL("%s::%s"),
@@ -213,9 +213,9 @@ static int as3_new2(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  /* AS3_Release(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
-  AS3_Release(params);
-  AS3_Release(as_class); /* TODO might want to store classes in a table to save loading again */
+  /* SAFE_RELEASE(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  SAFE_RELEASE(params);
+  SAFE_RELEASE(as_class); /* TODO might want to store classes in a table to save loading again */
 
   LRETURN(L, stack, 1);
 }
@@ -234,7 +234,7 @@ static int as3_release(lua_State * L)
 
   if (userdata->value != AS3_Undefined())
   {
-    AS3_Release(userdata->value);
+    SAFE_RELEASE(userdata->value);
     userdata->value = AS3_Undefined();
   }
 
@@ -311,7 +311,7 @@ static int as3_get(lua_State * L)
 
   push_as3_lua_userdata(L, val);
 
-  AS3_Release(val);
+  SAFE_RELEASE(val);
 
   LRETURN(L, stack, 1);
 }
@@ -408,7 +408,7 @@ static int as3_call(lua_State * L)
     SPAM(("as3_call(): AS3 arguments (with format)"));
     AS3_Val a = AS3_CallTS("join", params, "StrType", ";");
     AS3_Trace(a);
-    AS3_Release(a);
+    SAFE_RELEASE(a);
   }
 #endif /* DO_SPAM */
 
@@ -428,7 +428,7 @@ static int as3_call(lua_State * L)
   LCHECK(L, stack, 1);
   lua_pop(L, 1); /* Remove our protection from empty stack */
 
-  AS3_Release(params);
+  SAFE_RELEASE(params);
 
 #ifdef DO_SPAM
   SPAM(("as3_call() result type"));
@@ -446,7 +446,7 @@ static int as3_call(lua_State * L)
   lua_call(L, 2, 0);
 #endif /* DO_SPAM */
 
-  AS3_Release(result);
+  SAFE_RELEASE(result);
 
   LRETURN(L, stack, 1);
 }
@@ -487,8 +487,8 @@ static int as3_type(lua_State * L)
 
       push_as3_to_lua_stack(L, result);
 
-      AS3_Release(result);
-      AS3_Release(params);
+      SAFE_RELEASE(result);
+      SAFE_RELEASE(params);
     }
   }
 
@@ -557,10 +557,10 @@ static int as3_namespacecall(lua_State * L)
 
   push_as3_lua_userdata(L, result);
 
-  AS3_Release(result);
-  AS3_Release(as_namespace);
-  AS3_Release(as_method);
-  AS3_Release(params);
+  SAFE_RELEASE(result);
+  SAFE_RELEASE(as_namespace);
+  SAFE_RELEASE(as_method);
+  SAFE_RELEASE(params);
 
   LRETURN(L, stack, 1);
 }
