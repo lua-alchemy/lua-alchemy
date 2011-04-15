@@ -9,10 +9,10 @@
 #include "lstack.h"
 #include "bridge_lua_c.h"
 #include "bridge_as3_lua.h"
+#include "bridge_as3_c.h"
 
 #ifdef DO_SPAM
 
-#include "bridge_as3_c.h"
 #include "as3_lua_interface.h"
 
 #endif /* DO_SPAM */
@@ -94,7 +94,7 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
     SPAM(("as3_lua_callback(): AS3 arguments"));
     AS3_Val a = AS3_CallS("join", args, AS3_Undefined());
     AS3_Trace(a);
-    AS3_Release(a);
+    SAFE_RELEASE(a);
   }
 #endif /* DO_SPAM */
 
@@ -214,7 +214,7 @@ int release_callback(lua_State * L)
     if (pCallback->as3Function != AS3_Undefined())
     {
       SPAM(("release_callback() : before release"));
-      AS3_Release(pCallback->as3Function);
+      SAFE_RELEASE(pCallback->as3Function);
       SPAM(("release_callback() : after release"));
       pCallback->as3Function = AS3_Undefined();
     }
