@@ -770,7 +770,7 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         r1 = as3.new("flash.geom::Rectangle", 0, 0, 10, 10)
-        left = as3.get(r1, "left")
+        local left = as3.get(r1, "left")
         return as3.type(left), type(left)
         ]]> ).toString();
 
