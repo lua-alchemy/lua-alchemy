@@ -178,6 +178,7 @@ AS3_Val create_as3_value_from_lua_stack(
       as3Value = AS3_Array("AS3ValType", value);
       AS3_CallS("push", ret, as3Value);
       AS3_Release(as3Value);
+      AS3_Release(value);
       /*SPAM(("create_as3_value_from_lua_stack() + 1 end"));*/
     }
   }
