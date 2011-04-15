@@ -158,7 +158,6 @@ AS3_Val create_as3_value_from_lua_stack(
 
   LCALL(L, stack);
   AS3_Val ret;
-  AS3_Val value;
 
   SPAM(("create_as3_value_from_lua_stack(): begin"));
 
@@ -177,14 +176,17 @@ AS3_Val create_as3_value_from_lua_stack(
     ret = AS3_Array("");
     for (i = start; i <= end; ++i)
     {
-      AS3_Val as3Value;
+      AS3_Val value;
+      AS3_Val r;
 
       /*SPAM(("create_as3_value_from_lua_stack() + 1 begin"));*/
+
       value = get_as3_value_from_lua_stack(L, i);
-      as3Value = AS3_Array("AS3ValType", value);
-      AS3_CallS("push", ret, as3Value);
-      AS3_Release(as3Value);
-      AS3_Release(value);
+      r = AS3_CallTS("push", ret, "AS3ValType", value);
+      SAFE_RELEASE(r); /* Ignoring result */
+
+      SAFE_RELEASE(value);
+
       /*SPAM(("create_as3_value_from_lua_stack() + 1 end"));*/
     }
   }
