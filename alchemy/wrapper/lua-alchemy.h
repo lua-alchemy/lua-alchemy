@@ -26,6 +26,6 @@ void sztrace(char *);
 #define AS3LUA_CALLBACKMT "LuaAlchemy.cbMT"
 
 /* TODO: Get this string from `git describe` */
-#define AS3LUA_VERSION "v0.1a"
+#define AS3LUA_VERSION "v0.2.2-rc"
 
 #endif /* LUA_ALCHEMY_H_ */
