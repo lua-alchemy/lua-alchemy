@@ -7,8 +7,6 @@
 #include "lua-alchemy.h"
 
 /* Some global variables initialized in initialize_as3_constants() */
-extern AS3_Val no_params;
-extern AS3_Val zero_param;
 extern AS3_Val Number_class;
 extern AS3_Val int_class;
 extern AS3_Val String_class;

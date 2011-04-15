@@ -4,8 +4,6 @@
 
 #include <string.h>
 
-AS3_Val no_params = NULL;
-AS3_Val zero_param = NULL;
 AS3_Val Number_class = NULL;
 AS3_Val int_class = NULL;
 AS3_Val String_class = NULL;
@@ -17,8 +15,6 @@ AS3_Val Array_class = NULL;
 /* setup some useful constants */
 void initialize_as3_constants()
 {
-  no_params = AS3_Array("");
-  zero_param = AS3_Int(0);
   Number_class = get_class2(NULL, "Number");
   int_class = get_class2(NULL, "int");
   String_class = get_class2(NULL, "String");
