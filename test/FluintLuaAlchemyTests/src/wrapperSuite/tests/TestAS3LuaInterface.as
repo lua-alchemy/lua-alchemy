@@ -763,7 +763,7 @@ package wrapperSuite.tests
         return as3.type(contains), type(contains)
         ]]> ).toString();
 
-      doString(script, [true, "Boolean","userdata"]);
+      doString(script, [true, "Boolean", "userdata"]);
     }
 
     public function testAS3GetReturnsAS3Type():void
@@ -774,7 +774,7 @@ package wrapperSuite.tests
         return as3.type(left), type(left)
         ]]> ).toString();
 
-      doString(script, [true, "int","userdata"]);
+      doString(script, [true, "int", "userdata"]);
     }
 
     public function testAS3NamespaceCallReturnsAS3Type():void
@@ -785,7 +785,7 @@ package wrapperSuite.tests
         return as3.type(namespace), type(namespace)
         ]]> ).toString();
 
-      doString(script, [true, "String","userdata"]);
+      doString(script, [true, "String", "userdata"]);
     }
 
     public function testToStringSanity():void // Sanity check
