@@ -23,4 +23,8 @@ AS3_Val get_class2(const char * as_namespace_path, const char * as_class_path);
 BOOL is_null(AS3_Val val);
 AS3_Malloced_Str get_string_bytes(AS3_Val str, size_t * size_in_bytes);
 
+void safe_release(AS3_Val val, const char * file, int line);
+
+#define SAFE_RELEASE(val) safe_release(val, __FILE__, __LINE__)
+
 #endif /* BRIDGE_AS3_C_H_ */

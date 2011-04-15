@@ -28,6 +28,12 @@ void initialize_as3_constants()
   Array_class = get_class2(NULL, "Array");
 }
 
+/* Useful for debugging. Keep it here for a while */
+void safe_release(AS3_Val value, const char * file, int line)
+{
+  AS3_Release(value);
+}
+
 /*
 * Get an actionscript class with the given namespace and class name
 * in the format: package::ClassName
