@@ -286,5 +286,3 @@ int push_as3_to_lua_stack(lua_State * L, AS3_Val val)
 
   LRETURN(L, stack, 1);
 }
-
-
