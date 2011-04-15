@@ -29,6 +29,10 @@ package wrapperSuite.tests
       var myLuaAlchemy:LuaAlchemy = new LuaAlchemy(LuaAssets.filesystemRoot());
 
       var stack:Array = myLuaAlchemy.doFile("builtin://test-lua-based.lua");
+      if (stack[0] != true)
+      {
+        trace("test-lua-based.lua load failed:", stack[1]);
+      }
       assertTrue(stack[0]);
       assertEquals(2, stack.length);
 
