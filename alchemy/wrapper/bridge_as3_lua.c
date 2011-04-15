@@ -106,6 +106,12 @@ AS3_Val get_as3_value_from_lua_stack_type(lua_State * L, int i, int type)
           lua_pop(L, 2); /* Pop AS3LUA_METATABLE and userdata metatable */
           AS3LuaUserData * userdata = (AS3LuaUserData *)lua_touserdata(L, i);
           value = userdata->value;
+          /*
+          * We just created one more reference to the AS3 value,
+          * as it still lives inside Lua.
+          * (And will probably be collected by GC.)
+          */
+          AS3_Acquire(value);
         }
       }
       break;
