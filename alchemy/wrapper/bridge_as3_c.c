@@ -39,9 +39,8 @@ AS3_Val get_class(const char * as_namespaceclass_path)
   /* TODO: Merge with get_class2()? */
 
   AS3_Val as_namespace;
-  AS3_Val as_class;
   AS3_Val ret;
-  char * class_ptr = NULL;
+  const char * class_ptr = NULL;
 
   /* TODO might want to store classes in a table to save loading again */
 
@@ -52,20 +51,22 @@ AS3_Val get_class(const char * as_namespaceclass_path)
     as_namespace = AS3_StringN(
         as_namespaceclass_path, (class_ptr - as_namespaceclass_path) / sizeof(char)
       );
-    as_class = AS3_String(class_ptr + 2);
+    class_ptr = class_ptr + 2; /* Skip '::' */
   }
   else
   {
-    as_namespace = AS3_Undefined();
-    as_class = AS3_String(as_namespaceclass_path);
+    as_namespace = NULL;
+    class_ptr = as_namespaceclass_path;
   }
 
-  ret = AS3_NSGet(as_namespace, as_class);
+  ret = AS3_NSGetS(as_namespace, class_ptr);
 
   /* TODO check for failure getting class */
 
-  AS3_Release(as_namespace);
-  AS3_Release(as_class);
+  if (as_namespace)
+  {
+    AS3_Release(as_namespace);
+  }
 
   return ret;
 }
@@ -77,7 +78,6 @@ AS3_Val get_class(const char * as_namespaceclass_path)
 AS3_Val get_class2(const char * as_namespace_path, const char * as_class_path)
 {
   AS3_Val as_namespace;
-  AS3_Val as_class;
   AS3_Val ret;
 
   /* TODO might want to store classes in a table to save loading again */
@@ -88,17 +88,17 @@ AS3_Val get_class2(const char * as_namespace_path, const char * as_class_path)
   }
   else
   {
-    as_namespace = AS3_Undefined();
+    as_namespace = NULL;
   }
 
-  as_class = AS3_String(as_class_path);
-
-  ret = AS3_NSGet(as_namespace, as_class);
+  ret = AS3_NSGetS(as_namespace, as_class_path);
 
   /* TODO check for failure getting class */
 
-  AS3_Release(as_namespace);
-  AS3_Release(as_class);
+  if (as_namespace != NULL)
+  {
+    SAFE_RELEASE(as_namespace);
+  }
 
   return ret;
 }
