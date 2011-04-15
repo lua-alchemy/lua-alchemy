@@ -110,11 +110,14 @@ AS3_Val get_class2(const char * as_namespace_path, const char * as_class_path)
 BOOL is_null(AS3_Val val)
 {
   BOOL result = FALSE;
-  AS3_Val argsVal = AS3_Array("AS3ValType", val);
-  AS3_Val classNameVal = AS3_Call(getQualifiedClassName_method, NULL, argsVal);
+  AS3_Val classNameVal = AS3_CallT(
+      getQualifiedClassName_method,
+      NULL,
+      "AS3ValType",
+      val
+    );
   AS3_Malloced_Str className = AS3_StringValue(classNameVal);
-  AS3_Release(argsVal);
-  AS3_Release(classNameVal);
+  SAFE_RELEASE(classNameVal);
 
   result = (strncmp(className, "null", 4) == 0);
 
