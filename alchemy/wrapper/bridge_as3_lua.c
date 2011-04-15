@@ -23,15 +23,15 @@ int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
 
   len_v = AS3_GetS(array, "length");
   len = AS3_IntValue(len_v);
-  AS3_Release(len_v);
+  SAFE_RELEASE(len_v);
 
   for (i = 0; i < len; i++)
   {
     AS3_Val i_v = AS3_Int(i);
     cur = AS3_Get(array, i_v);
-    AS3_Release(i_v);
+    SAFE_RELEASE(i_v);
     push_as3_lua_userdata(L, cur);
-    AS3_Release(cur);
+    SAFE_RELEASE(cur);
   }
 
   LRETURN(L, stack, len);
