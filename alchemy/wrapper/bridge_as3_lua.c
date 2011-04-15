@@ -14,16 +14,22 @@ int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
   int len = 0;
   int i = 0;
   AS3_Val cur;
+  AS3_Val len_v;
 
   if (!AS3_InstanceOf(array, Array_class))
   {
     LRETURN(L, stack, 0);
   }
 
-  len = AS3_IntValue(AS3_GetS(array, "length"));
+  len_v = AS3_GetS(array, "length");
+  len = AS3_IntValue(len_v);
+  AS3_Release(len_v);
+
   for (i = 0; i < len; i++)
   {
-    cur = AS3_Get(array, AS3_Int(i));
+    AS3_Val i_v = AS3_Int(i);
+    cur = AS3_Get(array, i_v);
+    AS3_Release(i_v);
     push_as3_lua_userdata(L, cur);
     AS3_Release(cur);
   }
