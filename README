@@ -65,7 +65,6 @@ File Manifest
     HISTORY - Project history log
     README - This file describing the project
     alchemy/ - Builds lua-alchemy.swc
-    benchmark/ - Lua benchmarks
     build/ - Build utility tools
     demo/ - Flash and Flex demos
     etc/ - Odds and ends of various usefulness

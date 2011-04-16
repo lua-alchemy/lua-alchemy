@@ -13,7 +13,12 @@ Changes since v0.2.1a:
 3. Fixed a couple of memory leaks in Lua/AS3 bridge
    (including a nasty hidden bug in the AS3 userdata handling).
 
-4. Other minor fixes and improvements (see git log for more information).
+4. Removed unused Lua benchmarks and unused Lua test suites
+   hoarded into the distribution. LuaAlchemy test suite is still in place.
+   Feel free to contribute your pet tests and benchmarks -- as long
+   as you integrate them so they are immediately usable with Lua Alchemy.
+
+5. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.1a (never officially released)
 -----------------------------------------------
