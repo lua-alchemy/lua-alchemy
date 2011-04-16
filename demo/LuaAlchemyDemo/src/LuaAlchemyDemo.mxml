@@ -3,7 +3,7 @@
   xmlns:mx="http://www.adobe.com/2006/mxml"
   layout="vertical" xmlns:local="*">
   <mx:HBox width="100%">
-    <mx:Label text="Lua Alchemy v0.2a" fontWeight="bold" fontSize="16"/>
+    <mx:Label text="Lua Alchemy v0.2.2" fontWeight="bold" fontSize="16"/>
     <mx:Spacer width="100%"/>
     <mx:LinkButton label="About"
       click="navigateToURL(new URLRequest('http://code.google.com/p/lua-alchemy/'), 'about_window')"/>
