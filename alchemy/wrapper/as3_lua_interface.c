@@ -391,30 +391,9 @@ static int as3_call(lua_State * L)
 
   LCHECK(L, stack, 1);
 
-#ifdef DO_SPAM
-    /* TODO: Remove */
-    lua_pushcfunction(L, as3_trace);
-    lua_pushliteral(L, "AS3_CALL() ARGUMENTS");
-    dump_lua_stack(L, LBASE(L, 2));
-    lua_call(L, 2, 0);
-#endif /* DO_SPAM */
-
   params = create_as3_value_from_lua_stack(L, 3, LBASE(L, stack), FALSE);
 
   LCHECK(L, stack, 1);
-
-#ifdef DO_SPAM
-  {
-    SPAM(("as3_call(): object"));
-    AS3_Trace(userdata->value);
-    SPAM(("as3_call(): function name"));
-    sztrace((char *)function_name);
-    SPAM(("as3_call(): AS3 arguments (with format)"));
-    AS3_Val a = AS3_CallTS("join", params, "StrType", ";");
-    AS3_Trace(a);
-    SAFE_RELEASE(a);
-  }
-#endif /* DO_SPAM */
 
   SPAM(("as3_call(): before call"));
 
@@ -434,21 +413,7 @@ static int as3_call(lua_State * L)
 
   SAFE_RELEASE(params);
 
-#ifdef DO_SPAM
-  SPAM(("as3_call() result type"));
-  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", result)));
-#endif /* DO_SPAM */
-
   push_as3_lua_userdata(L, result);
-
-#ifdef DO_SPAM
-  /* TODO: Remove */
-  int top = lua_gettop(L);
-  lua_pushcfunction(L, as3_trace);
-  lua_pushliteral(L, "AS3_CALL()");
-  dump_lua_stack(L, top);
-  lua_call(L, 2, 0);
-#endif /* DO_SPAM */
 
   SAFE_RELEASE(result);
 
