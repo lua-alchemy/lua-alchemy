@@ -83,6 +83,8 @@ do
   end
 
   do -- Patch as3 metatable
+
+    -- TODO: HACK! There should be a legal way to do this!
     local mt = debug.getmetatable(assert(as3.new("String")))
 
     mt.__index = function(t, k)
@@ -109,6 +111,8 @@ do
   end
 
   do -- Patch methods
+
+    -- TODO: HACK! There should be a legal way to do this!
     local methods =
     {
       "release", "tolua", "get", "set", "assign",
