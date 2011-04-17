@@ -25,6 +25,13 @@ Changes since v0.2.2:
 
 2. Sugar: When sugar is enabled, all as3 objects are callable.
 
+3. New as3.invoke() API function to invoke (i.e. call) AS3 function objects.
+
+4. Thanks to above two items it is now possible to write for loop
+   iterators in AS3 etc.
+
+5. Other minor fixes and improvements (see git log for more information).
+
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
 
