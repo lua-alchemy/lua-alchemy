@@ -231,7 +231,12 @@ int push_as3_lua_userdata(lua_State * L, AS3_Val val)
 /*
 * Given an ActionScript object, push it onto the Lua stack as a Lua native
 * type if a primitive class (String, Number, Boolean, int, null).
-* If object is not convertible to native Lua value, do not push anything (and return 0).
+* If object is not convertible to native Lua value, do not push anything
+* (and return 0).
+*
+* WARNING: It important that this function does not touch
+*          non-primitive values (like Arrays). If this will be changed,
+*          optional primitive autoconversion logic will break.
 */
 int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val)
 {
