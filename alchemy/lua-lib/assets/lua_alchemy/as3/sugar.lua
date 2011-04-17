@@ -16,7 +16,8 @@ callobj * tostring -> as3.call(callobj.value, "toString")
 
 --]]
 
-local old_trace, old_call, old_tolua, old_type = as3.trace, as3.call, as3.tolua, as3.type
+local old_trace, old_call, old_tolua, old_type
+    = as3.trace, as3.call, as3.tolua, as3.type
 
 local spam = as3.trace
 
@@ -34,24 +35,24 @@ do
   local make_callobj
   do
     local index = function(t, k)
-      --spam("callobj index", k)
+      -- spam("callobj index", k)
       return make_callobj(getmetatable(t):value(), k)
     end
 
     local newindex = function(t, k, v)
-      --spam("callobj newindex", k)
+      -- spam("callobj newindex", k)
       as3.set(getmetatable(t):value(), k, v)
     end
 
     -- Enforcing dot notation for performance
     local call = function(t, ...)
       local mt = getmetatable(t) -- Note no value() call here
-      --spam("callobj call", mt.obj_, mt.key_)
+      -- spam("callobj call", mt.obj_, mt.key_)
       return as3.call(mt.obj_, mt.key_, ...)
     end
 
     local value = function(self)
-      --spam("callobj value", self.value_ ~= nil, self.obj_, self.key_)
+      -- spam("callobj value", self.value_ ~= nil, self.obj_, self.key_)
       if self.value_ == nil then
         self.value_ = as3.get(self.obj_, self.key_)
       end
@@ -63,7 +64,7 @@ do
         error("as3 object expected, got "..(as3.type(t) or type(t)))
       end
       return setmetatable(
-          {},
+          { },
           {
             proxy_tag;
 
@@ -120,11 +121,11 @@ do
       as3[name] = function(...)
         --[[
         if name ~= "trace" then
-          --spam("[as3.sugar]", name, "args:", ...)
+          -- spam("[as3.sugar]", name, "args:", ...)
         end
         --]]
         local n = select("#", ...)
-        local args = {}
+        local args = { }
         for i = 1, n do
           args[i] = unproxy(select(i, ...))
         end
@@ -183,7 +184,7 @@ do -- as3.class(), as3.namespace()
         -- TODO: Huge overhead, but simple. Rewrite.
 
         local str = table.concat({...}, "."):gsub(":+", ".")
-        local buf = {}
+        local buf = { }
         for match in str:gmatch("([^.:]+)") do
           buf[#buf + 1] = match
         end
@@ -214,9 +215,10 @@ do -- as3.class(), as3.namespace()
       local value = function(self)
         if self.value_ == nil then
           if self.kind_ ~= CLASS then
-            error("namespace objects can not be resolved to actual value") -- TODO: Really?
+            -- TODO: Really?
+            error("namespace objects can not be resolved to actual value")
           end
-          --spam("value", self.namespace_, self.class_, self.key_)
+          -- spam("value", self.namespace_, self.class_, self.key_)
           self.value_ = as3.get(as3.newclass2(self.namespace_, self.class_), self.key_)
         end
         return self.value_
@@ -227,15 +229,18 @@ do -- as3.class(), as3.namespace()
 
         local key = mt.key_
 
-        --spam("call begin", mt.kind_, mt.namespace_, mt.class_, mt.key_)
+        -- spam(
+        --     "pkgobj call begin", mt.kind_, mt.namespace_, mt.class_, mt.key_
+        --   )
 
-        -- TODO: Colon call attempt gives really misleading error message. Improve it.
+        -- TODO: Colon call attempt gives really misleading error message.
+        --       Improve it.
 
         -- TODO: Actually it should be two separate call() implementations.
         if mt.kind_ == CLASS then
           if key == "new" then
             -- new object mode
-            --spam("new call", mt.namespace_, mt.class_, mt.key_)
+            -- spam("new call", mt.namespace_, mt.class_, mt.key_)
             local result = as3.new2(mt.namespace_, mt.class_, ...)
 
             -- Note it is impossible to create a new instance of null.
@@ -244,19 +249,19 @@ do -- as3.class(), as3.namespace()
             --       and remove this restriction.
             assert(as3.type(result) ~= "null", "new2 failed")
 
-            --spam("created", as3.type(result), result)
+            -- spam("created", as3.type(result), result)
 
             return result
           elseif key == "class" then
             -- class object mode
-            --spam("class call", mt.namespace_, mt.class_, mt.key_)
+            -- spam("class call", mt.namespace_, mt.class_, mt.key_)
             local result = as3.newclass2(mt.namespace_, mt.class_, ...)
             assert(as3.type(result) ~= "null", "newclass2 failed (class call)")
             return result
           end
 
           -- dot call mode
-          --spam("dot call", mt.namespace_, mt.class_, mt.key_)
+          -- spam("dot call", mt.namespace_, mt.class_, mt.key_)
           local classobj = as3.newclass2(mt.namespace_, mt.class_)
           assert(as3.type(classobj) ~= "null", "newclass2 failed (static call)")
           return as3.call(classobj, key, ...)
@@ -265,13 +270,13 @@ do -- as3.class(), as3.namespace()
         assert(mt.kind_ == NAMESPACE)
 
         -- namespace call mode
-        --spam("namespace call", mt.namespace_, mt.class_, mt.key_)
+        -- spam("namespace call", mt.namespace_, mt.class_, mt.key_)
         return as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
       end
 
       local newindex = function(t, k, v)
         -- Note subindices in k are not supported
-        --spam("newindex", getmetatable(t).kind_, getmetatable(t):path2(k))
+        -- spam("newindex", getmetatable(t).kind_, getmetatable(t):path2(k))
         local mt = getmetatable(t)
         if mt.kind_ ~= CLASS then
           error("namespace objects are read-only") -- TODO: Really?
@@ -280,7 +285,7 @@ do -- as3.class(), as3.namespace()
       end
 
       local index = function(t, k)
-        --spam("index", getmetatable(t).kind_, getmetatable(t):path2(k))
+        -- spam("index", getmetatable(t).kind_, getmetatable(t):path2(k))
         local mt = getmetatable(t)
         return make_pkgobj(mt.kind_, mt:path2(k))
       end
@@ -322,7 +327,7 @@ do -- as3.class(), as3.namespace()
 
     local make_pkgobj_table = function(pkgobj_kind)
       return setmetatable(
-          {},
+          { },
           {
             __index = function(t, k)
               return make_pkgobj(pkgobj_kind, k)
