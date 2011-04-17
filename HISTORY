@@ -1,3 +1,30 @@
+Lua Alchemy v0.2.3 (not released yet)
+-------------------------------------
+
+Changes since v0.2.2:
+
+1. Sugar: Optional autoconversion to Lua for primitive AS3 types
+   (the ones that as3.tolua() handles). (Off by default.)
+
+   Use as3.enable_sugar_autoconversion() to enable it,
+   as3.disable_sugar_autoconversion() to disable
+   and as3.is_sugar_autoconversion_enabled() to query its status.
+
+   Note that autoconversion is likely to hamper performance a bit.
+
+   It will also not allow you to write code as follows:
+
+       as3.class.Array.new().length.toString()
+
+   Since length would be converted to Lua number right away.
+
+   For the sake of consistency of your code it is not recommended
+   to change autoconversion settings on the fly. Set it to a preferred
+   value right after Lua Alchemy state is initialized
+   and do not touch it after that.
+
+2. Sugar: When sugar is enabled, all as3 objects are callable.
+
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
 
