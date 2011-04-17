@@ -498,6 +498,8 @@ static int as3_type(lua_State * L)
 /*
 * Return true if argument is AS3 value. Return nil otherwise
 * Lua example: as3.isas3value(v)
+*
+* TODO: Why does this return nil?! It should return false to not surprise user.
 */
 static int as3_isas3value(lua_State * L)
 {
