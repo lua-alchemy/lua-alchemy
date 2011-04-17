@@ -182,8 +182,8 @@ do
     end
 
     mt.__call = function(t, ...)
-      -- spam("udata call", t, ...)
-      return maybe_as3_tolua(as3.call(t, ...))
+      -- spam("udata invoke", t, ...)
+      return maybe_as3_tolua(as3.invoke(t, ...))
     end
 
 --[[
