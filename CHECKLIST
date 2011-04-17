@@ -1,0 +1,14 @@
+Lua Alchemy release checklist
+=============================
+
+1. Update HISTORY file.
+2. Update version in lua-alchemy.h
+3. Update version in LuaAlchemyDemo.mxml
+4. Do a full rebuild and ensure that all is working OK.
+5. Tag release and push the tag to GitHub.
+6. Update demo SVN: http://lua-alchemy.googlecode.com/svn/trunk/demo/index.html
+7. Upload full sources (hint: git archive), lua-alchemy-vX.X.swc,
+   demo sources  to code.google.com/p/lua-alchemy. Make uploaded files
+   "featured" and remove "featured" from old files they replaced.
+8. Announce release to Lua Alchemy dev list, Lua ML etc.
+9. Cleanup stale feature-branches.
