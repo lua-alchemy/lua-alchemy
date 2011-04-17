@@ -181,6 +181,11 @@ do
       return maybe_as3_tolua(as3.set(t, k, v))
     end
 
+    mt.__call = function(t, ...)
+      -- spam("udata call", t, ...)
+      return maybe_as3_tolua(as3.call(t, ...))
+    end
+
 --[[
     mt.__tostring = function(t)
       local str = old_call(t, "toString")
