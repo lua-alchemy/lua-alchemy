@@ -29,7 +29,7 @@
   <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
 
   <!-- files -->
-  <property name="main.application" location="${src.dir}/LuaBoy.mxml"/>
+  <property name="main.application" location="${src.dir}/LuaBoy.as"/>
   <property name="output.swf.name" value="LuaBoy"/>
   <property name="main.application.release.out" location="${release.build.dir}/${output.swf.name}.swf"/>
   <property name="main.application.debug.out" location="${debug.build.dir}/${output.swf.name}.swf"/>
@@ -105,7 +105,8 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.release">
     <mxmlc file="${main.application}" output="${main.application.release.out}"
-      target-player="10.0.0">
+	target-player="10.0.0">
+      <static-link-runtime-shared-libraries />
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
         <include name="lua-alchemy.swc" />
@@ -118,7 +119,8 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.debug">
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
-      target-player="10.0.0">
+	target-player="10.0.0">
+      <static-link-runtime-shared-libraries />
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />
