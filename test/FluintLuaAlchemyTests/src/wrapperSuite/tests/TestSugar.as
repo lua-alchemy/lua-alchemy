@@ -734,6 +734,73 @@ package wrapperSuite.tests
       doString(script, [true]);
     }
 
+    public function testFunctionValue():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
+
+        local f = assert(v.getFortyTwoFn())
+
+        assert(as3.isas3value(f))
+
+        assert(as3.tolua(f()) == 42)
+        assert(as3.tolua(f()) == 42) -- again
+      ]]> ).toString();
+
+      doString(script, [true]);
+    }
+
+    public function testIterator():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
+
+        v.vec.push("forty")
+        v.vec.push("two")
+
+        -- Needed since "for" expects Lua nil,
+        -- and iterator would return as3 null.
+        local adapt = function(fn)
+          return function(...)
+            return as3.tolua(fn(...))
+          end
+        end
+
+        do
+          local t = { }
+          for val in adapt(v.listIter()) do
+            t[#t + 1] = as3.tolua(val)
+          end
+
+          assert(#t == 2)
+          assert(t[1] == "forty")
+          assert(t[2] == "two")
+        end
+
+        -- Repeat to ensure that iterator works ok
+        do
+          local t = { }
+          for val in adapt(v.listIter()) do
+            t[#t + 1] = as3.tolua(val):reverse()
+
+            for val in adapt(v.listIter()) do
+              t[#t + 1] = as3.tolua(val)
+            end
+          end
+
+          assert(#t == 6)
+          assert(t[1] == "ytrof")
+          assert(t[2] == "forty")
+          assert(t[3] == "two")
+          assert(t[4] == "owt")
+          assert(t[5] == "forty")
+          assert(t[6] == "two")
+        end
+      ]]> ).toString();
+
+      doString(script, [true]);
+    }
+
     // TODO test as3.filegetcontents(file) when loaded by default
 
     // TODO test with and without strict

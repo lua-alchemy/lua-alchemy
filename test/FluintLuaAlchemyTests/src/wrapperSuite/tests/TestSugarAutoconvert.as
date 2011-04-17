@@ -1011,5 +1011,70 @@ package wrapperSuite.tests
 
       doString(script, [true]);
     }
+
+    public function testFunctionValue():void
+    {
+      var script:String = ( <![CDATA[
+        assert(not as3.is_sugar_autoconversion_enabled())
+        as3.enable_sugar_autoconversion()
+
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
+
+        local f = assert(v.getFortyTwoFn())
+
+        assert(as3.isas3value(f))
+
+        assert(f() == 42)
+        assert(f() == 42) -- again
+      ]]> ).toString();
+
+      doString(script, [true]);
+    }
+
+    public function testIterator():void
+    {
+      var script:String = ( <![CDATA[
+        assert(not as3.is_sugar_autoconversion_enabled())
+        as3.enable_sugar_autoconversion()
+
+        local v = as3.class.wrapperSuite.tests.TestWrapperHelper.new()
+
+        v.vec.push("forty")
+        v.vec.push("two")
+
+        do
+          local t = { }
+          for val in v.listIter() do
+            t[#t + 1] = val
+          end
+
+          assert(#t == 2)
+          assert(t[1] == "forty")
+          assert(t[2] == "two")
+        end
+
+        -- Repeat to ensure that iterator works ok
+        do
+          local t = { }
+          for val in v.listIter() do
+            t[#t + 1] = val:reverse()
+
+            for val in v.listIter() do
+              t[#t + 1] = val
+            end
+          end
+
+          assert(#t == 6)
+          assert(t[1] == "ytrof")
+          assert(t[2] == "forty")
+          assert(t[3] == "two")
+          assert(t[4] == "owt")
+          assert(t[5] == "forty")
+          assert(t[6] == "two")
+        end
+      ]]> ).toString();
+
+      doString(script, [true]);
+    }
   }
 }

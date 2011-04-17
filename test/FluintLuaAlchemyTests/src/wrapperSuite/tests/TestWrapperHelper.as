@@ -62,5 +62,30 @@ package wrapperSuite.tests
 
     public var forty:int = 40;
     public var two:int = 2;
+
+    public var vec:Array = [];
+
+    public function getFortyTwoFn():Function
+    {
+      return function():*
+      {
+        return 42;
+      }
+    }
+
+    public function listIter():Function
+    {
+      var i:int = 0;
+
+      return function():*
+      {
+        if (i < vec.length)
+        {
+          return vec[i++];
+        }
+
+        return null;
+      }
+    }
   }
 }
