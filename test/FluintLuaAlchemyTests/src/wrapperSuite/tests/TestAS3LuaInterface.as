@@ -875,5 +875,19 @@ package wrapperSuite.tests
 
       assertEquals(3, stack.length);
     }
+
+    public function testAS3Invoke():void
+    {
+      var script:String = ( <![CDATA[
+        local v = as3.new("wrapperSuite.tests::TestWrapperHelper")
+        local f = assert(as3.call(v, "getFortyTwoFn"))
+        assert(as3.isas3value(f))
+
+        assert(as3.tolua(as3.invoke(f)) == 42)
+        assert(as3.tolua(as3.invoke(f)) == 42) -- again
+      ]]> ).toString();
+
+      doString(script, [true]);
+    }
   }
 }
