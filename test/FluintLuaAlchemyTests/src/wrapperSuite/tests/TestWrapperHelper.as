@@ -19,6 +19,11 @@ package wrapperSuite.tests
     public function get string2():String { return _string2; }
     public function set string2(value:String):void { _string2 = value; }
 
+    public function concat1And2():String
+    {
+      return string1 + _string2;
+    }
+
     public var nameAge:String;
     public function setNameAge(name:String, age:int):void
     {
@@ -54,5 +59,8 @@ package wrapperSuite.tests
     {
       staticString = str;
     }
+
+    public var forty:int = 40;
+    public var two:int = 2;
   }
 }

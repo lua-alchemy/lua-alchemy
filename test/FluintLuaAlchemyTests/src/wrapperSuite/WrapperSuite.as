@@ -13,6 +13,7 @@ package wrapperSuite
       addTestCase(new TestTypeConversion());
       addTestCase(new TestCallbacks());
       addTestCase(new TestSugar());
+      addTestCase(new TestSugarAutoconvert());
       addTestCase(new TestLuaAlchemyInterface());
       addTestCase(new TestStrictness());
       addTestCase(new TestLuaBased());
