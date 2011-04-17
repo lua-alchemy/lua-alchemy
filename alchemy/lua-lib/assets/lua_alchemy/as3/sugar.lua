@@ -31,6 +31,84 @@ local unproxy = function(o)
   return o
 end
 
+local is_mas3gaa_enabled = false
+
+local maybe_as3_tolua
+local maybe_as3_get_and_autoconvert
+do
+  local do_not_as3_get_and_autoconvert = function(t, k)
+    -- spam("mas3gaa: not autoconverting", t, k)
+    return false, nil, nil
+  end
+
+  local do_as3_get_and_autoconvert = function(t, k)
+    local proxied_value = as3.get(t, k)
+
+    local unproxied_value = unproxy(proxied_value)
+
+    local lua_value = as3.tolua(unproxied_value)
+    if lua_value ~= unproxied_value then -- TODO: Fragile?
+      -- spam("mas3gaa: unproxied", t, k, lua_value)
+      return true, nil, lua_value -- We know how to represent this value in Lua
+    end
+
+    -- spam("mas3gaa: kept", t, k, proxied_value)
+    return true, proxied_value, nil
+  end
+
+  local identity = function(...) return ... end
+
+  -- Since as3.tolua() may be wrapped, we opt to resolve it at run-time
+  local call_as3_tolua = function(...)
+    return as3.tolua(...)
+  end
+
+  local handlers =
+  {
+    [false] =
+    {
+      get = do_not_as3_get_and_autoconvert;
+      tolua = identity;
+    };
+
+    -- Slower.
+    -- Also would break code like as3.class.Array.new().length.toString()
+    -- since length would be autoconverted to Lua number.
+    [true] =
+    {
+      get = do_as3_get_and_autoconvert;
+      tolua = call_as3_tolua;
+    };
+  }
+
+  maybe_as3_get_and_autoconvert = handlers[is_mas3gaa_enabled].get
+  maybe_as3_tolua = handlers[is_mas3gaa_enabled].tolua
+
+  as3.enable_sugar_autoconversion = function(enable)
+    if enable == nil then
+      enable = true
+    end
+
+    is_mas3gaa_enabled = enable
+
+    maybe_as3_get_and_autoconvert = assert(
+        handlers[is_mas3gaa_enabled],
+        "enable_sugar_autoconversion expects boolean argument"
+      ).get
+    maybe_as3_tolua = handlers[is_mas3gaa_enabled].tolua
+  end
+
+  as3.disable_sugar_autoconversion = function()
+    is_mas3gaa_enabled = false
+    maybe_as3_get_and_autoconvert = handlers[is_mas3gaa_enabled].get
+    maybe_as3_tolua = handlers[is_mas3gaa_enabled].tolua
+  end
+
+  as3.is_sugar_autoconversion_enabled = function()
+    return is_mas3gaa_enabled
+  end
+end
+
 do
   local make_callobj
   do
@@ -41,20 +119,20 @@ do
 
     local newindex = function(t, k, v)
       -- spam("callobj newindex", k)
-      as3.set(getmetatable(t):value(), k, v)
+      return maybe_as3_tolua(as3.set(getmetatable(t):value(), k, v))
     end
 
     -- Enforcing dot notation for performance
     local call = function(t, ...)
       local mt = getmetatable(t) -- Note no value() call here
       -- spam("callobj call", mt.obj_, mt.key_)
-      return as3.call(mt.obj_, mt.key_, ...)
+      return maybe_as3_tolua(as3.call(mt.obj_, mt.key_, ...))
     end
 
     local value = function(self)
       -- spam("callobj value", self.value_ ~= nil, self.obj_, self.key_)
       if self.value_ == nil then
-        self.value_ = as3.get(self.obj_, self.key_)
+        self.value_ = maybe_as3_tolua(as3.get(self.obj_, self.key_))
       end
       return self.value_
     end
@@ -63,6 +141,14 @@ do
       if not as3.isas3value(t) then
         error("as3 object expected, got "..(as3.type(t) or type(t)))
       end
+
+      local did_get, proxied_value, lua_value = maybe_as3_get_and_autoconvert(
+          t, k
+        )
+      if did_get and proxied_value == nil then
+        return lua_value
+      end
+
       return setmetatable(
           { },
           {
@@ -70,7 +156,7 @@ do
 
             obj_ = t;
             key_ = k;
-            value_ = nil;
+            value_ = proxied_value;
 
             value = value;
 
@@ -92,7 +178,7 @@ do
     end
 
     mt.__newindex = function(t, k, v)
-      return as3.set(t, k, v)
+      return maybe_as3_tolua(as3.set(t, k, v))
     end
 
 --[[
@@ -223,7 +309,9 @@ do -- as3.class(), as3.namespace()
             error("namespace objects can not be resolved to actual value")
           end
           -- spam("value", self.namespace_, self.class_, self.key_)
-          self.value_ = as3.get(as3.newclass2(self.namespace_, self.class_), self.key_)
+          self.value_ = maybe_as3_tolua(
+              as3.get(assert(as3.newclass2(self.namespace_, self.class_)), self.key_)
+            )
         end
         return self.value_
       end
@@ -259,23 +347,25 @@ do -- as3.class(), as3.namespace()
           elseif key == "class" then
             -- class object mode
             -- spam("class call", mt.namespace_, mt.class_, mt.key_)
-            local result = as3.newclass2(mt.namespace_, mt.class_, ...)
+            local result = assert(as3.newclass2(mt.namespace_, mt.class_, ...))
             assert(as3.type(result) ~= "null", "newclass2 failed (class call)")
             return result
           end
 
           -- dot call mode
           -- spam("dot call", mt.namespace_, mt.class_, mt.key_)
-          local classobj = as3.newclass2(mt.namespace_, mt.class_)
+          local classobj = assert(as3.newclass2(mt.namespace_, mt.class_))
           assert(as3.type(classobj) ~= "null", "newclass2 failed (static call)")
-          return as3.call(classobj, key, ...)
+          return maybe_as3_tolua(as3.call(classobj, key, ...))
         end
 
         assert(mt.kind_ == NAMESPACE)
 
         -- namespace call mode
         -- spam("namespace call", mt.namespace_, mt.class_, mt.key_)
-        return as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
+        return maybe_as3_tolua(
+            as3.namespacecall(mt.namespace_.."."..mt.class_, key, ...)
+          )
       end
 
       local newindex = function(t, k, v)
@@ -285,7 +375,7 @@ do -- as3.class(), as3.namespace()
         if mt.kind_ ~= CLASS then
           error("namespace objects are read-only") -- TODO: Really?
         end
-        as3.set(as3.newclass2(mt:path2()), k, v)
+        return maybe_as3_tolua(as3.set(assert(as3.newclass2(mt:path2())), k, v))
       end
 
       local index = function(t, k)
@@ -304,28 +394,49 @@ do -- as3.class(), as3.namespace()
 
       make_pkgobj = function(pkgobj_kind, ...)
         local namespace, class, key = splitpath(...)
-        return setmetatable(
-            {},
-            {
-              proxy_tag;
-              pkgobj_proxy_tag;
 
-              kind_ = pkgobj_kind;
+        local mt =
+        {
+          proxy_tag;
+          pkgobj_proxy_tag;
 
-              namespace_ = namespace;
-              class_ = class;
-              key_ = key;
-              value_ = nil;
+          kind_ = pkgobj_kind;
 
-              path2 = path2;
-              value = value;
+          namespace_ = namespace;
+          class_ = class;
+          key_ = key;
+          value_ = nil;
 
-              __index = index;
-              __newindex = newindex;
-              __call = call;
-              --__tostring = tostring_pkgobj;
-            }
-          )
+          path2 = path2;
+          value = value;
+
+          __index = index;
+          __newindex = newindex;
+          __call = call;
+          --__tostring = tostring_pkgobj;
+        }
+
+        -- TODO: Why is this not a configurable function as with callobj?
+        --
+        -- Looks really slow, especially for
+        -- as3.class.a.b.c.new() kind of thing.
+        if is_mas3gaa_enabled and pkgobj_kind == CLASS and mt.class_ then
+          -- Note: mt.class_ is nil on as3.class.a stage.
+          local class = as3.newclass2(mt.namespace_, mt.class_)
+          if class then
+            -- This looks even worse performance-wise.
+            local value = as3.tolua(as3.get(class, mt.key_))
+            if value ~= nil and not as3.isas3value(value) then -- TODO: ?!
+              -- spam(
+              --     "pkgobj: unwrapped",
+              --      mt.namespace_, mt.class_, mt.key_, value
+              --   )
+              return value
+            end
+          end
+        end
+
+        return setmetatable({ }, mt)
       end
     end
 
