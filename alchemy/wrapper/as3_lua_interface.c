@@ -368,6 +368,56 @@ static int as3_assign(lua_State * L)
 }
 
 /*
+* Invoke a given ActionScript function.
+* Any return data is returned as an AS3 object
+* Lua example: as3.invoke(fn, "param1", param2, ...)
+*/
+static int as3_invoke(lua_State * L)
+{
+  LCALL(L, stack);
+
+  SPAM(("as3_invoke(): begin"));
+
+  AS3LuaUserData * userdata = NULL;
+  AS3_Val params;
+  AS3_Val result;
+
+  lua_pushnil(L); /* Hack to ensure we're not at empty stack */
+
+  userdata = check_as3userdata(L, 1);
+
+  LCHECK(L, stack, 1);
+
+  params = create_as3_value_from_lua_stack(L, 2, LBASE(L, stack), FALSE);
+
+  LCHECK(L, stack, 1);
+
+  SPAM(("as3_invoke(): before call"));
+
+  result = AS3_Call(userdata->value, AS3_Undefined(), params);
+
+  SPAM(("as3_invoke(): after call"));
+
+  /* TODO check for function call failure, make sure to relase params */
+  if (LTOP(L, stack) == 0)
+  {
+    /* TODO: HACK. Lua state is not usable after panic! */
+    fatal_error("as3_invoke(): callback error detected");
+  }
+
+  LCHECK(L, stack, 1);
+  lua_pop(L, 1); /* Remove our protection from empty stack */
+
+  SAFE_RELEASE(params);
+
+  push_as3_lua_userdata(L, result);
+
+  SAFE_RELEASE(result);
+
+  LRETURN(L, stack, 1);
+}
+
+/*
 * Call a function on a given ActionScript object.
 * Any return data is returned as an AS3 object
 * Lua example: as3.call(v, "myFunction", "param1", param2, ...)
@@ -655,6 +705,7 @@ static const luaL_reg AS3_LUA_LIB[] =
   { "set", as3_set },
   { "assign", as3_assign },
   { "call", as3_call },
+  { "invoke", as3_invoke },
   { "type", as3_type },
   { "namespacecall", as3_namespacecall },
   { "trace", as3_trace },
