@@ -73,6 +73,8 @@ static int as3_newclass(lua_State * L)
 * Lua example: v = as3.newclass2("flash.utils", "ByteArray")
 * Namespace may be empty (pass nil, false or empty string)
 * NOTE: This function is intentionally not documented.
+*
+* Returns nil, err if can't resolve name.
 */
 static int as3_newclass2(lua_State * L)
 {
@@ -95,12 +97,14 @@ static int as3_newclass2(lua_State * L)
   as_class = get_class2(namespacename, classname);
   if (as_class == NULL)
   {
-    return luaL_error(
+    lua_pushnil(L);
+    lua_pushfstring(
         L,
         "newclass2: invalid package::ClassName: " LUA_QL("%s::%s"),
         namespacename,
         classname
       );
+    return 2;
   }
 
   push_as3_lua_userdata(L, as_class);
