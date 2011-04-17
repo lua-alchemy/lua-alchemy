@@ -397,6 +397,7 @@ static int as3_call(lua_State * L)
 
   SPAM(("as3_call(): before call"));
 
+  /* TODO: Allow function_name to be a function object? */
   result = AS3_CallS(function_name, userdata->value, params);
 
   SPAM(("as3_call(): after call"));
