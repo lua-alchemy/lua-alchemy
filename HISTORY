@@ -31,7 +31,10 @@ Changes since v0.2.2:
 4. Thanks to above two items it is now possible to write Lua `for` loop
    iterators in AS3.
 
-5. Other minor fixes and improvements (see git log for more information).
+5. Added LuaBoy demo, contributed by Yura Beznos — pure AS3 version
+   of classic LuaAlchemyDemo.
+
+6. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
