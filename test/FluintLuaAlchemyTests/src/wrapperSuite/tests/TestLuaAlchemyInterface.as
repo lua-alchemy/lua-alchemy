@@ -82,5 +82,14 @@ package wrapperSuite.tests
 
       doString(script, [true, "Hello There", null, "string"])
     }
+
+    public function testSugarNotLoaded():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.class == nil)
+      ]]> ).toString();
+
+      doString(script, [true])
+    }
   }
 }

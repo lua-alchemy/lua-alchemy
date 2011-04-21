@@ -22,19 +22,7 @@
         lua = new LuaAlchemy("builtin://");
         lua.setGlobal("CANVAS", luaCanvas);
 
-        // We want sugar.
-        var stack:Array = lua.doFile("builtin://lua_alchemy.lua");
-        if (stack.shift() == false)
-        {
-          Alert.show(
-              stack.join("\n") + "\n",
-              "Lua error (lua_alchemy.lua)",
-              mx.controls.Alert.OK
-            );
-          // Fail here, system error.
-        }
-
-        stack = lua.doString(
+        var stack:Array = lua.doString(
             'as3.class.mx.controls.Alert.show("Hello world!", "Lua Alchemy")'
           )
         if (stack.shift() == false)

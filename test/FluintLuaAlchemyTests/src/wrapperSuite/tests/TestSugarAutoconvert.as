@@ -14,6 +14,15 @@ package wrapperSuite.tests
   //
   public class TestSugarAutoconvert extends SugarLuaAlchemyTestCase
   {
+    public function testSugarIsLoaded():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.class ~= nil)
+      ]]> ).toString();
+
+      doString(script, [true])
+    }
+
     public function testAS3AutoconversionSettings():void
     {
       var script:String = ( <![CDATA[

@@ -19,9 +19,12 @@ package luaAlchemy
     * @param virtualFilesystemRoot The root of virtual file system (default "builtin://")
     * @see init()
     */
-    public function LuaAlchemy(virtualFilesystemRoot:* = null)
+    public function LuaAlchemy(
+        virtualFilesystemRoot:* = null,
+        loadSugar:Boolean = true
+      )
     {
-      init(virtualFilesystemRoot);
+      init(virtualFilesystemRoot, loadSugar);
     }
 
     /**
@@ -30,7 +33,10 @@ package luaAlchemy
     * @param virtualFilesystemRoot The new root of virtual file system (optional)
     * @see close()
     */
-    public function init(virtualFilesystemRoot:* = null):void
+    public function init(
+        virtualFilesystemRoot:* = null,
+        loadSugar:Boolean = true
+      ):void
     {
       if (luaState != 0)
       {
@@ -49,7 +55,20 @@ package luaAlchemy
           luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot
         );
 
-      /* Not loading builtin://lua_alchemy.lua -- it is up to user. */
+      if (loadSugar)
+      {
+        var stack:Array = lua_wrapper.doFile(
+            luaState, "builtin://lua_alchemy.lua"
+          );
+        if (stack.shift() == false)
+        {
+          close();
+          throw new Error(
+              "LuaAlchemy.init() to call 'lua_alchemy.lua' failed: "
+              + stack.toString()
+            );
+        }
+      }
     }
 
     /** Close the Lua interpreter and cleanup. */

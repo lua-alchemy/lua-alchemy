@@ -8,7 +8,7 @@ package wrapperSuite.tests
 
     override protected function setUp():void
     {
-      myLuaAlchemy = new LuaAlchemy();
+      myLuaAlchemy = new LuaAlchemy(null, false);
     }
 
     override protected function tearDown():void

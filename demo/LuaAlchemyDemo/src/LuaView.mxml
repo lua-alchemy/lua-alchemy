@@ -50,18 +50,6 @@
         myLuaAlchemy = new LuaAlchemy();
         myLuaAlchemy.setGlobal("canvas", luaCanvas);
         myLuaAlchemy.setGlobal("output", outputTA);
-
-        // We want sugar.
-        var stack:Array = myLuaAlchemy.doFile("builtin://lua_alchemy.lua");
-        if (stack.shift() == false)
-        {
-          Alert.show(
-              stack.join("\n") + "\n",
-              "Lua error (lua_alchemy.lua)",
-              mx.controls.Alert.OK
-            );
-          // Fail here, system error.
-        }
       }
 
       private function onRunClicked(event:MouseEvent):void

@@ -36,26 +36,7 @@ Features 1-4 were sponsored by the DragonRAD: http://dragonrad.com/.
 5. Fixed a long-standing typo (note missing "a"):
    lua_wrapper.luaInitilizeState -> lua_wrapper.luaInitializeState
 
-6. LuaAlchemy() and LuaAlchemy::init() does not load builtin://lua_alchemy.lua
-   any more. It is up to user if he wants sugar or bare-bones.
-
-   Most demos and tests were loading lua_alchemy.lua separately from the start,
-   so this should be OK.
-
-   If you start to get strange errors after upgrade, like "attempt to index
-   field 'class' (a nil value)", make sure that your code does something like
-   this right after LuaAlchemy is (re)initialized:
-
-        var stack:Array = lua.doFile("builtin://lua_alchemy.lua");
-        if (stack.shift() == false)
-        {
-          Alert.show(
-              stack.join("\n") + "\n",
-              "Lua error (lua_alchemy.lua)",
-              mx.controls.Alert.OK
-            );
-          // Fail here, system error.
-        }
+6. Added an option to luaAlchemy constructor to bypass sugar code loading.
 
 7. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
    interface without using LuaAssets file.

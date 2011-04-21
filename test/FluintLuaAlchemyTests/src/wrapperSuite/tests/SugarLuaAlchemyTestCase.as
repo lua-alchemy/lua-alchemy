@@ -6,14 +6,7 @@ package wrapperSuite.tests
   {
     override protected function setUp():void
     {
-      super.setUp();
-
-      // We want sugar.
-      checkLuaResult(
-          [true],
-          myLuaAlchemy.doFile("builtin://lua_alchemy.lua"),
-          true
-        );
+      myLuaAlchemy = new LuaAlchemy();
     }
   }
 }

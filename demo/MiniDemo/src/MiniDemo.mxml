@@ -25,6 +25,8 @@
         luaState = lua_wrapper.luaInitializeState();
         lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
 
+        // Note that sugar is not loaded.
+        // Load builtin://lua_alchemy.lua if you want it.
         var stack:Array = lua_wrapper.doFile(luaState, "demo.lua");
         if (stack.shift() == false)
         {

@@ -11,6 +11,15 @@ package wrapperSuite.tests
 
   public class TestSugar extends SugarLuaAlchemyTestCase
   {
+    public function testSugarIsLoaded():void
+    {
+      var script:String = ( <![CDATA[
+        assert(as3.class ~= nil)
+      ]]> ).toString();
+
+      doString(script, [true])
+    }
+
     public function testNewInstance():void
     {
       var script:String = ( <![CDATA[
