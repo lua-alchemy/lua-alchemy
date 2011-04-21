@@ -16,7 +16,7 @@ package wrapperSuite.tests
 
     public function testCreateCloseContext():void
     {
-      var luaState:uint = lua_wrapper.luaInitilizeState();
+      var luaState:uint = lua_wrapper.luaInitializeState();
       assertTrue(luaState != 0);
       lua_wrapper.luaClose(luaState);
     }

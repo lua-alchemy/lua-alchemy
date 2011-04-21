@@ -43,7 +43,7 @@ package luaAlchemy
         vfsRoot = virtualFilesystemRoot;
       }
 
-      luaState = lua_wrapper.luaInitilizeState();
+      luaState = lua_wrapper.luaInitializeState();
 
       lua_wrapper.setGlobalLuaValue(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot);
 

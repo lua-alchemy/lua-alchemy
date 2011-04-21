@@ -80,7 +80,7 @@ package wrapperSuite.tests
       for (expected = 1; expected <= 10; expected++)
       {
         lua_wrapper.luaClose(luaState);
-        luaState = lua_wrapper.luaInitilizeState();
+        luaState = lua_wrapper.luaInitializeState();
         lua_wrapper.setGlobal(luaState, "testHelper", myHelper);
 
         stack = lua_wrapper.luaDoString(luaState, script);

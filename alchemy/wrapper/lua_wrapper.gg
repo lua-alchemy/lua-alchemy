@@ -104,7 +104,7 @@ static void ggInit()
 /* end of passthru C section */
 }
 
-public function luaInitilizeState():(unsigned int)uint
+public function luaInitializeState():(unsigned int)uint
 {
   return (unsigned int)initialize_state();
 }

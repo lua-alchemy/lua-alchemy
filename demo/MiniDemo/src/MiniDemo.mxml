@@ -22,7 +22,7 @@
       {
         LuaAssets.init();
 
-        luaState = lua_wrapper.luaInitilizeState();
+        luaState = lua_wrapper.luaInitializeState();
         lua_wrapper.setGlobal(luaState, "canvas", luaCanvas);
 
         var stack:Array = lua_wrapper.doFile(luaState, "demo.lua");

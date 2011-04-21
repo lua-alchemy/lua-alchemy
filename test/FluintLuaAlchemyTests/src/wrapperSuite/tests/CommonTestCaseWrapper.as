@@ -10,7 +10,7 @@ package wrapperSuite.tests
 
     override protected function setUp():void
     {
-      luaState = lua_wrapper.luaInitilizeState();
+      luaState = lua_wrapper.luaInitializeState();
     }
 
     override protected function tearDown():void
