@@ -36,7 +36,12 @@ Features 1-4 were sponsored by the DragonRAD: http://dragonrad.com/.
 5. Fixed a long-standing typo (note missing "a"):
    lua_wrapper.luaInitilizeState -> lua_wrapper.luaInitializeState
 
-6. Other minor fixes and improvements (see git log for more information).
+6. LuaAlchemy() and LuaAlchemy::init() does not load builtin://lua_alchemy.lua
+   any more. It is up to user if he wants sugar or bare-bones.
+   All demos and tests were loading lua_alchemy.lua separately from the start,
+   so this should be OK.
+
+7. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------

@@ -47,12 +47,7 @@ package luaAlchemy
 
       lua_wrapper.setGlobalLuaValue(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot);
 
-      var stack:Array = lua_wrapper.doFile(luaState, "builtin://lua_alchemy.lua");
-      if (stack.shift() == false)
-      {
-        close();
-        throw new Error("LuaAlchemy.init() to call 'lua_alchemy.lua' failed: " + stack.toString());
-      }
+      /* Not loading builtin://lua_alchemy.lua -- it is up to user. */
     }
 
     /** Close the Lua interpreter and cleanup. */
