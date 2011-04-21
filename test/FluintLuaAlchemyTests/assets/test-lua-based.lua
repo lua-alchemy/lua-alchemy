@@ -1,3 +1,5 @@
+dofile("builtin://lua_alchemy.lua")
+
 -- TODO: Generalize to as3.protectcallback()?
 -- Protect callback return value follows lua.doString() convention.
 local protectcallback = function(fn)

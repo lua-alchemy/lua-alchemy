@@ -9,7 +9,7 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  public class TestSugar extends CommonLuaAlchemyTestCase
+  public class TestSugar extends SugarLuaAlchemyTestCase
   {
     public function testNewInstance():void
     {

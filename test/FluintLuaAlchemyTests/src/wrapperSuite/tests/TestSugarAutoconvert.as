@@ -12,7 +12,7 @@ package wrapperSuite.tests
   // TODO: Hack! This suite is just copy-pasted from TestSugar.as
   //       Generalize code instead!
   //
-  public class TestSugarAutoconvert extends CommonLuaAlchemyTestCase
+  public class TestSugarAutoconvert extends SugarLuaAlchemyTestCase
   {
     public function testAS3AutoconversionSettings():void
     {
