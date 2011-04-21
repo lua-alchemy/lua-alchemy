@@ -5,3 +5,4 @@ Flash and Flex demos of lua-alchemy in action.
   Rapid/ - Rapid development prototype.
   MiniDemo/ - Minimalistic Lua Alchemy demo.
   NoAssets/ - Demo without Lua asset files.
+  Barebones/ - AS3-only minimalistic demo.

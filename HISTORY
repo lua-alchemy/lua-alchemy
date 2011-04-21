@@ -41,7 +41,10 @@ Features 1-4 were sponsored by the DragonRAD: http://dragonrad.com/.
 7. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
    interface without using LuaAssets file.
 
-8. Other minor fixes and improvements (see git log for more information).
+8. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
+   interface from bare-bones Flash.
+
+9. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
