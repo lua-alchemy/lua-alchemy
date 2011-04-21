@@ -67,7 +67,9 @@
       private function onRunClicked(event:MouseEvent):void
       {
         if (clearBeforeRunCB.selected)
+        {
           outputTA.text = "";
+        }
 
         if (resetBeforeRunCB.selected)
         {

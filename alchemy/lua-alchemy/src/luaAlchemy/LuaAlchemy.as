@@ -45,7 +45,9 @@ package luaAlchemy
 
       luaState = lua_wrapper.luaInitializeState();
 
-      lua_wrapper.setGlobalLuaValue(luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot);
+      lua_wrapper.setGlobalLuaValue(
+          luaState, "_LUA_ALCHEMY_FILESYSTEM_ROOT", vfsRoot
+        );
 
       /* Not loading builtin://lua_alchemy.lua -- it is up to user. */
     }
