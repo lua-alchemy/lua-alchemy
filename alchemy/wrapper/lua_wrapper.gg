@@ -117,7 +117,9 @@ public function luaClose(luaState:(lua_State *)uint):void
   sztrace("luaClose() : end");
 }
 
-public function doFile(luaState:(lua_State *)uint, strFileName:(AS3_Val)*):(AS3_Val)Array
+public function doFile(
+    luaState:(lua_State *)uint, strFileName:(AS3_Val)*
+  ):(AS3_Val)Array
 {
   /*
   * Experimental. Assuming strFileName to be added with CLibInit.supplyFile()
@@ -234,13 +236,17 @@ public function luaDoString(
 
 // TODO: Add luaDoStringThrow()?
 
-public function setGlobal(luaState:(lua_State *)uint, key:String, value:(AS3_Val)*):void
+public function setGlobal(
+    luaState:(lua_State *)uint, key:String, value:(AS3_Val)*
+  ):void
 {
   push_as3_lua_userdata(luaState, value);
   lua_setglobal(luaState, key);
 }
 
-public function setGlobalLuaValue(luaState:(lua_State *)uint, key:String, value:(AS3_Val)*):void
+public function setGlobalLuaValue(
+    luaState:(lua_State *)uint, key:String, value:(AS3_Val)*
+  ):void
 {
   push_as3_to_lua_stack(luaState, value);
   lua_setglobal(luaState, key);
