@@ -107,12 +107,14 @@
     <mxmlc file="${main.application}" output="${main.application.release.out}"
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
+      <source-path path-element="${FLEX_HOME}/frameworks" /> 
       <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
         <include name="lua-alchemy.swc" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${lib.dir}" append="true">
         <include name="FlixelLib.swc" />
       </compiler.include-libraries>
+      <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
     </mxmlc>
   </target>
 
@@ -123,12 +125,14 @@
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
       target-player="10.0.0">
       <load-config filename="${flex.config.xml}" />
+      <source-path path-element="${FLEX_HOME}/frameworks" /> 
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />
       </compiler.include-libraries>
       <compiler.include-libraries dir="${lib.dir}" append="true">
         <include name="FlixelLib.swc" />
       </compiler.include-libraries>
+      <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
     </mxmlc>
   </target>
 

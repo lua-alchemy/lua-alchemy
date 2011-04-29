@@ -4,7 +4,7 @@ local FlxSprite = as3.class.org.flixel.FlxSprite
 local FlxGroup = as3.class.org.flixel.FlxGroup
 local FlxText = as3.class.org.flixel.FlxText
 local FlxG = as3.class.org.flixel.FlxG
-local FlxU = as3.class.org.flixel.FlxU
+local FlxObject = as3.class.org.flixel.FlxObject
 
 local level   -- : FlxTilemap
 local exit    -- : FlxSprite
@@ -14,7 +14,9 @@ local score   -- : FlxText
 local status  -- : FlxText
 
 local function createCoin(x, y)
-  return FlxSprite.new(x*8+3, y*8+2).createGraphic(2, 4, 0xffffff00)
+  local coin = FlxSprite.new(x*8+3, y*8+2)
+  coin.makeGraphic(2, 4, 0xffffff00)
+  coins.add(coin)
 end
 
 -- Called whenever the player touches a coin
@@ -36,7 +38,7 @@ end
 
 function create()
   -- Set the background color to light gray (0xAARRGGBB)
-  FlxState.bgColor = 0xffaaaaaa
+  FlxG.bgColor = 0xffaaaaaa
 
   -- Design your platformer level with 1s and 0s (at 40x30 to fill 320x240 screen)
   local data = {
@@ -74,71 +76,70 @@ function create()
 
   -- Create a new tilemap using our level data
   level = FlxTilemap.new()
-  level.auto = FlxTilemap.AUTO
-  level.loadMap(FlxTilemap.arrayToCSV(as3.toarray(data), 40), FlxTilemap.ImgAuto)
+  level.loadMap(FlxTilemap.arrayToCSV(as3.toarray(data), 40), FlxTilemap.ImgAuto, 0, 0, FlxTilemap.AUTO)
   this.add(level)
 
   -- Create the level exit, a dark gray box that is hidden at first
   exit = FlxSprite.new(35*8+1, 25*8)
-  exit.createGraphic(14, 16, 0xff3f3f3f)
+  exit.makeGraphic(14, 16, 0xff3f3f3f)
   exit.exists = false
   this.add(exit)
 
   -- Create coins to collect (see createCoin() function below for more info)
   coins = FlxGroup.new()
   -- Top left coins
-  coins.add(createCoin(18,4))
-  coins.add(createCoin(12,4))
-  coins.add(createCoin(9,4))
-  coins.add(createCoin(8,11))
-  coins.add(createCoin(1,7))
-  coins.add(createCoin(3,4))
-  coins.add(createCoin(5,2))
-  coins.add(createCoin(15,11))
-  coins.add(createCoin(16,11))
+  createCoin(18,4)
+  createCoin(12,4)
+  createCoin(9,4)
+  createCoin(8,11)
+  createCoin(1,7)
+  createCoin(3,4)
+  createCoin(5,2)
+  createCoin(15,11)
+  createCoin(16,11)
 
   -- Bottom left coins
-  coins.add(createCoin(3,16))
-  coins.add(createCoin(4,16))
-  coins.add(createCoin(1,23))
-  coins.add(createCoin(2,23))
-  coins.add(createCoin(3,23))
-  coins.add(createCoin(4,23))
-  coins.add(createCoin(5,23))
-  coins.add(createCoin(12,26))
-  coins.add(createCoin(13,26))
-  coins.add(createCoin(17,20))
-  coins.add(createCoin(18,20))
+  createCoin(3,16)
+  createCoin(4,16)
+  createCoin(1,23)
+  createCoin(2,23)
+  createCoin(3,23)
+  createCoin(4,23)
+  createCoin(5,23)
+  createCoin(12,26)
+  createCoin(13,26)
+  createCoin(17,20)
+  createCoin(18,20)
 
   -- Top right coins
-  coins.add(createCoin(21,4))
-  coins.add(createCoin(26,2))
-  coins.add(createCoin(29,2))
-  coins.add(createCoin(31,5))
-  coins.add(createCoin(34,5))
-  coins.add(createCoin(36,8))
-  coins.add(createCoin(33,11))
-  coins.add(createCoin(31,11))
-  coins.add(createCoin(29,11))
-  coins.add(createCoin(27,11))
-  coins.add(createCoin(25,11))
-  coins.add(createCoin(36,14))
+  createCoin(21,4)
+  createCoin(26,2)
+  createCoin(29,2)
+  createCoin(31,5)
+  createCoin(34,5)
+  createCoin(36,8)
+  createCoin(33,11)
+  createCoin(31,11)
+  createCoin(29,11)
+  createCoin(27,11)
+  createCoin(25,11)
+  createCoin(36,14)
 
   -- Bottom right coins
-  coins.add(createCoin(38,17))
-  coins.add(createCoin(33,17))
-  coins.add(createCoin(28,19))
-  coins.add(createCoin(25,20))
-  coins.add(createCoin(18,26))
-  coins.add(createCoin(22,26))
-  coins.add(createCoin(26,26))
-  coins.add(createCoin(30,26))
+  createCoin(38,17)
+  createCoin(33,17)
+  createCoin(28,19)
+  createCoin(25,20)
+  createCoin(18,26)
+  createCoin(22,26)
+  createCoin(26,26)
+  createCoin(30,26)
 
   this.add(coins);
 
   -- Create player (a red box)
   player = FlxSprite.new(as3.tolua(FlxG.width)/2 - 5)
-  player.createGraphic(10, 12, 0xffaa1111)
+  player.makeGraphic(10, 12, 0xffaa1111)
   player.maxVelocity.x = 80
   player.maxVelocity.y = 200
   player.acceleration.y = 200
@@ -173,25 +174,25 @@ function beforeUpdate()
   if as3.tolua(keys.RIGHT) then
       player.acceleration.x = as3.tolua(player.maxVelocity.x) * 4
   end
-  if as3.tolua(keys.SPACE) and as3.tolua(player.onFloor) then
+  if as3.tolua(keys.justPressed("SPACE")) and as3.tolua(player.isTouching(FlxObject.FLOOR)) then
       player.velocity.y = -as3.tolua(player.maxVelocity.y) / 2
   end
 end
 
 function afterUpdate()
+  -- Check if player collected a coin or coins this frame
+  FlxG.overlap(coins,player,getCoin)
+
+  --Check to see if the player touched the exit door this frame
+  FlxG.overlap(exit,player,win)
+
+  -- Finally, bump the player up against the level
+  FlxG.collide(level,player);
+
   -- Check for player lose conditions
   if as3.tolua(player.y) > as3.tolua(FlxG.height) then
       FlxG.score = 1 -- sets status.text to "Aww, you died!"
-      this.restart()
+      FlxG.resetState()
       return
   end
-
-  -- Check if player collected a coin or coins this frame
-  FlxU.overlap(coins,player,getCoin)
-
-  --Check to see if the player touched the exit door this frame
-  FlxU.overlap(exit,player,win)
-
-  -- Finally, bump the player up against the level
-  FlxU.collide(level,player);
 end

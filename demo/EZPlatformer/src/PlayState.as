@@ -15,7 +15,9 @@ package {
 			lua.setGlobal("this", this);
 			lua.setGlobal("keys", FlxG.keys);
 			const res : Array = lua.doString("create()");
-//			trace("create: res: " + res);
+			if(res[0] === false){
+				throw new Error("Error executing 'create' lua function ")
+			}
 		}
 		
 		override public function update() : void {
@@ -28,18 +30,17 @@ package {
 
 		private function beforeUpdate() : void {
 			const res : Array = lua.doString("beforeUpdate()");
-//			trace("beforeUpdate: res: " + res);
+			if(res[0] === false){
+				throw new Error("Error executing 'beforeUpdate' lua function ")
+			}
 		}
 		
 		private function afterUpdate() : void {
 			const res : Array = lua.doString("afterUpdate()");
-//			trace("afterUpdate: res: " + res);
+			if(res[0] === false){
+				throw new Error("Error executing 'afterUpdate' lua function ")
+			}
 		}
 		
-		public function restart() : void {
-			setTimeout(function () : void {
-				FlxG.state = new PlayState();
-			}, 1);
-		}
 	}
 }

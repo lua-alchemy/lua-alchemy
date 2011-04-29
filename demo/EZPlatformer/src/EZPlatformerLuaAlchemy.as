@@ -1,19 +1,7 @@
 package {
-	import cmodule.lua_wrapper.CLibInit;
-	
-	import flash.display.Loader;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.text.TextField;
 	import flash.utils.ByteArray;
 	
-	import flashx.textLayout.compose.ISWFContext;
-	
 	import luaAlchemy.LuaAlchemy;
-	
-	import mx.core.ByteArrayAsset;
-	import mx.core.IFlexModuleFactory;
 	
 	import org.flixel.FlxG;
 	import org.flixel.FlxGame;
@@ -44,7 +32,9 @@ package {
 			const luaString:String = luaAsset.readUTFBytes(luaAsset.bytesAvailable);
 			const lua : LuaAlchemy = new LuaAlchemy();
 			const res : Array = lua.doString(luaString);
-//			trace("initLua: res: " + res);
+			if(res[0] === false){
+				throw new Error("Error executing lua main script")
+			}
 			PlayState.lua = lua;
 		}
 
