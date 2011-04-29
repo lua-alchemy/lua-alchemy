@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<project name="LuaAlchemyDemo" default="build" basedir=".">
+
+  <property environment="env"/>
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
+
+  <fail>
+    <condition>
+      <not>
+        <isset property="env.FLEX_HOME" />
+      </not>
+    </condition>
+    Error!
+    You need to set FLEX_HOME environment variable (path to Flex SDK)
+    export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
+  </fail>
+
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+  <!-- dirs -->
+
+  <property name="build.dir" location="build/"/>
+  <property name="release.build.dir" location="${build.dir}/release/"/>
+  <property name="debug.build.dir" location="${build.dir}/debug/"/>
+  <property name="src.dir" location="src/"/>
+  <property name="lib.dir" location="libs/"/>
+  <property name="alchemy.release.dir" location="../../alchemy/lua-alchemy/build/release"/>
+  <property name="alchemy.debug.dir" location="../../alchemy/lua-alchemy/build/debug"/>
+  <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
+
+  <!-- files -->
+  <property name="main.application" location="${src.dir}/EZPlatformerLuaAlchemy.as"/>
+  <property name="output.swf.name" value="EZPlatformerLuaAlchemy"/>
+  <property name="main.application.release.out" location="${release.build.dir}/${output.swf.name}.swf"/>
+  <property name="main.application.debug.out" location="${debug.build.dir}/${output.swf.name}.swf"/>
+
+  <!-- wrapper -->
+  <property name="output.html.name" value="${output.swf.name}.html"/>
+  <property name="output.debug.html" location="${debug.build.dir}/${output.html.name}"/>
+  <property name="output.release.html" location="${release.build.dir}/${output.html.name}"/>
+
+  <property name="swf.width" value="100%"/>
+  <property name="swf.height" value="100%"/>
+  <property name="swf.debug.title" value="LuaAlchemyDemo App"/>
+  <property name="swf.release.title" value="LuaAlchemyDemo App"/>
+  <property name="swf.version.major" value="10"/>
+  <property name="swf.version.minor" value="0"/>
+  <property name="swf.version.revision" value="0"/>
+  <property name="swf.application" value="${output.swf.name}"/>
+  <property name="swf.swf" value="${output.swf.name}"/>
+  <property name="swf.bgcolor" value="#FFFFFF"/>
+
+  <description>
+    EZPlatformer flixel port to lua-alchemy
+  </description>
+
+  <!-- =================================
+        target: build
+       ================================= -->
+  <target name="build"
+    depends="clear, init, compile.release, compile.debug, make.release.wrapper, make.debug.wrapper"
+    description="--> EZPlatformer flixel port to lua-alchemy application">
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: make.release.wrapper
+         - - - - - - - - - - - - - - - - - -->
+  <target name="make.release.wrapper">
+    <html-wrapper
+      history="true"
+      width="${swf.width}"
+      height="${swf.height}"
+      title="${swf.release.title}"
+      version-major="${swf.version.major}"
+      version-minor="${swf.version.minor}"
+      version-revision="${swf.version.revision}"
+      application="${swf.application}"
+      swf="${swf.swf}"
+      bgcolor="${swf.bgcolor}"
+      output="${release.build.dir}" />
+    <move file="${release.build.dir}/index.html" tofile="${output.release.html}" />
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: make.debug.wrapper
+         - - - - - - - - - - - - - - - - - -->
+  <target name="make.debug.wrapper">
+    <html-wrapper
+      history="true"
+      width="${swf.width}"
+      height="${swf.height}"
+      title="${swf.debug.title}"
+      version-major="${swf.version.major}"
+      version-minor="${swf.version.minor}"
+      version-revision="${swf.version.revision}"
+      application="${swf.application}"
+      swf="${swf.swf}"
+      bgcolor="${swf.bgcolor}"
+      output="${debug.build.dir}" />
+    <move file="${debug.build.dir}/index.html" tofile="${output.debug.html}" />
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.release
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.release">
+    <mxmlc file="${main.application}" output="${main.application.release.out}"
+      target-player="10.0.0">
+      <load-config filename="${flex.config.xml}" />
+      <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
+        <include name="lua-alchemy.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lib.dir}" append="true">
+        <include name="FlixelLib.swc" />
+      </compiler.include-libraries>
+    </mxmlc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: compile.debug
+       - - - - - - - - - - - - - - - - - -->
+  <target name="compile.debug">
+    <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
+      target-player="10.0.0">
+      <load-config filename="${flex.config.xml}" />
+      <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
+        <include name="lua-alchemy.swc" />
+      </compiler.include-libraries>
+      <compiler.include-libraries dir="${lib.dir}" append="true">
+        <include name="FlixelLib.swc" />
+      </compiler.include-libraries>
+    </mxmlc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: clear
+         - - - - - - - - - - - - - - - - - -->
+  <target name="clear">
+    <delete failonerror="false">
+      <fileset dir="${build.dir}" includes="**/*.*" />
+    </delete>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: init
+         - - - - - - - - - - - - - - - - - -->
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${release.build.dir}"/>
+    <mkdir dir="${debug.build.dir}"/>
+  </target>
+</project>

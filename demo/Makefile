@@ -4,6 +4,7 @@ all:
 	(cd Rapid; ant)
 	(cd NoAssets; ant)
 	(cd Barebones; make)
+	(cd EzPlatformer; ant)
 
 clean:
 	(cd LuaAlchemyDemo; ant clear)
@@ -11,3 +12,4 @@ clean:
 	(cd Rapid; ant clear)
 	(cd NoAssets; ant clear)
 	(cd Barebones; make clean)
+	(cd EzPlatformer; ant clear)
