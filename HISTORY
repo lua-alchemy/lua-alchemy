@@ -1,11 +1,20 @@
-Lua Alchemy v0.2.3 (not released yet)
+Lua Alchemy v0.3 (not released yet)
 -------------------------------------
 
 Changes since v0.2.2:
 
-Features 1-4 were sponsored by the DragonRAD: http://dragonrad.com/.
+Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
 
-1. Sugar: Optional autoconversion to Lua for primitive AS3 types
+1. AS3 API: doFileAsync(), doStringAsync(). Non-asynchronous versions
+   are now deprecated.
+
+2. Finally got as3.flyield() to work -- only inside asynchronous calls.
+
+   It now returns true (after yield is complete) when invoked
+   from inside asynchronous function and nil, error_message when not
+   (and not even attempt to yield).
+
+2. Sugar: Optional autoconversion to Lua for primitive AS3 types
    (the ones that as3.tolua() handles). (Off by default.)
 
    Use as3.enable_sugar_autoconversion() to enable it,
@@ -25,26 +34,26 @@ Features 1-4 were sponsored by the DragonRAD: http://dragonrad.com/.
    value right after Lua Alchemy state is initialized
    and do not touch it after that.
 
-2. Sugar: When sugar is enabled, all as3 objects are callable.
+3. Sugar: When sugar is enabled, all as3 objects are callable.
 
-3. New as3.invoke() API function to invoke (i.e. call) AS3 function objects
+4. New as3.invoke() API function to invoke (i.e. call) AS3 function objects
    without resorting to Function::call.
 
-4. Thanks to above two items it is now possible to write Lua `for` loop
+5. Thanks to above two items it is now possible to write Lua `for` loop
    iterators in AS3.
 
-5. Fixed a long-standing typo (note missing "a"):
+6. Fixed a long-standing typo (note missing "a"):
    lua_wrapper.luaInitilizeState -> lua_wrapper.luaInitializeState
 
-6. Added an option to luaAlchemy constructor to bypass sugar code loading.
+7. Added an option to luaAlchemy constructor to bypass sugar code loading.
 
-7. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
+8. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
    interface without using LuaAssets file.
 
-8. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
+9. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
    interface from bare-bones Flash.
 
-9. Other minor fixes and improvements (see git log for more information).
+10. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------

@@ -16,7 +16,11 @@ package luaAlchemy
 
     /**
     * Create and init() a new Lua interpreter
-    * @param virtualFilesystemRoot The root of virtual file system (default "builtin://")
+    * @param virtualFilesystemRoot The root of virtual file system
+    * (default: "builtin://")
+    *
+    * Initialization is done synchronously.
+    *
     * @see init()
     */
     public function LuaAlchemy(
@@ -30,6 +34,9 @@ package luaAlchemy
     /**
     * Initialize the Lua interpreter.  If already initialized, it will be closed
     * and then initialized.
+    *
+    * Initialization is done synchronously.
+    *
     * @param virtualFilesystemRoot The new root of virtual file system (optional)
     * @see close()
     */
@@ -71,7 +78,11 @@ package luaAlchemy
       }
     }
 
-    /** Close the Lua interpreter and cleanup. */
+    /**
+    * Close the Lua interpreter and cleanup.
+    *
+    * Any resulting Lua calls would be done synchronously.
+    */
     public function close():void
     {
       if (luaState != 0)
@@ -87,7 +98,10 @@ package luaAlchemy
     * if the string is sucessfully run.  If sucessful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
     * Note at this time you can only run LuaAsset files.
-    * @param strValue The string to run.
+    *
+    * Deprecated. Use doFileAsync() instead.
+    *
+    * @param strFileName The name of file to run.
     * @return The Lua return call stack.
     */
     public function doFile(strFileName:String):Array
@@ -100,10 +114,38 @@ package luaAlchemy
     }
 
     /**
+    * Run the given file.  Returns an array of values represting
+    * the results of the call.  The first return value is true/false based on
+    * if the string is sucessfully run.  If sucessful, the remaining values
+    * are the Lua return values.  If failed, the second value is the error.
+    * Note at this time you can only run LuaAsset files.
+    *
+    * Asynchronous version.
+    *
+    * @param strFileName The name of file to run.
+    * @param handler The callback function.
+    * @return The Lua return call stack.
+    */
+    public function doFileAsync(
+        strFileName:String,
+        handler:Function
+      ):void
+    {
+      if (luaState == 0)
+      {
+        init();
+      }
+      lua_wrapper.doFileAsync(handler, luaState, strFileName);
+    }
+
+    /**
     * Run the given string.  Returns an array of values represting
     * the results of the call.  The first return value is true/false based on
     * if the string is sucessfully run.  If sucessful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
+    *
+    * Deprecated. Use doStringAsync() instead.
+    *
     * @param strValue The string to run.
     * @return The Lua return call stack.
     */
@@ -117,8 +159,33 @@ package luaAlchemy
     }
 
     /**
+    * Run the given string.  Returns an array of values represting
+    * the results of the call.  The first return value is true/false based on
+    * if the string is sucessfully run.  If sucessful, the remaining values
+    * are the Lua return values.  If failed, the second value is the error.
+    *
+    * Asynchronous version.
+    *
+    * @param strValue The string to run.
+    * @param handler The callback function.
+    * @return The Lua return call stack.
+    */
+    public function doStringAsync(strValue:String, handler:Function):void
+    {
+      if (luaState == 0)
+      {
+        init();
+      }
+      lua_wrapper.luaDoStringAsync(handler, luaState, strValue);
+    }
+
+    /**
     * Set a global Lua variable with the key/value pair.
     *	The value is never converted to a Lua native type.
+    *
+    * Note that this may trigger metamethod calls in Lua.
+    * These calls would be synchronous.
+    *
     * @param key The name of the new global variable
     * @param value The value of the new global variable
     */
@@ -134,6 +201,10 @@ package luaAlchemy
     /**
     * Set a global Lua variable with the key/value pair.
     * The value is converted to a native Lua type if possible.
+    *
+    * Note that this may trigger metamethod calls in Lua.
+    * These calls would be synchronous.
+    *
     * @param key The name of the new global variable
     * @param value The value of the new global variable
     */
@@ -147,7 +218,8 @@ package luaAlchemy
     }
 
     /**
-    * Supply a ByteArray as a file in Lua
+    * Supply a ByteArray as a file in Lua.
+    *
     * @param name The name of the file within Lua
     * @param data The contents of the file
     */

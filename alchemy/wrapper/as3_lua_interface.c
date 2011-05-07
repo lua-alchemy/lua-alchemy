@@ -13,7 +13,8 @@
   (AS3LuaUserData *)luaL_checkudata(L, index, AS3LUA_METATABLE)
 
 /*
-* Release control to Flash and return to this point on the next timer tick
+* Release control to Flash and return to this point on the next timer tick.
+* Works only when in do*Async() mode.
 * Lua example: as3.flyield()
 */
 static int as3_flyield(lua_State * L)

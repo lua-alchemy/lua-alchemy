@@ -101,28 +101,11 @@ static void ggInit()
   initialize_as3_constants();
 }
 
-/* end of passthru C section */
-}
 
-public function luaInitializeState():(unsigned int)uint
-{
-  return (unsigned int)initialize_state();
-}
-
-public function luaClose(luaState:(lua_State *)uint):void
-{
-  /* Note: Keep these traces. It is easy to get bad things happening in final GC */
-  sztrace("luaClose() : begin");
-  lua_close(luaState);
-  sztrace("luaClose() : end");
-}
-
-public function doFile(
-    luaState:(lua_State *)uint, strFileName:(AS3_Val)*
-  ):(AS3_Val)Array
+AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName)
 {
   /*
-  * Experimental. Assuming strFileName to be added with CLibInit.supplyFile()
+  * Assuming strFileName to be added with CLibInit.supplyFile()
   * or otherwise be available in the security sandbox.
   */
   /* WARNING: Panic alert! Use L*_FN checkers here! */
@@ -167,10 +150,7 @@ public function doFile(
   return res;
 }
 
-public function luaDoString(
-    luaState:(lua_State *)uint,
-    strValue:(AS3_Val)*
-  ):(AS3_Val)Array
+AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue)
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
@@ -232,6 +212,52 @@ public function luaDoString(
   SPAM(("luaDoString(): end"));
 
   return res;
+}
+
+/* end of passthru C section */
+}
+
+public function luaInitializeState():(unsigned int)uint
+{
+  return (unsigned int)initialize_state();
+}
+
+public function luaClose(luaState:(lua_State *)uint):void
+{
+  /* Note: Keep these traces. It is easy to get bad things happening in final GC */
+  sztrace("luaClose() : begin");
+  lua_close(luaState);
+  sztrace("luaClose() : end");
+}
+
+public function doFile(
+    luaState:(lua_State *)uint, strFileName:(AS3_Val)*
+  ):(AS3_Val)Array
+{
+  return doFileImpl(luaState, strFileName);
+}
+
+async public function doFileAsync(
+    luaState:(lua_State *)uint, strFileName:(AS3_Val)*
+  ):(AS3_Val)Array
+{
+  return doFileImpl(luaState, strFileName);
+}
+
+public function luaDoString(
+    luaState:(lua_State *)uint,
+    strValue:(AS3_Val)*
+  ):(AS3_Val)Array
+{
+  return luaDoStringImpl(luaState, strValue);
+}
+
+async public function luaDoStringAsync(
+    luaState:(lua_State *)uint,
+    strValue:(AS3_Val)*
+  ):(AS3_Val)Array
+{
+  return luaDoStringImpl(luaState, strValue);
 }
 
 // TODO: Add luaDoStringThrow()?
