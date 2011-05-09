@@ -28,10 +28,71 @@ package wrapperSuite.tests
       trace("CommonTestCaseWrapper::tearDown(): end");
     }
 
-    protected function doString(script:String, expected:Array, verifyLength:Boolean = true):void
+    protected function doString(
+        script:String,
+        expected:Array,
+        verifyLength:Boolean = true
+      ):void
     {
       var stack:Array = lua_wrapper.luaDoString(luaState, script);
       checkLuaResult(expected, stack, verifyLength);
+    }
+
+    protected function doStringAsync(
+        timeout:Number,
+        script:String,
+        expected:Array,
+        verifyLength:Boolean = true
+      ):void
+    {
+      var settings:Object = new Object();
+      settings.expected = expected;
+      settings.verifyLength = verifyLength;
+      var handler:Function = asyncHandler(
+          doStringAsyncHandler,
+          timeout,
+          settings,
+          timeOutHandler
+        );
+      lua_wrapper.luaDoStringAsync(
+          function(stack:Array):void
+          {
+            settings.stack = stack;
+            handler(stack, settings);
+          },
+          luaState,
+          script
+        );
+    }
+
+    protected function doStringAsyncHandler(
+        stack:Array,
+        settings:Object
+      ):void
+    {
+      trace("doStringAsyncHandler", stack);
+      checkLuaResult(
+          settings.expected,
+          stack,
+          settings.verifyLength
+        );
+    }
+
+    protected function timeOutHandler(settings:Object):void
+    {
+      if (settings.stack) // TODO: WTF?!
+      {
+        trace("timeOutHandler", settings.stack);
+        checkLuaResult(
+            settings.expected,
+            settings.stack,
+            settings.verifyLength
+          );
+      }
+      else
+      {
+        fail("timed out");
+      }
     }
   }
 }
