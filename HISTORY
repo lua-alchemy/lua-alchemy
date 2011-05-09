@@ -17,7 +17,7 @@ Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
    You may check as3.is_async read-only flag value
    if you need to know if you're inside asynchronous call.
 
-2. Sugar: Optional autoconversion to Lua for primitive AS3 types
+3. Sugar: Optional autoconversion to Lua for primitive AS3 types
    (the ones that as3.tolua() handles). (Off by default.)
 
    Use as3.enable_sugar_autoconversion() to enable it,
@@ -37,26 +37,26 @@ Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
    value right after Lua Alchemy state is initialized
    and do not touch it after that.
 
-3. Sugar: When sugar is enabled, all as3 objects are callable.
+4. Sugar: When sugar is enabled, all as3 objects are callable.
 
-4. New as3.invoke() API function to invoke (i.e. call) AS3 function objects
+5. New as3.invoke() API function to invoke (i.e. call) AS3 function objects
    without resorting to Function::call.
 
-5. Thanks to above two items it is now possible to write Lua `for` loop
+6. Thanks to above two items it is now possible to write Lua `for` loop
    iterators in AS3.
 
-6. Fixed a long-standing typo (note missing "a"):
+7. Fixed a long-standing typo (note missing "a"):
    lua_wrapper.luaInitilizeState -> lua_wrapper.luaInitializeState
 
-7. Added an option to luaAlchemy constructor to bypass sugar code loading.
+8. Added an option to luaAlchemy constructor to bypass sugar code loading.
 
-8. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
+9. Added new NoAssets demo to demonstrate how to use LuaAlchemy high-level
    interface without using LuaAssets file.
 
-9. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
+10. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
    interface from bare-bones Flash.
 
-10. Other minor fixes and improvements (see git log for more information).
+11. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
