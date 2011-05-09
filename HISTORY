@@ -20,6 +20,14 @@ Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
 3. Sugar: Optional autoconversion to Lua for primitive AS3 types
    (the ones that as3.tolua() handles). (Off by default.)
 
+   Silly example. You had to write as follows:
+
+      local double_size = as3.tolua(myobj.length)
+
+   With autoconversion you may write like this:
+
+      local double_size = myobj.length * 2
+
    Use as3.enable_sugar_autoconversion() to enable it,
    as3.disable_sugar_autoconversion() to disable
    and as3.is_sugar_autoconversion_enabled() to query its status.
