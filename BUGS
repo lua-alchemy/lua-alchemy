@@ -7,13 +7,8 @@ Consult http://code.google.com/p/lua-alchemy/issues/list for a full list.
 
 If issue is stopped being listed, it means that it was fixed.
 
-Version 0.2.2
--------------
-
--- as3.flyield() does not work as intended
-
-http://code.google.com/p/lua-alchemy/issues/detail?id=112
-http://code.google.com/p/lua-alchemy/issues/detail?id=121
+Version 0.3
+-----------
 
 -- resuming coroutine from an AS3 callback does not work
 
