@@ -61,6 +61,28 @@ package wrapperSuite.tests
       checkLuaResult([true, 42], stack);
     }
 
+    public function testDoStringAsync():void
+    {
+      var script:String = ( <![CDATA[
+        return "Test doStringAsync"
+        ]]> ).toString();
+
+      doStringAsync(100, script, [true, "Test doStringAsync"])
+    }
+
+    public function testDoFileAsync():void
+    {
+      var script:String = ( <![CDATA[
+        return 42
+        ]]> ).toString();
+      var luaAsset:ByteArray = new ByteArray();
+      luaAsset.writeUTFBytes(script);
+
+      myLuaAlchemy.supplyFile("myFileDoFileNoError.lua", luaAsset);
+
+      doFileAsync(100, "myFileDoFileNoError.lua", [true, 42]);
+    }
+
     public function testSetGlobal():void
     {
       myLuaAlchemy.setGlobal("hello", "Hello There");
@@ -87,6 +109,7 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         assert(as3.class == nil)
+
       ]]> ).toString();
 
       doString(script, [true])

@@ -38,5 +38,85 @@ package wrapperSuite.tests
       var stack:Array = myLuaAlchemy.doFile(file);
       checkLuaResult(expected, stack, verifyLength);
     }
+
+    protected function doStringAsync(
+        timeout:Number,
+        script:String,
+        expected:Array,
+        verifyLength:Boolean = true
+      ):void
+    {
+      var settings:Object = new Object();
+      settings.expected = expected;
+      settings.verifyLength = verifyLength;
+      var handler:Function = asyncHandler(
+          asyncCallback,
+          timeout,
+          settings,
+          timeOutCallback
+        );
+      myLuaAlchemy.doStringAsync(
+          script,
+          function(stack:Array):void
+          {
+            settings.stack = stack;
+            handler(stack, settings);
+          }
+        );
+    }
+
+    protected function doFileAsync(
+        timeout:Number,
+        filename:String,
+        expected:Array,
+        verifyLength:Boolean = true
+      ):void
+    {
+      var settings:Object = new Object();
+      settings.expected = expected;
+      settings.verifyLength = verifyLength;
+      var handler:Function = asyncHandler(
+          asyncCallback,
+          timeout,
+          settings,
+          timeOutCallback
+        );
+      myLuaAlchemy.doFileAsync(
+          filename,
+          function(stack:Array):void
+          {
+            settings.stack = stack;
+            handler(stack, settings);
+          }
+        );
+    }
+
+    protected function asyncCallback(
+        stack:Array,
+        settings:Object
+      ):void
+    {
+      checkLuaResult(
+          settings.expected,
+          stack,
+          settings.verifyLength
+        );
+    }
+
+    protected function timeOutCallback(settings:Object):void
+    {
+      if (settings.stack) // TODO: WTF?!
+      {
+        checkLuaResult(
+            settings.expected,
+            settings.stack,
+            settings.verifyLength
+          );
+      }
+      else
+      {
+        fail("timed out");
+      }
+    }
   }
 }

@@ -49,10 +49,10 @@ package wrapperSuite.tests
       settings.expected = expected;
       settings.verifyLength = verifyLength;
       var handler:Function = asyncHandler(
-          doStringAsyncHandler,
+          asyncCallback,
           timeout,
           settings,
-          timeOutHandler
+          timeOutCallback
         );
       lua_wrapper.luaDoStringAsync(
           function(stack:Array):void
@@ -65,12 +65,38 @@ package wrapperSuite.tests
         );
     }
 
-    protected function doStringAsyncHandler(
+    protected function doFileAsync(
+        timeout:Number,
+        filename:String,
+        expected:Array,
+        verifyLength:Boolean = true
+      ):void
+    {
+      var settings:Object = new Object();
+      settings.expected = expected;
+      settings.verifyLength = verifyLength;
+      var handler:Function = asyncHandler(
+          asyncCallback,
+          timeout,
+          settings,
+          timeOutCallback
+        );
+      lua_wrapper.doFileAsync(
+          function(stack:Array):void
+          {
+            settings.stack = stack;
+            handler(stack, settings);
+          },
+          luaState,
+          filename
+        );
+    }
+
+    protected function asyncCallback(
         stack:Array,
         settings:Object
       ):void
     {
-      trace("doStringAsyncHandler", stack);
       checkLuaResult(
           settings.expected,
           stack,
@@ -78,11 +104,10 @@ package wrapperSuite.tests
         );
     }
 
-    protected function timeOutHandler(settings:Object):void
+    protected function timeOutCallback(settings:Object):void
     {
       if (settings.stack) // TODO: WTF?!
       {
-        trace("timeOutHandler", settings.stack);
         checkLuaResult(
             settings.expected,
             settings.stack,
