@@ -65,13 +65,17 @@
           resetLua();
         }
 
-        var stack:Array = myLuaAlchemy.doString(getCode());
-
-        var success:Boolean = stack.shift();
-        outputTA.setStyle("color", success ? "black" : "red");
-        outputTA.text = outputTA.text +
-          (success ? "\n=== Return values ===\n" : "\n=== Error ===\n") +
-          stack.join("\n") + "\n";
+        myLuaAlchemy.doStringAsync(
+            getCode(),
+            function(stack:Array):void
+            {
+              var success:Boolean = stack.shift();
+              outputTA.setStyle("color", success ? "black" : "red");
+              outputTA.text = outputTA.text +
+                (success ? "\n=== Return values ===\n" : "\n=== Error ===\n") +
+                stack.join("\n") + "\n";
+            }
+          );
       }
 
       private function onLoadClicked(event:MouseEvent):void
