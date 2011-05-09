@@ -64,6 +64,7 @@ File Manifest
     COPYRIGHT - Copyright for the lua-alchemy project
     HISTORY - Project history log
     README - This file describing the project
+    SPONSORS - The list if Lua Alchemy sponsors
     alchemy/ - Builds lua-alchemy.swc
     build/ - Build utility tools
     demo/ - Flash and Flex demos
