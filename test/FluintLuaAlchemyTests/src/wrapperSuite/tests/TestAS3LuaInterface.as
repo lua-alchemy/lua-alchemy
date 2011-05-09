@@ -285,13 +285,52 @@ package wrapperSuite.tests
       doString(script, [true, "Name: Jessie James age: 127"]);
     }
 
-    public function testAS3FlYield():void
+    public function testAS3FlYieldSync():void
     {
       var script:String = ( <![CDATA[
-        as3.flyield()
+        return as3.flyield()
         ]]> ).toString();
 
-      doString(script, [true]);
+      doString(script, [true, null, "not in asynchronous call"]);
+    }
+
+    public function testAS3FlYieldAsync():void
+    {
+      var script:String = ( <![CDATA[
+        local called = false
+
+        local time_start = as3.tolua(
+            as3.namespacecall("flash.utils", "getTimer")
+          )
+        as3.trace("start", time_start)
+        as3.namespacecall(
+            "flash.utils",
+            "setTimeout",
+            function()
+              local time_now = as3.tolua(
+                  as3.namespacecall("flash.utils", "getTimer")
+                )
+              as3.trace("called", time_now)
+              called = true
+            end,
+            100 -- milliseconds
+          )
+        assert(called == false)
+        while not called do
+          local time_now = as3.tolua(
+              as3.namespacecall("flash.utils", "getTimer")
+            )
+          as3.trace("tick", time_now - time_start)
+          if time_now - time_start > 200 then
+            error("timed out while waiting for async call")
+          end
+          assert(as3.flyield() == true)
+        end
+        as3.trace("flyield worked")
+
+        ]]> ).toString();
+
+      doStringAsync(500, script, [true]);
     }
 
     public function testAS3Trace():void
