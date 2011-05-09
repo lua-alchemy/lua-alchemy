@@ -15,15 +15,26 @@
 /*
 * Release control to Flash and return to this point on the next timer tick.
 * Works only when in do*Async() mode.
+*
+* Returns true if in async mode, nil and error message otherwise.
+*
 * Lua example: as3.flyield()
 */
 static int as3_flyield(lua_State * L)
 {
   LCALL(L, stack);
 
+  if (!get_async_state(L))
+  {
+    lua_pushnil(L);
+    lua_pushliteral(L, "not in asynchronous call");
+    LRETURN(L, stack, 2);
+  }
+
   flyield();
 
-  LRETURN(L, stack, 0);
+  lua_pushboolean(L, 1);
+  LRETURN(L, stack, 1);
 }
 
 /*

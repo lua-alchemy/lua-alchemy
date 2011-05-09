@@ -102,7 +102,7 @@ static void ggInit()
 }
 
 
-AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName)
+AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
 {
   /*
   * Assuming strFileName to be added with CLibInit.supplyFile()
@@ -130,8 +130,8 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName)
   if (status == 0)
   {
     LCHECK_FN(L, stack, 2, fatal_error);
-    SPAM(("doFile(): run begin"));
-    status = do_pcall_with_traceback(L, 0, LUA_MULTRET);
+    SPAM(("doFile(): run begin (%s)", (isAsync) ? "async" : "sync"));
+    status = do_pcall_with_traceback(L, 0, LUA_MULTRET, isAsync);
     SPAM(("doFile(): run end"));
   }
 
@@ -150,7 +150,7 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName)
   return res;
 }
 
-AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue)
+AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
@@ -162,7 +162,7 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue)
     LERROR(L, stack, "dirty state stack");
   }
 
-  SPAM(("luaDoString(): begin"));
+  SPAM(("luaDoString(): begin (%s)", (isAsync) ? "async" : "sync"));
 
   /*
   * TODO: Note that use of get_string_bytes here effectively denies
@@ -189,7 +189,7 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue)
   {
     LCHECK_FN(L, stack, 2, fatal_error);
     SPAM(("luaDoString(): run begin"));
-    status = do_pcall_with_traceback(L, 0, LUA_MULTRET);
+    status = do_pcall_with_traceback(L, 0, LUA_MULTRET, isAsync);
     SPAM(("luaDoString(): run end"));
   }
 
@@ -234,14 +234,22 @@ public function doFile(
     luaState:(lua_State *)uint, strFileName:(AS3_Val)*
   ):(AS3_Val)Array
 {
-  return doFileImpl(luaState, strFileName);
+  return doFileImpl(
+      luaState,
+      strFileName,
+      FALSE /* not async */
+    );
 }
 
 async public function doFileAsync(
     luaState:(lua_State *)uint, strFileName:(AS3_Val)*
   ):(AS3_Val)Array
 {
-  return doFileImpl(luaState, strFileName);
+  return doFileImpl(
+      luaState,
+      strFileName,
+      TRUE /* is async */
+    );
 }
 
 public function luaDoString(
@@ -249,7 +257,11 @@ public function luaDoString(
     strValue:(AS3_Val)*
   ):(AS3_Val)Array
 {
-  return luaDoStringImpl(luaState, strValue);
+  return luaDoStringImpl(
+      luaState,
+      strValue,
+      FALSE /* not async */
+    );
 }
 
 async public function luaDoStringAsync(
@@ -257,7 +269,11 @@ async public function luaDoStringAsync(
     strValue:(AS3_Val)*
   ):(AS3_Val)Array
 {
-  return luaDoStringImpl(luaState, strValue);
+  return luaDoStringImpl(
+      luaState,
+      strValue,
+      TRUE /* is async */
+    );
 }
 
 // TODO: Add luaDoStringThrow()?

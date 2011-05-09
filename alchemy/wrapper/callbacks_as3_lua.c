@@ -98,7 +98,6 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
   }
 #endif /* DO_SPAM */
 
-
     /* TODO: Assert we have Lua function (or other callable object) on the top of the stack */
 
     LCHECK_FN(L, stack, 2 + 1, fatal_error);
@@ -117,7 +116,9 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
     LCHECK_FN(L, stack, 2 + 1 + nargs, fatal_error);
 
     results_base = LBASE(L, stack) + 2;
-    status = do_pcall_with_traceback(L, nargs, LUA_MULTRET);
+
+    /* TODO: We do not need to change is_async here. */
+    status = do_pcall_with_traceback(L, nargs, LUA_MULTRET, get_async_state(L));
     if (status != 0)
     {
       const char * msg = NULL;

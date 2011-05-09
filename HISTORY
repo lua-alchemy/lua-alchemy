@@ -14,6 +14,9 @@ Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
    from inside asynchronous function and nil, error_message when not
    (and not even attempt to yield).
 
+   You may check as3.is_async read-only flag value
+   if you need to know if you're inside asynchronous call.
+
 2. Sugar: Optional autoconversion to Lua for primitive AS3 types
    (the ones that as3.tolua() handles). (Off by default.)
 

@@ -155,14 +155,78 @@ int luaB_tostring (lua_State *L) {
  * END COPY-PASTE FROM Lua 5.1.4 lbaselib.c
  */
 
-int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
+/*
+* TODO: Do not assume that as3 table is avalable in global environment.
+*       Store a reference to it in the registry instead.
+*/
+static BOOL set_async_state(lua_State * L, BOOL is_async)
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
-  SPAM(("do_pcall_with_traceback(): begin"));
+  BOOL old_async = FALSE;
+
+  lua_getglobal(L, "as3");
+  if (!lua_istable(L, -1))
+  {
+    /* TODO: Hack. This should not be required */
+    lua_pop(L, 1);
+    sztrace("as3 global table not available");
+    return FALSE;
+  }
+
+  lua_getfield(L, -1, "is_async");
+  old_async = lua_toboolean(L, -1);
+  lua_pop(L, 1); /* old flag value */
+
+  lua_pushboolean(L, is_async);
+  lua_setfield(L, -2, "is_async");
+
+  lua_pop(L, 1); /* as3 table */
+
+  return old_async;
+}
+
+BOOL get_async_state(lua_State * L)
+{
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  BOOL result = FALSE;
+
+  lua_getglobal(L, "as3");
+  if (!lua_istable(L, -1))
+  {
+    /*
+    * TODO: Hack. This should not be required, see comment for set_async_state()
+    */
+    lua_pop(L, 1);
+    sztrace("as3 global table not available");
+    return FALSE;
+  }
+
+  lua_getfield(L, -1, "is_async");
+  result = lua_toboolean(L, -1);
+  lua_pop(L, 2); /* flag value, as3 table */
+
+  return result;
+}
+
+int do_pcall_with_traceback(
+    lua_State * L,
+    int narg,
+    int nresults,
+    BOOL is_async /* Hackish. This may be too specific to lua-alchemy. */
+  )
+{
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  SPAM((
+      "do_pcall_with_traceback(): begin (%s)", (is_async) ? "async" : "sync"
+    ));
 
   LCALL_ARGS(L, stack, 1 + narg); /* The function itself with arguments */
   int status = 0;
+
+  BOOL old_async = set_async_state(L, is_async);
 
   lua_pushcfunction(L, db_errorfb);  /* push traceback function */
   lua_insert(L, LBASE(L, stack));  /* put it under chunk and args */
@@ -174,6 +238,8 @@ int do_pcall_with_traceback(lua_State * L, int narg, int nresults)
   status = lua_pcall(L, narg, nresults, LBASE(L, stack));
 
   lua_remove(L, LBASE(L, stack));  /* remove traceback function */
+
+  set_async_state(L, old_async);
 
   if (status != 0)
   {
