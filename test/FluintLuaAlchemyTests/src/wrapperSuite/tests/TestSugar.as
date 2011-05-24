@@ -1,13 +1,16 @@
 package wrapperSuite.tests
 {
-  import luaAlchemy.LuaAlchemy;
-
   import flash.utils.ByteArray;
+
+  import luaAlchemy.LuaAlchemy;
 
   import mx.containers.Canvas;
   import mx.utils.ObjectUtil;
 
   import net.digitalprimates.fluint.tests.TestCase;
+
+  import wrapperSuite.tests.testSugarClasses.TestPropertyOfStaticInstanceGetClass1;
+
 
   public class TestSugar extends SugarLuaAlchemyTestCase
   {
@@ -810,8 +813,20 @@ package wrapperSuite.tests
       doString(script, [true]);
     }
 
+    public function testPropertyOfStaticInstanceGet():void
+    {
+      TestPropertyOfStaticInstanceGetClass1;
+
+      var script:String = ( <![CDATA[
+        return as3.tolua(as3.class.wrapperSuite.tests.testSugarClasses.TestPropertyOfStaticInstanceGetClass1.field.property)
+      ]]> ).toString();
+
+      doString(script, [true, 121]);
+    }
+
     // TODO test as3.filegetcontents(file) when loaded by default
 
     // TODO test with and without strict
   }
+
 }
