@@ -10,15 +10,19 @@ If issue is stopped being listed, it means that it was fixed.
 Version 0.3
 -----------
 
--- resuming coroutine from an AS3 callback does not work
+-- rRsuming coroutine from an AS3 callback does not work.
 
 http://code.google.com/p/lua-alchemy/issues/detail?id=113
 http://code.google.com/p/lua-alchemy/issues/detail?id=116
 
--- math.random() may return values greater than 1
+-- math.random() may return values greater than 1.
 
 http://code.google.com/p/lua-alchemy/issues/detail?id=127
 
--- AS3<->Lua interface could be faster
+-- AS3<->Lua interface could be faster.
 
 http://code.google.com/p/lua-alchemy/issues/detail?id=130
+
+-- Sugar "magic" does not work for the static properties.
+
+http://code.google.com/p/lua-alchemy/issues/detail?id=145
