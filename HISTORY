@@ -64,7 +64,10 @@ Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
 10. Added new Barebones demo to demonstrate how to use LuaAlchemy high-level
    interface from bare-bones Flash.
 
-11. Other minor fixes and improvements (see git log for more information).
+11. Added new EZPlatformer demo, ported to Lua from one of samples for
+   the popular Flixel framework (http://flixel.org/).
+
+12. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.2.2 (2011-04-17)
 -------------------------------
