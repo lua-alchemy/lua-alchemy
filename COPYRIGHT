@@ -29,4 +29,10 @@ THE SOFTWARE.
 
 ===============================================================================
 
+Note that EZPlatformer demo is based on MIT-licensed ActionScript implementation
+by Adam Atomic: https://github.com/AdamAtomic/EZPlatformer.
+
+It uses MIT-licensed Flixel (http://flixel.org) framework, bundled with
+the demo for ease of use.
+
 (end of COPYRIGHT)
