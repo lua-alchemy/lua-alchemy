@@ -95,7 +95,7 @@ package luaAlchemy
     /**
     * Run the given file.  Returns an array of values represting
     * the results of the call.  The first return value is true/false based on
-    * if the string is sucessfully run.  If sucessful, the remaining values
+    * if the string is successfully run.  If successful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
     * Note at this time you can only run LuaAsset files.
     *
@@ -114,9 +114,10 @@ package luaAlchemy
     }
 
     /**
-    * Run the given file.  Returns an array of values represting
+    * Run the given file.  Calls callback when done.
+    * Callback should accept a single Array argument with
     * the results of the call.  The first return value is true/false based on
-    * if the string is sucessfully run.  If sucessful, the remaining values
+    * if the string is successfully run.  If successful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
     * Note at this time you can only run LuaAsset files.
     *
@@ -141,7 +142,7 @@ package luaAlchemy
     /**
     * Run the given string.  Returns an array of values represting
     * the results of the call.  The first return value is true/false based on
-    * if the string is sucessfully run.  If sucessful, the remaining values
+    * if the string is successfully run.  If successful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
     *
     * Deprecated. Use doStringAsync() instead.
@@ -159,9 +160,10 @@ package luaAlchemy
     }
 
     /**
-    * Run the given string.  Returns an array of values represting
+    * Run the given string.  Calls callback when done.
+    * Callback should accept a single Array argument with
     * the results of the call.  The first return value is true/false based on
-    * if the string is sucessfully run.  If sucessful, the remaining values
+    * if the string is successfully run.  If successful, the remaining values
     * are the Lua return values.  If failed, the second value is the error.
     *
     * Asynchronous version.
