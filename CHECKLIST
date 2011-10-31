@@ -1,7 +1,7 @@
 Lua Alchemy release checklist
 =============================
 
-1. Update HISTORY file.
+1. Update HISTORY file. Do not forget to put in a new version release date!
 2. Update version in lua-alchemy.h
 3. Update version in LuaAlchemyDemo.mxml
 4. Do a full rebuild and ensure that all is working OK.
