@@ -128,7 +128,7 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.release" depends="generate.assets">
     <mxmlc file="${main.application}" output="${main.application.release.out}"
-      target-player="10.0.0">
+      >
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
         <include name="${fluint.swc}" />
@@ -144,7 +144,7 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.debug" depends="generate.assets">
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
-      target-player="10.0.0">
+      >
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${lib.dir}" append="true">
         <include name="${fluint.swc}" />

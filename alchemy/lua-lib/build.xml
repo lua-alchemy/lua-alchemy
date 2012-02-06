@@ -68,7 +68,7 @@
         target: compile.release
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.release" depends="generate.assets">
-    <compc target-player="10.0.0" debug="false" output="${main.library.release.out}"
+    <compc debug="false" output="${main.library.release.out}"
       include-classes="${assets.package.name}.${assets.class.name}">
       <source-path path-element="${src.dir}" />
     </compc>
@@ -78,7 +78,7 @@
         target: compile.debug
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.debug" depends="generate.assets">
-    <compc target-player="10.0.0" debug="true" output="${main.library.debug.out}"
+    <compc debug="true" output="${main.library.debug.out}"
       include-classes="${assets.package.name}.${assets.class.name}">
       <source-path path-element="${src.dir}" />
     </compc>

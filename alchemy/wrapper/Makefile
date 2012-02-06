@@ -32,7 +32,7 @@ $(WRAPPER).swc : glue.o $(OBJS)
 	$(CC) $(INC) $(CFLAGS) -swc -o $(WRAPPER).swc glue.o $(OBJS) $(LDFLAGS)
 
 $(NAME).swc : $(WRAPPER).swc
-	compc -namespace $(PACKAGE_WRAPPER) manifest.xml -source-path $(WRAPPER_SRC_DIR) -include-namespaces $(PACKAGE_WRAPPER) -include-classes $(PACKAGE_WRAPPER).$(WRAPPER) -include-libraries $(WRAPPER).swc -target-player=10.0.0 -output='$(NAME).swc'
+	compc -namespace $(PACKAGE_WRAPPER) manifest.xml -source-path $(WRAPPER_SRC_DIR) -include-namespaces $(PACKAGE_WRAPPER) -include-classes $(PACKAGE_WRAPPER).$(WRAPPER) -include-libraries $(WRAPPER).swc -output='$(NAME).swc'
 
 bridge_as3_c.o : bridge_as3_c.c bridge_as3_c.h lua-alchemy.h
 
@@ -50,7 +50,7 @@ $(WRAPPER).gg : lua-alchemy.h bridge_as3_c.h bridge_as3_lua.h bridge_lua_c.h cal
 
 clean:
 	rm $(OBJS) glue.* $(WRAPPER).swc $(WRAPPER).as $(NAME).swc *.o
-	rm swfbridge.log 
+	rm swfbridge.log
 	rm *achacks*
 	rm -r _sb_*
 	rm -rf bin

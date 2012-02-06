@@ -105,7 +105,7 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.release">
     <mxmlc file="${main.application}" output="${main.application.release.out}"
-      target-player="10.0.0">
+      >
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.release.dir}" append="true">
         <include name="lua-alchemy.swc" />
@@ -118,7 +118,7 @@
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.debug">
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
-      target-player="10.0.0">
+      >
       <load-config filename="${flex.config.xml}" />
       <compiler.include-libraries dir="${alchemy.debug.dir}" append="true">
         <include name="lua-alchemy.swc" />

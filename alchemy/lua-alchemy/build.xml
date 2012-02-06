@@ -58,7 +58,7 @@
         target: compile.release
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.release">
-    <compc target-player="10.0.0" debug="false" output="${main.library.release.out}"
+    <compc debug="false" output="${main.library.release.out}"
       include-classes="${main.package.name}.${main.class.name}">
       <source-path path-element="${src.dir}" />
       <compiler.include-libraries dir="${lua-wrapper.release.dir}" append="true">
@@ -74,7 +74,7 @@
         target: compile.debug
        - - - - - - - - - - - - - - - - - -->
   <target name="compile.debug">
-    <compc target-player="10.0.0" debug="true" output="${main.library.debug.out}"
+    <compc debug="true" output="${main.library.debug.out}"
       include-classes="${main.package.name}.${main.class.name}">
       <source-path path-element="${src.dir}" />
       <compiler.include-libraries dir="${lua-wrapper.release.dir}" append="true">
