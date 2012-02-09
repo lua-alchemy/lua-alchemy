@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/3.1">
+  <id>com.logiceditor.lua-alchemy.demo.mini.air</id>
+  <name>Lua Alchemy MiniDemoAIR</name>
+  <versionNumber>1.0</versionNumber>
+  <supportedProfiles>mobileDevice desktop</supportedProfiles>
+  <filename>MiniDemoAIR</filename>
+  <description>Lua Alchemy MiniDemo for AIR</description>
+  <copyright>2008-2012 Lua Alchemy authors</copyright>
+  <initialWindow>
+    <title>Lua Alchemy MiniDemoAIR</title>
+    <content>MiniDemoAIR.swf</content>
+    <visible>true</visible>
+  </initialWindow>
+</application>

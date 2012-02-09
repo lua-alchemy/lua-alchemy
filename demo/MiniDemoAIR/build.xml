@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <project name="MiniDemoAIR" default="build" basedir=".">
 
+  <property file="build.properties" />
   <property environment="env"/>
   <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
 
@@ -26,18 +27,14 @@
   <property name="lib.dir" location="libs/"/>
   <property name="alchemy.wrapper.release.dir" location="../../alchemy/wrapper"/>
   <property name="alchemy.wrapper.debug.dir" location="../../alchemy/wrapper"/>
-  <property name="flex.config.xml" location="${FLEX_HOME}/frameworks/flex-config.xml"/>
+
+  <property name="adt.config.xml" location="${FLEX_HOME}/frameworks/air-config.xml"/>
 
   <!-- files -->
   <property name="main.application" location="${src.dir}/MiniDemoAIR.mxml"/>
   <property name="output.swf.name" value="MiniDemoAIR"/>
   <property name="main.application.release.out" location="${release.build.dir}/${output.swf.name}.swf"/>
   <property name="main.application.debug.out" location="${debug.build.dir}/${output.swf.name}.swf"/>
-
-  <!-- wrapper -->
-  <property name="output.html.name" value="${output.swf.name}.html"/>
-  <property name="output.debug.html" location="${debug.build.dir}/${output.html.name}"/>
-  <property name="output.release.html" location="${release.build.dir}/${output.html.name}"/>
 
   <property name="swf.width" value="100%"/>
   <property name="swf.height" value="100%"/>
@@ -50,54 +47,28 @@
   <property name="swf.swf" value="${output.swf.name}"/>
   <property name="swf.bgcolor" value="#FFFFFF"/>
 
+  <!-- To be set in build.properties file
+  <property name="adt.store.type" value="pkcs12"/>
+  <property name="adt.store.path" value="mycert.p12"/>
+  <property name="adt.store.pass" value="12345"/>
+  -->
+  <property name="adt.jar" value="${FLEX_HOME}/lib/adt.jar"/>
+  <property name="adt.out.file.name" value="MiniDemoAIR.air"/>
+  <property name="adt.app.descriptor" value="application.xml"/>
+
+  <property name="adt.out.release" location="${release.build.dir}/${adt.out.file.name}"/>
+  <property name="adt.out.debug" location="${debug.build.dir}/${adt.out.file.name}"/>
+
   <description>
-    Minimal Demo Program for lua-alchemy
+    Minimal Demo Program for lua-alchemy, using AIR
   </description>
 
   <!-- =================================
         target: build
        ================================= -->
   <target name="build"
-    depends="clear, init, compile.release, compile.debug, make.release.wrapper, make.debug.wrapper"
-    description="--> MiniDemoAIR application">
-  </target>
-
-  <!-- - - - - - - - - - - - - - - - - -
-          target: make.release.wrapper
-         - - - - - - - - - - - - - - - - - -->
-  <target name="make.release.wrapper">
-    <html-wrapper
-      history="true"
-      width="${swf.width}"
-      height="${swf.height}"
-      title="${swf.release.title}"
-      version-major="${swf.version.major}"
-      version-minor="${swf.version.minor}"
-      version-revision="${swf.version.revision}"
-      application="${swf.application}"
-      swf="${swf.swf}"
-      bgcolor="${swf.bgcolor}"
-      output="${release.build.dir}" />
-    <move file="${release.build.dir}/index.html" tofile="${output.release.html}" />
-  </target>
-
-  <!-- - - - - - - - - - - - - - - - - -
-          target: make.debug.wrapper
-         - - - - - - - - - - - - - - - - - -->
-  <target name="make.debug.wrapper">
-    <html-wrapper
-      history="true"
-      width="${swf.width}"
-      height="${swf.height}"
-      title="${swf.debug.title}"
-      version-major="${swf.version.major}"
-      version-minor="${swf.version.minor}"
-      version-revision="${swf.version.revision}"
-      application="${swf.application}"
-      swf="${swf.swf}"
-      bgcolor="${swf.bgcolor}"
-      output="${debug.build.dir}" />
-    <move file="${debug.build.dir}/index.html" tofile="${output.debug.html}" />
+    depends="clear, init, compile.release, compile.debug, package.release, package.debug"
+    description="MiniDemoAIR application">
   </target>
 
   <!-- - - - - - - - - - - - - - - - - -
@@ -106,7 +77,7 @@
   <target name="compile.release">
     <mxmlc file="${main.application}" output="${main.application.release.out}"
       >
-      <load-config filename="${flex.config.xml}" />
+      <load-config filename="${adt.config.xml}" />
       <compiler.include-libraries dir="${alchemy.wrapper.release.dir}" append="true">
         <!-- NOTE: this demo intentionally uses wrapper only -->
         <include name="lua-alchemy-wrapper.swc" />
@@ -120,12 +91,56 @@
   <target name="compile.debug">
     <mxmlc debug="true" file="${main.application}" output="${main.application.debug.out}"
       >
-      <load-config filename="${flex.config.xml}" />
+      <load-config filename="${adt.config.xml}" />
       <compiler.include-libraries dir="${alchemy.wrapper.debug.dir}" append="true">
         <!-- NOTE: this demo intentionally uses wrapper only -->
         <include name="lua-alchemy-wrapper.swc" />
       </compiler.include-libraries>
     </mxmlc>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: package.debug
+       - - - - - - - - - - - - - - - - - -->
+  <target name="package.debug">
+    <java jar="${adt.jar}" fork="true" failonerror="true">
+      <arg value="-package"/>
+      <arg value="-storetype"/>
+      <arg value="${adt.store.type}"/>
+      <arg value="-keystore"/>
+      <arg value="${adt.store.path}"/>
+      <arg value="-storepass"/>
+      <arg value="${adt.store.pass}"/>
+      <arg value="-target"/>
+      <arg value="air"/>
+      <arg value="${adt.out.debug}"/>
+      <arg value="${adt.app.descriptor}"/>
+      <arg value="-C"/>
+      <arg value="${debug.build.dir}"/>
+      <arg value="${main.application.debug.out}"/>
+    </java>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+        target: package.release
+       - - - - - - - - - - - - - - - - - -->
+  <target name="package.release">
+    <java jar="${adt.jar}" fork="true" failonerror="true">
+      <arg value="-package"/>
+      <arg value="-storetype"/>
+      <arg value="${adt.store.type}"/>
+      <arg value="-keystore"/>
+      <arg value="${adt.store.path}"/>
+      <arg value="-storepass"/>
+      <arg value="${adt.store.pass}"/>
+      <arg value="-target"/>
+      <arg value="air"/>
+      <arg value="${adt.out.release}"/>
+      <arg value="${adt.app.descriptor}"/>
+      <arg value="-C"/>
+      <arg value="${release.build.dir}"/>
+      <arg value="${main.application.release.out}"/>
+    </java>
   </target>
 
   <!-- - - - - - - - - - - - - - - - - -
