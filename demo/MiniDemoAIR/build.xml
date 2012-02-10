@@ -56,6 +56,9 @@
   <property name="adt.out.file.name" value="MiniDemoAIR.air"/>
   <property name="adt.app.descriptor" value="application.xml"/>
 
+  <property name="adt.target.release" value="air"/>
+  <property name="adt.target.debug" value="air"/>
+
   <property name="adt.out.release" location="${release.build.dir}/${adt.out.file.name}"/>
   <property name="adt.out.debug" location="${debug.build.dir}/${adt.out.file.name}"/>
 
@@ -112,7 +115,7 @@
       <arg value="-storepass"/>
       <arg value="${adt.store.pass}"/>
       <arg value="-target"/>
-      <arg value="air"/>
+      <arg value="${adt.target.debug}"/>
       <arg value="${adt.out.debug}"/>
       <arg value="${adt.app.descriptor}"/>
       <arg value="-C"/>
@@ -134,7 +137,7 @@
       <arg value="-storepass"/>
       <arg value="${adt.store.pass}"/>
       <arg value="-target"/>
-      <arg value="air"/>
+      <arg value="${adt.target.release}"/>
       <arg value="${adt.out.release}"/>
       <arg value="${adt.app.descriptor}"/>
       <arg value="-C"/>
