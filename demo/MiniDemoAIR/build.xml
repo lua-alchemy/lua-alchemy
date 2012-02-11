@@ -4,6 +4,7 @@
   <property file="build.properties" />
   <property environment="env"/>
   <property name="AIR_HOME" location="${env.AIR_HOME}"/>
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
 
   <fail>
     <condition>
@@ -17,7 +18,19 @@
     export AIR_HOME=${HOME}/air_sdk
   </fail>
 
-  <!--taskdef resource="flexTasks.tasks" classpath="${AIR_HOME}/ant/lib/flexTasks.jar" /-->
+  <fail>
+    <condition>
+      <not>
+        <isset property="env.FLEX_HOME" />
+      </not>
+    </condition>
+    Error!
+    You need to set FLEX_HOME environment variable (path to FLEX SDK)
+    Example:
+    export FLEX_HOME=${HOME}/flex_sdk
+  </fail>
+
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
 
   <!-- dirs -->
 
@@ -29,7 +42,7 @@
   <property name="alchemy.wrapper.release.dir" location="../../alchemy/wrapper"/>
   <property name="alchemy.wrapper.debug.dir" location="../../alchemy/wrapper"/>
 
-  <property name="adt.config.xml" location="${AIR_HOME}/frameworks/air-config.xml"/>
+  <property name="adt.config.xml" location="${FLEX_HOME}/frameworks/air-config.xml"/>
 
   <!-- files -->
   <property name="main.application" location="${src.dir}/MiniDemoAIR.mxml"/>
