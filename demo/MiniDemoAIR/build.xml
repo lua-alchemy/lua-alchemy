@@ -55,13 +55,15 @@
   -->
 
   <property name="adt.jar" value="${AIR_HOME}/lib/adt.jar"/>
+  <property name="adt.out.file.name" value="MiniDemoAIR"/>
+  <property name="adt.out.file.ext" value=".air"/>
   <property name="adt.app.descriptor" value="application.xml"/>
 
   <property name="adt.target.release" value="air"/>
   <property name="adt.target.debug" value="air"/>
 
-  <property name="adt.out.release" location="${release.build.dir}/${adt.out.file.name}"/>
-  <property name="adt.out.debug" location="${debug.build.dir}/${adt.out.file.name}"/>
+  <property name="adt.out.release" location="${release.build.dir}/${adt.out.file.name}${adt.out.file.ext}"/>
+  <property name="adt.out.debug" location="${debug.build.dir}/${adt.out.file.name}${adt.out.file.ext}"/>
 
   <description>
     Minimal Demo Program for lua-alchemy, using AIR
