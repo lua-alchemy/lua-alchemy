@@ -1,8 +1,10 @@
+Note that you need AIR SDK, not Flex SDK to build this.
 Example build.properties:
 
 adt.store.type = pkcs12
 adt.store.path = SigningCert.p12
 adt.store.pass = 12345
+
 
 How to generate cert (for testing purposes only):
 

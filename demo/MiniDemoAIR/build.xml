@@ -3,20 +3,21 @@
 
   <property file="build.properties" />
   <property environment="env"/>
-  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
+  <property name="AIR_HOME" location="${env.AIR_HOME}"/>
 
   <fail>
     <condition>
       <not>
-        <isset property="env.FLEX_HOME" />
+        <isset property="env.AIR_HOME" />
       </not>
     </condition>
     Error!
-    You need to set FLEX_HOME environment variable (path to Flex SDK)
-    export FLEX_HOME=/Applications/Adobe\ Flex\ Builder\ 3/sdks/3.2.0
+    You need to set AIR_HOME environment variable (path to AIR SDK)
+    Example:
+    export AIR_HOME=${HOME}/air_sdk
   </fail>
 
-  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+  <!--taskdef resource="flexTasks.tasks" classpath="${AIR_HOME}/ant/lib/flexTasks.jar" /-->
 
   <!-- dirs -->
 
@@ -28,7 +29,7 @@
   <property name="alchemy.wrapper.release.dir" location="../../alchemy/wrapper"/>
   <property name="alchemy.wrapper.debug.dir" location="../../alchemy/wrapper"/>
 
-  <property name="adt.config.xml" location="${FLEX_HOME}/frameworks/air-config.xml"/>
+  <property name="adt.config.xml" location="${AIR_HOME}/frameworks/air-config.xml"/>
 
   <!-- files -->
   <property name="main.application" location="${src.dir}/MiniDemoAIR.mxml"/>
@@ -52,8 +53,8 @@
   <property name="adt.store.path" value="mycert.p12"/>
   <property name="adt.store.pass" value="12345"/>
   -->
-  <property name="adt.jar" value="${FLEX_HOME}/lib/adt.jar"/>
-  <property name="adt.out.file.name" value="MiniDemoAIR.air"/>
+
+  <property name="adt.jar" value="${AIR_HOME}/lib/adt.jar"/>
   <property name="adt.app.descriptor" value="application.xml"/>
 
   <property name="adt.target.release" value="air"/>
