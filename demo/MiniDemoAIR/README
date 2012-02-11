@@ -1,14 +1,15 @@
 Note that you need AIR SDK, not Flex SDK to build this.
-Example build.properties:
 
-adt.store.type = pkcs12
-adt.store.path = SigningCert.p12
-adt.store.pass = 12345
+Example `build.properties` for a regular build
+----------------------------------------------
 
+    adt.store.type = pkcs12
+    adt.store.path = SigningCert.p12
+    adt.store.pass = 12345
 
 How to generate cert (for testing purposes only):
 
-$ adt -certificate -cn SelfSign 2048-RSA SigningCert.p12 12345
+    $ adt -certificate -cn SelfSign 2048-RSA SigningCert.p12 12345
 
 Make sure that you know what are you doing if you're to release
 the resulting app. Consult Adobe docs for details.
