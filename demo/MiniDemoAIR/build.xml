@@ -150,6 +150,30 @@
   </target>
 
   <!-- - - - - - - - - - - - - - - - - -
+        target: package.iphone
+       - - - - - - - - - - - - - - - - - -->
+  <target name="package.iphone">
+    <java jar="${adt.jar}" fork="true" failonerror="true">
+      <arg value="-package"/>
+      <arg value="-target"/>
+      <arg value="${adt.iphone.target}"/>
+      <arg value="-provisioning-profile"/>
+      <arg value="${adt.iphone.provisioning-profile}"/>
+      <arg value="-storetype"/>
+      <arg value="${adt.store.type}"/>
+      <arg value="-keystore"/>
+      <arg value="${adt.store.path}"/>
+      <arg value="-storepass"/>
+      <arg value="${adt.store.pass}"/>
+      <arg value="${adt.out.release}"/>
+      <arg value="${adt.app.descriptor}"/>
+      <arg value="-C"/>
+      <arg value="${release.build.dir}"/>
+      <arg value="${main.application.release.out}"/>
+    </java>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
           target: clear
          - - - - - - - - - - - - - - - - - -->
   <target name="clear">

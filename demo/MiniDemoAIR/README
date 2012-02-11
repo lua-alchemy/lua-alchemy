@@ -13,3 +13,25 @@ How to generate cert (for testing purposes only):
 
 Make sure that you know what are you doing if you're to release
 the resulting app. Consult Adobe docs for details.
+
+Hints on configuration for iOS build
+------------------------------------
+
+Note: Due to many complications like developer licenses, provisioning files
+etc., it is too much work to streamline the iOS build of this small demo
+so it works out of the box. Patches are welcome. Meanwhile, consult Apple
+and Adobe documentation for instructions on how to set up the basic stuff
+for your application.
+
+Here is an example of `build.properties` to get an .ipa for testing purposes:
+
+    adt.iphone.target = ipa-test
+    adt.iphone.provisioning-profile = iOS.mobileprovision
+    adt.out.file.ext = ipa
+
+(Append this to the above `adt.store` stuff.)
+
+Build with
+
+    $ ant # to build prerequisites
+    $ ant package.iphone
