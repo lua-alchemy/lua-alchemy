@@ -27,12 +27,15 @@ Here is an example of `build.properties` to get an .ipa for testing purposes:
 
     adt.iphone.target = ipa-test
     adt.iphone.provisioning-profile = iOS.mobileprovision
+    adt.iphone.store.path = MyiPhoneDevelperCertificate.p12
+    adt.iphone.store.password = 12345
     adt.out.file.ext = ipa
 
 Append this to the above `adt.store` stuff. Note that you need to use your
-Apple-issued .p12 for `adt.store.path`, not a self-signed one.
+Apple-issued certificate, exported to `.p12` for `adt.iphone.store.path`,
+not a self-signed one.
 
-Build with
+Build as follows:
 
     $ ant # to build prerequisites
     $ ant package.iphone

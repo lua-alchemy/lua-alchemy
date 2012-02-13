@@ -65,6 +65,11 @@
   <property name="adt.store.type" value="pkcs12"/>
   <property name="adt.store.path" value="mycert.p12"/>
   <property name="adt.store.pass" value="12345"/>
+  <property
+    name="adt.iphone.store.path"
+    value="MyiPhoneDevelperCertificate.p12"
+    />
+  <property name="adt.iphone.store.pass" value="12345"/>
   -->
 
   <property name="adt.jar" value="${AIR_HOME}/lib/adt.jar"/>
@@ -175,9 +180,9 @@
       <arg value="-storetype"/>
       <arg value="${adt.store.type}"/>
       <arg value="-keystore"/>
-      <arg value="${adt.store.path}"/>
+      <arg value="${adt.iphone.store.path}"/>
       <arg value="-storepass"/>
-      <arg value="${adt.store.pass}"/>
+      <arg value="${adt.iphone.store.pass}"/>
       <arg value="${adt.out.release}"/>
       <arg value="${adt.app.descriptor}"/>
       <arg value="-C"/>
