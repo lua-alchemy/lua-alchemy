@@ -36,7 +36,12 @@ static lua_State * initialize_state()
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
-  lua_State * L = lua_open();
+  lua_State * L = luaL_newstate();
+  if (L == NULL)
+  {
+    sztrace("initialize_state: luaL_newstate() returned NULL");
+    return NULL;
+  }
 
   lua_atpanic(L, &panic_handler);
 
