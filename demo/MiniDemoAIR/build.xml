@@ -15,7 +15,7 @@
     Error!
     You need to set AIR_HOME environment variable (path to AIR SDK)
     Example:
-    export AIR_HOME=${HOME}/air_sdk
+    export AIR_HOME=$${HOME}/air_sdk
   </fail>
 
   <fail>
@@ -27,7 +27,7 @@
     Error!
     You need to set FLEX_HOME environment variable (path to FLEX SDK)
     Example:
-    export FLEX_HOME=${HOME}/flex_sdk
+    export FLEX_HOME=$${HOME}/flex_sdk
   </fail>
 
   <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
