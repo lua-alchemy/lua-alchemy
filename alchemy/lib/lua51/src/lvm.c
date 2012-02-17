@@ -26,7 +26,7 @@
 #include "ltm.h"
 #include "lvm.h"
 
-
+void sztrace(char *);
 
 /* limit for table tag-method chains (to avoid loops) */
 #define MAXTAGLOOP	100
@@ -125,7 +125,7 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       callTMres(L, val, tm, t, key);
       return;
     }
-    t = tm;  /* else repeat with `tm' */ 
+    t = tm;  /* else repeat with `tm' */
   }
   luaG_runerror(L, "loop in gettable");
 }
@@ -133,28 +133,56 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
 
 void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
   int loop;
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0010 -- luaV_settable BEGIN");
+
   for (loop = 0; loop < MAXTAGLOOP; loop++) {
     const TValue *tm;
+    sztrace("0057.1.0030.1.0072.0140.0050.0020");
     if (ttistable(t)) {  /* `t' is a table? */
+      sztrace("0057.1.0030.1.0072.0140.0050.0030");
       Table *h = hvalue(t);
+      sztrace("0057.1.0030.1.0072.0140.0050.0040");
       TValue *oldval = luaH_set(L, h, key); /* do a primitive set */
+      sztrace("0057.1.0030.1.0072.0140.0050.0050");
       if (!ttisnil(oldval) ||  /* result is no nil? */
           (tm = fasttm(L, h->metatable, TM_NEWINDEX)) == NULL) { /* or no TM? */
+        sztrace("0057.1.0030.1.0072.0140.0050.0060");
         setobj2t(L, oldval, val);
+        sztrace("0057.1.0030.1.0072.0140.0050.0070");
         luaC_barriert(L, h, val);
+        sztrace("0057.1.0030.1.0072.0140.0050.0080 -- luaV_settable END.1");
         return;
       }
       /* else will try the tag method */
     }
     else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_NEWINDEX)))
+    {
+      sztrace("0057.1.0030.1.0072.0140.0050.0090");
       luaG_typeerror(L, t, "index");
+      sztrace("0057.1.0030.1.0072.0140.0050.0100");
+    }
+
+    sztrace("0057.1.0030.1.0072.0140.0050.0110");
+
     if (ttisfunction(tm)) {
+      sztrace("0057.1.0030.1.0072.0140.0050.0120");
+
       callTM(L, tm, t, key, val);
+
+      sztrace("0057.1.0030.1.0072.0140.0050.0130 -- luaV_settable END.2");
       return;
     }
-    t = tm;  /* else repeat with `tm' */ 
+    sztrace("0057.1.0030.1.0072.0140.0050.0140");
+    t = tm;  /* else repeat with `tm' */
+    sztrace("0057.1.0030.1.0072.0140.0050.0150");
   }
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0160 -- luaV_settable END.fail");
+
   luaG_runerror(L, "loop in settable");
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0170 -- luaV_settable END.unreachable");
 }
 
 

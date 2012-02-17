@@ -29,6 +29,7 @@
 #include "lundump.h"
 #include "lvm.h"
 
+void sztrace(char *);
 
 
 const char lua_ident[] =
@@ -211,7 +212,7 @@ LUA_API void lua_replace (lua_State *L, int idx) {
   api_checkvalidindex(L, o);
   if (idx == LUA_ENVIRONINDEX) {
     Closure *func = curr_func(L);
-    api_check(L, ttistable(L->top - 1)); 
+    api_check(L, ttistable(L->top - 1));
     func->c.env = hvalue(L->top - 1);
     luaC_barrier(L, func, L->top - 1);
   }
@@ -644,13 +645,36 @@ LUA_API void lua_getfenv (lua_State *L, int idx) {
 
 LUA_API void lua_settable (lua_State *L, int idx) {
   StkId t;
+
+  sztrace("0057.1.0030.1.0072.0140.0010 -- lua_settable BEGIN");
+
   lua_lock(L);
+
+  sztrace("0057.1.0030.1.0072.0140.0020");
+
   api_checknelems(L, 2);
+
+  sztrace("0057.1.0030.1.0072.0140.0030");
+
   t = index2adr(L, idx);
+
+  sztrace("0057.1.0030.1.0072.0140.0040");
+
   api_checkvalidindex(L, t);
+
+  sztrace("0057.1.0030.1.0072.0140.0050");
+
   luaV_settable(L, t, L->top - 2, L->top - 1);
+
+  sztrace("0057.1.0030.1.0072.0140.0060");
+
   L->top -= 2;  /* pop index and value */
+
+  sztrace("0057.1.0030.1.0072.0140.0070");
+
   lua_unlock(L);
+
+  sztrace("0057.1.0030.1.0072.0140.0080 -- lua_settable END");
 }
 
 
@@ -771,7 +795,7 @@ LUA_API int lua_setfenv (lua_State *L, int idx) {
 
 #define checkresults(L,na,nr) \
      api_check(L, (nr) == LUA_MULTRET || (L->ci->top - L->top >= (nr) - (na)))
-	
+
 
 LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
   StkId func;

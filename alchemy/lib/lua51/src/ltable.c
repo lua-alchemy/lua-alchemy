@@ -20,6 +20,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 #define ltable_c
 #define LUA_CORE
@@ -34,6 +35,7 @@
 #include "lstate.h"
 #include "ltable.h"
 
+void sztrace(char *);
 
 /*
 ** max size of array part is 2^MAXBITS
@@ -48,7 +50,7 @@
 
 
 #define hashpow2(t,n)      (gnode(t, lmod((n), sizenode(t))))
-  
+
 #define hashstr(t,str)  hashpow2(t, (str)->tsv.hash)
 #define hashboolean(t,p)        hashpow2(t, p)
 
@@ -302,7 +304,7 @@ static void resize (lua_State *L, Table *t, int nasize, int nhsize) {
   if (nasize > oldasize)  /* array part must grow? */
     setarrayvector(L, t, nasize);
   /* create new hash part with appropriate size */
-  setnodevector(L, t, nhsize);  
+  setnodevector(L, t, nhsize);
   if (nasize < oldasize) {  /* array part must shrink? */
     t->sizearray = nasize;
     /* re-insert elements from vanishing slice */
@@ -380,51 +382,105 @@ void luaH_free (lua_State *L, Table *t) {
 
 
 static Node *getfreepos (Table *t) {
+  char buf[4096];
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0010 -- getfreepos BEGIN");
   while (t->lastfree-- > t->node) {
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0020");
+    sprintf(
+        buf,
+        "0057.1.0030.1.0072.0140.0050.0040.0090.0040.0021 t: %p",
+        t
+      );
+    sztrace(buf);
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0022");
+    sprintf(
+        buf,
+        "0057.1.0030.1.0072.0140.0050.0040.0090.0040.0023 t->lastfree: %p",
+        t->lastfree
+      );
+    sztrace(buf);
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0024");
     if (ttisnil(gkey(t->lastfree)))
+    {
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0030 -- getfreepos END.found");
       return t->lastfree;
+    }
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0040");
   }
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040.0050 -- getfreepos END.notfound");
   return NULL;  /* could not find a free place */
 }
 
 
 
 /*
-** inserts a new key into a hash table; first, check whether key's main 
-** position is free. If not, check whether colliding node is in its main 
-** position or not: if it is not, move colliding node to an empty place and 
-** put new key in its main position; otherwise (colliding node is in its main 
-** position), new key goes to an empty position. 
+** inserts a new key into a hash table; first, check whether key's main
+** position is free. If not, check whether colliding node is in its main
+** position or not: if it is not, move colliding node to an empty place and
+** put new key in its main position; otherwise (colliding node is in its main
+** position), new key goes to an empty position.
 */
 static TValue *newkey (lua_State *L, Table *t, const TValue *key) {
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0010 -- newkey BEGIN");
   Node *mp = mainposition(t, key);
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0020");
   if (!ttisnil(gval(mp)) || mp == dummynode) {
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0030");
     Node *othern;
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0040");
     Node *n = getfreepos(t);  /* get a free place */
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0050");
     if (n == NULL) {  /* cannot find a free place? */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0060");
       rehash(L, t, key);  /* grow table */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0070");
       return luaH_set(L, t, key);  /* re-insert key into grown table */
     }
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0080");
     lua_assert(n != dummynode);
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0090");
     othern = mainposition(t, key2tval(mp));
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0100");
     if (othern != mp) {  /* is colliding node out of its main position? */
       /* yes; move colliding node into free position */
-      while (gnext(othern) != mp) othern = gnext(othern);  /* find previous */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0110");
+      while (gnext(othern) != mp)
+      {
+        sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0120");
+        othern = gnext(othern);  /* find previous */
+        sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0130");
+      }
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0140");
       gnext(othern) = n;  /* redo the chain with `n' in place of `mp' */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0150");
       *n = *mp;  /* copy colliding node into free pos. (mp->next also goes) */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0160");
       gnext(mp) = NULL;  /* now `mp' is free */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0170");
       setnilvalue(gval(mp));
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0180");
     }
     else {  /* colliding node is in its own main position */
       /* new node will go into free position */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0190");
       gnext(n) = gnext(mp);  /* chain new position */
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0200");
       gnext(mp) = n;
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0210");
       mp = n;
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0220");
     }
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0230");
   }
-  gkey(mp)->value = key->value; gkey(mp)->tt = key->tt;
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0240");
+  gkey(mp)->value = key->value;
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0250");
+  gkey(mp)->tt = key->tt;
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0260");
   luaC_barriert(L, t, key);
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0270");
   lua_assert(ttisnil(gval(mp)));
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0090.0280 -- newkey END");
   return gval(mp);
 }
 
@@ -492,14 +548,36 @@ const TValue *luaH_get (Table *t, const TValue *key) {
 
 
 TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0010 -- luaH_set BEGIN");
+
   const TValue *p = luaH_get(t, key);
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0020");
+
   t->flags = 0;
+
+  sztrace("0057.1.0030.1.0072.0140.0050.0040.0030");
+
   if (p != luaO_nilobject)
+  {
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0040");
     return cast(TValue *, p);
+  }
   else {
-    if (ttisnil(key)) luaG_runerror(L, "table index is nil");
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0050");
+    if (ttisnil(key))
+    {
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0060");
+      luaG_runerror(L, "table index is nil");
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0070");
+    }
     else if (ttisnumber(key) && luai_numisnan(nvalue(key)))
+    {
+      sztrace("0057.1.0030.1.0072.0140.0050.0040.0080");
       luaG_runerror(L, "table index is NaN");
+    }
+    sztrace("0057.1.0030.1.0072.0140.0050.0040.0090 -- luaH_set END");
     return newkey(L, t, key);
   }
 }
