@@ -192,6 +192,32 @@
   </target>
 
   <!-- - - - - - - - - - - - - - - - - -
+        target: package.iphone-remdebug
+       - - - - - - - - - - - - - - - - - -->
+  <target name="package.iphone-remdebug">
+    <java jar="${adt.jar}" fork="true" failonerror="true">
+      <arg value="-package"/>
+      <arg value="-target"/>
+      <arg value="${adt.iphone.remdebug.target}"/>
+      <arg value="-connect"/>
+      <arg value="${adt.iphone.remdebug.ip}"/>
+      <arg value="-provisioning-profile"/>
+      <arg value="${adt.iphone.provisioning-profile}"/>
+      <arg value="-storetype"/>
+      <arg value="${adt.store.type}"/>
+      <arg value="-keystore"/>
+      <arg value="${adt.iphone.store.path}"/>
+      <arg value="-storepass"/>
+      <arg value="${adt.iphone.store.pass}"/>
+      <arg value="${adt.out.debug}"/>
+      <arg value="${adt.app.descriptor}"/>
+      <arg value="-C"/>
+      <arg value="${debug.build.dir}"/>
+      <arg value="${main.application.debug.out}"/>
+    </java>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
           target: clear
          - - - - - - - - - - - - - - - - - -->
   <target name="clear">

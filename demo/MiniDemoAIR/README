@@ -31,6 +31,10 @@ Here is an example of `build.properties` to get an .ipa for testing purposes:
     adt.iphone.store.password = 12345
     adt.out.file.ext = ipa
 
+For remote debugging, configure this with your machine IP:
+
+    adt.iphone.remdebug.ip = 192.168.1.2
+
 Append this to the above `adt.store` stuff. Note that you need to use your
 Apple-issued certificate, exported to `.p12` for `adt.iphone.store.path`,
 not a self-signed one.
@@ -39,3 +43,16 @@ Build as follows:
 
     $ ant # to build prerequisites
     $ ant package.iphone
+
+Run this instead of the last line for remote debugging:
+
+    $ ant package.iphone-remdebug
+
+To run remote debugger without FDT:
+
+    $ fdb
+    (fdb) run
+
+Make sure the debugger is running and says `Waiting for Player to connect`
+before you start the application. See Adobe docs for more information
+on using the debugger.
