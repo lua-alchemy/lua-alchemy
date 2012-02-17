@@ -13,6 +13,7 @@
 #include "lualib.h"
 #include "lauxlib.h"
 
+void sztrace(char *);
 
 static const luaL_Reg lualibs[] = {
   {"", luaopen_base},
@@ -28,11 +29,26 @@ static const luaL_Reg lualibs[] = {
 
 
 LUALIB_API void luaL_openlibs (lua_State *L) {
+  sztrace("0051 -- luaL_openlibs BEGIN 1");
   const luaL_Reg *lib = lualibs;
+  char buf[4096];
+  sztrace("0052");
   for (; lib->func; lib++) {
+    sztrace("0053");
+    sprintf(
+        buf,
+        "0053.1 name %s L %p lib %p func %p",
+        lib->name, L, lib, lib->func
+      );
+    sztrace(buf);
+    sztrace("0054");
     lua_pushcfunction(L, lib->func);
+    sztrace("0055");
     lua_pushstring(L, lib->name);
+    sztrace("0056");
     lua_call(L, 1, 0);
+    sztrace("0058");
   }
+  sztrace("0059 -- luaL_openlibs BEGIN");
 }
 

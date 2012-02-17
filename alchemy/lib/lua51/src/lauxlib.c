@@ -239,32 +239,75 @@ static int libsize (const luaL_Reg *l) {
 }
 
 
+void sztrace(char *);
+
 LUALIB_API void luaI_openlib (lua_State *L, const char *libname,
                               const luaL_Reg *l, int nup) {
+  char buf[4096];
+
+  sztrace("0057.1.0030.1.0010 -- luaI_openlib BEGIN");
+
   if (libname) {
+    sztrace("0057.1.0030.1.0020");
     int size = libsize(l);
+    sztrace("0057.1.0030.1.0030");
     /* check whether lib already exists */
     luaL_findtable(L, LUA_REGISTRYINDEX, "_LOADED", 1);
+    sztrace("0057.1.0030.1.0040");
     lua_getfield(L, -1, libname);  /* get _LOADED[libname] */
+    sztrace("0057.1.0030.1.0050");
     if (!lua_istable(L, -1)) {  /* not found? */
+      sztrace("0057.1.0030.1.0060");
       lua_pop(L, 1);  /* remove previous result */
+      sztrace("0057.1.0030.1.0070");
+
+      sprintf(
+          buf,
+          "0057.1.0030.1.0071 L %p libname %s size %d globalsindex %d",
+          L, libname, size, LUA_GLOBALSINDEX
+        );
+      sztrace(buf);
+
+      sztrace("0057.1.0030.1.0072");
+
       /* try global variable (and create one if it does not exist) */
       if (luaL_findtable(L, LUA_GLOBALSINDEX, libname, size) != NULL)
+      {
+        sztrace("0057.1.0030.1.0080");
         luaL_error(L, "name conflict for module " LUA_QS, libname);
+        sztrace("0057.1.0030.1.0090");
+      }
+      sztrace("0057.1.0030.1.0100");
       lua_pushvalue(L, -1);
+      sztrace("0057.1.0030.1.0110");
       lua_setfield(L, -3, libname);  /* _LOADED[libname] = new table */
+      sztrace("0057.1.0030.1.0120");
     }
+    sztrace("0057.1.0030.1.0130");
     lua_remove(L, -2);  /* remove _LOADED table */
+    sztrace("0057.1.0030.1.0140");
     lua_insert(L, -(nup+1));  /* move library table to below upvalues */
+    sztrace("0057.1.0030.1.0150");
   }
+  sztrace("0057.1.0030.1.0160");
   for (; l->name; l++) {
     int i;
+    sztrace("0057.1.0030.1.0170");
     for (i=0; i<nup; i++)  /* copy upvalues to the top */
+    {
+      sztrace("0057.1.0030.1.0180");
       lua_pushvalue(L, -nup);
+      sztrace("0057.1.0030.1.0190");
+    }
+    sztrace("0057.1.0030.1.0200");
     lua_pushcclosure(L, l->func, nup);
+    sztrace("0057.1.0030.1.0210");
     lua_setfield(L, -(nup+2), l->name);
+    sztrace("0057.1.0030.1.0220");
   }
+  sztrace("0057.1.0030.1.0230");
   lua_pop(L, nup);  /* remove upvalues */
+  sztrace("0057.1.0030.1.0240 -- luaI_openlib END");
 }
 
 
@@ -357,26 +400,66 @@ LUALIB_API const char *luaL_gsub (lua_State *L, const char *s, const char *p,
 LUALIB_API const char *luaL_findtable (lua_State *L, int idx,
                                        const char *fname, int szhint) {
   const char *e;
+
+  sztrace("0057.1.0030.1.0072.0010 -- luaL_findtable BEGIN");
+
   lua_pushvalue(L, idx);
+
+  sztrace("0057.1.0030.1.0072.0020");
+
   do {
+
+    sztrace("0057.1.0030.1.0072.0030");
+
     e = strchr(fname, '.');
-    if (e == NULL) e = fname + strlen(fname);
+
+    sztrace("0057.1.0030.1.0072.0040");
+
+    if (e == NULL)
+    {
+      sztrace("0057.1.0030.1.0072.0050");
+      e = fname + strlen(fname);
+      sztrace("0057.1.0030.1.0072.0060");
+    }
+
+    sztrace("0057.1.0030.1.0072.0070");
+
     lua_pushlstring(L, fname, e - fname);
+
+    sztrace("0057.1.0030.1.0072.0080");
+
     lua_rawget(L, -2);
+
+    sztrace("0057.1.0030.1.0072.0090");
+
     if (lua_isnil(L, -1)) {  /* no such field? */
+      sztrace("0057.1.0030.1.0072.0100");
       lua_pop(L, 1);  /* remove this nil */
+      sztrace("0057.1.0030.1.0072.0110");
       lua_createtable(L, 0, (*e == '.' ? 1 : szhint)); /* new table for field */
+      sztrace("0057.1.0030.1.0072.0120");
       lua_pushlstring(L, fname, e - fname);
+      sztrace("0057.1.0030.1.0072.0130");
       lua_pushvalue(L, -2);
+      sztrace("0057.1.0030.1.0072.0140");
       lua_settable(L, -4);  /* set new table into field */
+      sztrace("0057.1.0030.1.0072.0150");
     }
     else if (!lua_istable(L, -1)) {  /* field has a non-table value? */
+      sztrace("0057.1.0030.1.0072.0160");
       lua_pop(L, 2);  /* remove table and value */
+      sztrace("0057.1.0030.1.0072.0170");
       return fname;  /* return problematic part of the name */
     }
+    sztrace("0057.1.0030.1.0072.0180");
     lua_remove(L, -2);  /* remove previous table */
+    sztrace("0057.1.0030.1.0072.0190");
     fname = e + 1;
+    sztrace("0057.1.0030.1.0072.0200");
   } while (*e == '.');
+
+  sztrace("0057.1.0030.1.0072.0210 -- luaL_findtable END");
+
   return NULL;
 }
 

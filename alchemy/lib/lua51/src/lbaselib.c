@@ -19,6 +19,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+void sztrace(char *);
 
 
 
@@ -625,23 +626,91 @@ static void auxopen (lua_State *L, const char *name,
 
 static void base_open (lua_State *L) {
   /* set global _G */
+
+  char buf[4096];
+
+  sztrace("0057.1.0010 -- base_open BEGIN");
+
   lua_pushvalue(L, LUA_GLOBALSINDEX);
+
+  sztrace("0057.1.0020");
+
+  sprintf(
+      buf,
+      "0057.1.0021 L %p top type %s globalsindex %d",
+      L, luaL_typename(L, -1), LUA_GLOBALSINDEX
+    );
+  sztrace(buf);
+
+  sztrace("0057.1.0022");
+
   lua_setglobal(L, "_G");
+
+  sztrace("0057.1.0023");
+
+  lua_getglobal(L, "_G");
+
+  sztrace("0057.1.0024");
+
+  sprintf(buf, "0057.1.0025 L %p top type %s", L, luaL_typename(L, -1));
+  sztrace(buf);
+
+  sztrace("0057.1.0026");
+
+  lua_pop(L, 1);
+
+  sztrace("0057.1.0030");
+
   /* open lib into global table */
   luaL_register(L, "_G", base_funcs);
+
+  sztrace("0057.1.0040");
+
   lua_pushliteral(L, LUA_VERSION);
+
+  sztrace("0057.1.0050");
+
   lua_setglobal(L, "_VERSION");  /* set global _VERSION */
+
+  sztrace("0057.1.0060");
+
   /* `ipairs' and `pairs' need auxliliary functions as upvalues */
   auxopen(L, "ipairs", luaB_ipairs, ipairsaux);
+
+  sztrace("0057.1.0070");
+
   auxopen(L, "pairs", luaB_pairs, luaB_next);
+
+  sztrace("0057.1.0080");
+
   /* `newproxy' needs a weaktable as upvalue */
   lua_createtable(L, 0, 1);  /* new table `w' */
+
+  sztrace("0057.1.0090");
+
   lua_pushvalue(L, -1);  /* `w' will be its own metatable */
+
+  sztrace("0057.1.0100");
+
   lua_setmetatable(L, -2);
+
+  sztrace("0057.1.0110");
+
   lua_pushliteral(L, "kv");
+
+  sztrace("0057.1.0120");
+
   lua_setfield(L, -2, "__mode");  /* metatable(w).__mode = "kv" */
+
+  sztrace("0057.1.0130");
+
   lua_pushcclosure(L, luaB_newproxy, 1);
+
+  sztrace("0057.1.0140");
+
   lua_setglobal(L, "newproxy");  /* set global `newproxy' */
+
+  sztrace("0057.1.0150 -- base_open END");
 }
 
 

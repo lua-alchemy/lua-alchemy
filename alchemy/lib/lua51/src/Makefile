@@ -7,7 +7,7 @@
 # Your platform. See PLATS for possible values.
 PLAT= none
 
-CC= gcc
+CC= gcc -DLUA_USE_APICHECK
 CFLAGS= -O2 -Wall $(MYCFLAGS)
 AR= ar rcu
 RANLIB= ranlib

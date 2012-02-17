@@ -36,6 +36,8 @@ static lua_State * initialize_state()
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
+  sztrace("0010 -- BEGIN");
+
   lua_State * L = luaL_newstate();
   if (L == NULL)
   {
@@ -43,30 +45,59 @@ static lua_State * initialize_state()
     return NULL;
   }
 
+  sztrace("0020");
+
   lua_atpanic(L, &panic_handler);
+
+  sztrace("0030");
 
   LCALL(L, stack);
 
+  sztrace("0040");
+
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+
+  sztrace("0050");
 
   luaL_openlibs(L);
 
+  sztrace("0060");
+
   LCHECK_FN(L, stack, 0, fatal_error);
+
+  sztrace("0070");
 
   initialize_callbacks(L);
 
+  sztrace("0080");
+
   LCHECK_FN(L, stack, 0, fatal_error);
+
+  sztrace("0090");
 
   register_as3_lua_interface(L);
 
+  sztrace("0100");
+
   LCHECK_FN(L, stack, 0, fatal_error);
 
+  sztrace("0110");
+
   lua_pushliteral(L, AS3LUA_VERSION);
+
+  sztrace("0120");
+
   lua_setglobal(L, "_LUA_ALCHEMY");
+
+  sztrace("0130");
 
   lua_gc(L, LUA_GCRESTART, 0); /* restart collector */
 
+  sztrace("0140");
+
   LCHECK_FN(L, stack, 0, fatal_error);
+
+  sztrace("0150");
 
   return L;
 }
