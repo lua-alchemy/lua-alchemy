@@ -70,11 +70,11 @@
     value="MyiPhoneDevelperCertificate.p12"
     />
   <property name="adt.iphone.store.pass" value="12345"/>
+  <property name="adt.out.file.ext" value=".air"/>
   -->
 
   <property name="adt.jar" value="${AIR_HOME}/lib/adt.jar"/>
   <property name="adt.out.file.name" value="MiniDemoAIR"/>
-  <property name="adt.out.file.ext" value=".air"/>
   <property name="adt.app.descriptor" value="application.xml"/>
 
   <property name="adt.target.release" value="air"/>
