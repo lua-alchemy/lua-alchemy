@@ -31,13 +31,27 @@ Here is an example of `build.properties` to get an .ipa for testing purposes:
     adt.iphone.store.password = 12345
     adt.out.file.ext = ipa
 
-For remote debugging, configure this with your machine IP:
+For remote debugging use these lines:
 
     adt.iphone.remdebug.ip = 192.168.1.2
+    adt.iphone.remdebug.target = ipa-debug
 
 Append this to the above `adt.store` stuff. Note that you need to use your
 Apple-issued certificate, exported to `.p12` for `adt.iphone.store.path`,
 not a self-signed one.
+
+WARNING: Lua Alchemy is NOT compatible with `ipa-*-interpreter` adt
+targets. If you build your application with such target, it will crash
+at the Lua initialization stage with an error similar to this:
+
+    Error #1506: The specified range is invalid.
+           at cmodule.lua_wrapper::FSM_newkey/work()
+           at Function/<anonymous>()
+           at Function/<anonymous>()
+           at luaAlchemy::lua_wrapper$/luaInitializeState()[/Users/agladysh/projects/lua-alchemy/alchemy/wrapper/bin/src/luaAlchemy/lua_wrapper.as:7]
+           at luaAlchemy::LuaAlchemy/init()
+           at luaAlchemy::LuaAlchemy()
+          ...
 
 Build as follows:
 
