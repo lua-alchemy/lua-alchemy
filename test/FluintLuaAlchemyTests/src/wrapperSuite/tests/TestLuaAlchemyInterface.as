@@ -114,5 +114,128 @@ package wrapperSuite.tests
 
       doString(script, [true])
     }
+
+    /*
+    * If you do anything in Lua after you invoked doStringAsync,
+    * it crashes in luaV_execute.
+    *
+    * See http://code.google.com/p/lua-alchemy/issues/detail?id=154 for details.
+    *
+    * TODO: Fix that.
+    * TODO: While not fixed, test also that callbacks also are protected
+    *       from accidentally calling do*Async() from Lua code.
+    * TODO: Fix and uncomment those assert('unreachable 3'),
+    *       they should not crash.
+    * TODO: In fact, whole set of tests is broken and messes up
+    *       with Alchemy, breaking other tests. Uncomment them and fix that.
+    */
+
+    /*
+    public function testDoStringAsyncNotCallableFromSameLuaState():void
+    {
+      myLuaAlchemy.setGlobal("_ALCHEMY", myLuaAlchemy);
+
+      var script:String = ( <![CDATA[
+        as3.call(
+            _ALCHEMY,
+            "doStringAsync",
+            [[
+              assert("unreachable 1")
+            ]],
+            function(stack)
+              assert("unreachable 2")
+            end
+          )
+
+--        assert("unreachable 3")
+
+      ]]> ).toString();
+
+      doString(
+          script,
+          [ false, "can't call doStringAsync from Lua" ]
+        );
+    }
+
+    public function testDoStringAsyncNotCallableFromOtherLuaState():void
+    {
+      var script:String = ( <![CDATA[
+        local lua = as3.new("luaAlchemy::LuaAlchemy")
+        as3.call(
+            lua,
+            "doStringAsync",
+            [[
+              assert("unreachable 1")
+            ]],
+            function(stack)
+              assert("unreachable 2")
+            end
+          )
+
+--        assert("unreachable 3")
+
+      ]]> ).toString();
+
+      doString(
+          script,
+          [ false, "can't call doStringAsync from Lua" ]
+        );
+    }
+
+    public function testDoFileAsyncNotCallableFromSameLuaState():void
+    {
+      myLuaAlchemy.setGlobal("_ALCHEMY", myLuaAlchemy);
+
+      var script:String = ( <![CDATA[
+        local bytes = as3.new("flash.utils::ByteArray")
+        as3.call(bytes, "writeMultiByte", [[assert("unreachable 1")]], "UTF-8")
+        as3.call(_ALCHEMY, "supplyFile", "test://foo.lua", bytes)
+
+        as3.call(
+            _ALCHEMY,
+            "doFileAsync",
+            "test://foo.lua",
+            function(stack)
+              assert("unreachable 2")
+            end
+          )
+
+--        assert("unreachable 3")
+
+      ]]> ).toString();
+
+      doString(
+          script,
+          [ false, "can't call doFileAsync from Lua" ]
+        );
+    }
+
+    public function testDoFileAsyncNotCallableFromOtherLuaState():void
+    {
+      var script:String = ( <![CDATA[
+        local lua = as3.new("luaAlchemy::LuaAlchemy")
+        local bytes = as3.new("flash.utils::ByteArray")
+        as3.call(bytes, "writeMultiByte", [[assert("unreachable 1")]], "UTF-8")
+        as3.call(lua, "supplyFile", "test://foo.lua", bytes)
+
+        as3.call(
+            lua,
+            "doFileAsync",
+            "test://foo.lua",
+            function(stack)
+              assert("unreachable 2")
+            end
+          )
+
+        assert("unreachable 3")
+
+      ]]> ).toString();
+
+      doString(
+          script,
+          [ false, "can't call doFileAsync from Lua" ]
+        );
+    }
+    */
   }
 }

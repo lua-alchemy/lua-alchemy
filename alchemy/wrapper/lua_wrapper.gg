@@ -106,6 +106,37 @@ static void ggInit()
   initialize_as3_constants();
 }
 
+/*
+* Intentionally global, not per-state.
+*
+* See here for details:
+* http://code.google.com/p/lua-alchemy/issues/detail?id=154
+*/
+/* TODO: Fix and uncomment. See tests. */
+/*
+int g_AsyncCounter = 0;
+
+void enter_lua()
+{
+  SPAM(("enter_lua"));
+  ++g_AsyncCounter;
+}
+
+void leave_lua()
+{
+  SPAM(("leave_lua"));
+  --g_AsyncCounter;
+  if (g_AsyncCounter < 0)
+  {
+    sztrace("g_AsyncCounter < 0!");
+  }
+}
+
+BOOL can_do_async()
+{
+  return g_AsyncCounter == 0;
+}
+*/
 
 AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
 {
@@ -123,8 +154,22 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
   LCALL(L, stack);
 
   int base = LBASE(L, stack);
+
+  /* TODO: Fix and uncomment, see tests */
+  /*
+  if (isAsync && !can_do_async())
   {
+    free(str);
+    sztrace("doFile(): can't do async from Lua");
+    return AS3_Array(
+        "AS3ValType, StrType",
+        AS3_False(),
+        "can't call doFileAsync from Lua"
+      );
   }
+
+  enter_lua();
+  */
 
   lua_pushboolean(L, 1); /* Placeholder for execution status */
 
@@ -152,6 +197,8 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
 
   lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
 
+  /*leave_lua();*/
+
   return res;
 }
 
@@ -176,6 +223,22 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
   size_t length = 0;
   AS3_Malloced_Str str = get_string_bytes(strValue, &length);
   AS3_Val res;
+
+  /* TODO: Fix and uncomment, see tests */
+  /*
+  if (isAsync && !can_do_async())
+  {
+    free(str);
+    sztrace("doString(): can't do async from Lua");
+    return AS3_Array(
+        "AS3ValType, StrType",
+        AS3_False(),
+        "can't call doStringAsync from Lua"
+      );
+  }
+
+  enter_lua();
+  */
 
   lua_pushboolean(L, 1); /* Placeholder for execution status */
 
@@ -213,6 +276,8 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
   lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
 
   SPAM(("luaDoString(): end"));
+
+  /*leave_lua();*/
 
   return res;
 }
