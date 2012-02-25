@@ -28,7 +28,7 @@ int dump_lua_stack(lua_State * L, int base)
       luaL_addstring(&b, (pos != base) ? "[" : "{");
       lua_pushinteger(L, pos);
       luaL_addvalue(&b);
-      luaL_addstring(&b, (pos != base) ? "] - " : "} -");
+      luaL_addstring(&b, (pos != base) ? "] - " : "} - ");
       luaL_addstring(&b, luaL_typename(L, pos));
       luaL_addstring(&b, " - `");
 
