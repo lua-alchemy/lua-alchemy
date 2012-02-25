@@ -69,7 +69,9 @@ AS3_Val get_as3_value_from_lua_stack_type(lua_State * L, int i, int type)
           length = 6;
           str = "(null)";
         }
-        /* NOTE: Alchemy .5a truncates embedded zeroes in string regardless to the passed length */
+        /* NOTE: Alchemy .5a truncates embedded zeroes in string
+        * regardless to the passed length
+        */
         value = AS3_StringN(str, length);
       }
       break;
@@ -133,7 +135,11 @@ AS3_Val get_as3_value_from_lua_stack_type(lua_State * L, int i, int type)
 
 #ifdef DO_SPAM
   SPAM(("get_as3_value_from_lua_stack(): end"));
-  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value)));
+  AS3_Trace(
+      AS3_Call(
+          getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", value)
+        )
+    );
 #endif /* DO_SPAM */
 
   LCHECK_FN(L, stack, 0, fatal_error);
@@ -199,7 +205,11 @@ AS3_Val create_as3_value_from_lua_stack(
 
 #ifdef DO_SPAM
   SPAM(("create_as3_value_from_lua_stack(): end"));
-  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", ret)));
+  AS3_Trace(
+      AS3_Call(
+          getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", ret)
+        )
+    );
 #endif /* DO_SPAM */
 
   LCHECK_FN(L, stack, 0, fatal_error);
@@ -245,7 +255,11 @@ int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val)
 #ifdef DO_SPAM
   SPAM(("push_as3_to_lua_stack_if_convertible(): begin: value, type"));
   AS3_Trace(val);
-  AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)));
+  AS3_Trace(
+      AS3_Call(
+          getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", val)
+        )
+    );
 #endif /* DO_SPAM */
 
   if (AS3_InstanceOf(val, Number_class))

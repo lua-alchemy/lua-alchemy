@@ -1,5 +1,6 @@
-/* callbacks_as3_lua.h -- Handle creation and management of Lua function callbacks returned on stack
- */
+/* callbacks_as3_lua.h -- Handle creation and management of
+* Lua function callbacks returned on stack
+*/
 #include "callbacks_as3_lua.h"
 
 #include <lauxlib.h>
@@ -98,7 +99,9 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
   }
 #endif /* DO_SPAM */
 
-    /* TODO: Assert we have Lua function (or other callable object) on the top of the stack */
+    /* TODO: Assert we have Lua function (or other callable object)
+    * on the top of the stack
+    */
 
     LCHECK_FN(L, stack, 2 + 1, fatal_error);
 
@@ -129,7 +132,9 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
       LCHECK_FN(L, stack, 1, fatal_error); /* Only error message */
 
       /* Error message is on stack */
-      /* NOTE: It is not necessary string! If we want to preserve its type, see lua_DoString. */
+      /* NOTE: It is not necessary string! If we want to preserve its type,
+      * see lua_DoString.
+      */
 
       if (lua_tostring(L, -1) == NULL)
       {
@@ -173,11 +178,19 @@ AS3_Val as3_lua_callback(void * data, AS3_Val args)
     */
 #endif /* DO_SPAM */
 
-    res = create_as3_value_from_lua_stack(L, results_base + 1, LTOP(L, stack), TRUE);
+    res = create_as3_value_from_lua_stack(
+        L, results_base + 1, LTOP(L, stack), TRUE
+      );
 
 #ifdef DO_SPAM
     SPAM(("as3_lua_callback() result type"));
-    AS3_Trace(AS3_Call(getQualifiedClassName_method, NULL, AS3_Array("AS3ValType", res)));
+    AS3_Trace(
+        AS3_Call(
+            getQualifiedClassName_method,
+            NULL,
+            AS3_Array("AS3ValType", res)
+          )
+      );
 #endif /* DO_SPAM */
 
     lua_settop(L, LBASE(L, stack)); /* Cleanup results and two holder tables */
@@ -194,9 +207,10 @@ int release_callback(lua_State * L)
 {
   SPAM(("release_callback() : begin"));
 
-  LuaFunctionCallbackData ** pUserdata = (LuaFunctionCallbackData **)luaL_checkudata(
-      L, 1, AS3LUA_CALLBACKMT
-    );
+  LuaFunctionCallbackData ** pUserdata =
+      (LuaFunctionCallbackData **)luaL_checkudata(
+          L, 1, AS3LUA_CALLBACKMT
+        );
   if (pUserdata == NULL)
   {
     SPAM(("release_callback() : bad userdata"));
@@ -244,7 +258,9 @@ AS3_Val setup_callback(lua_State * L, int index)
     NOTE: Can't do lua_newuserdata() immediately
           since it would be deleted by Lua on lua_close()
   */
-  /* TODO: Free this somewhere! When freeing, remove pData->ref from the state */
+  /* TODO: Free this somewhere!
+  * When freeing, remove pData->ref from the state
+  */
   LuaFunctionCallbackData * pData = malloc(sizeof(LuaFunctionCallbackData));
 
   index = LABSIDX(L, stack, index); /* Normalize index */

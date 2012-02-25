@@ -64,12 +64,18 @@ static int as3_newclass(lua_State * L)
   AS3_Val as_class;
 
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, LUA_QL("package::ClassName") " expected");
+  luaL_argcheck(
+      L, classname != NULL, 1, LUA_QL("package::ClassName") " expected"
+    );
 
   as_class = get_class(classname);
   if (as_class == NULL)
   {
-    return luaL_error(L, "newclass: invalid package::ClassName: " LUA_QL("%s"), classname);
+    return luaL_error(
+        L,
+        "newclass: invalid package::ClassName: " LUA_QL("%s"),
+        classname
+      );
   }
 
   push_as3_lua_userdata(L, as_class);
@@ -140,7 +146,12 @@ static int as3_new(lua_State * L)
   AS3_Val as_object;
 
   classname = lua_tostring(L, 1);
-  luaL_argcheck(L, classname != NULL, 1, LUA_QL("package::ClassName") " expected");
+  luaL_argcheck(
+      L,
+      classname != NULL,
+      1,
+      LUA_QL("package::ClassName") " expected"
+    );
 
   as_class = get_class(classname);
   if (as_class == NULL)
@@ -168,9 +179,11 @@ static int as3_new(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  /* SAFE_RELEASE(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  /* SAFE_RELEASE(as_object);
+  // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
   SAFE_RELEASE(params);
-  SAFE_RELEASE(as_class); /* TODO might want to store classes in a table to save loading again */
+  /* TODO might want to store classes in a table to save loading again */
+  SAFE_RELEASE(as_class);
 
   LRETURN(L, stack, 1);
 }
@@ -229,9 +242,11 @@ static int as3_new2(lua_State * L)
 
   push_as3_lua_userdata(L, as_object);
 
-  /* SAFE_RELEASE(as_object); // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
+  /* SAFE_RELEASE(as_object);
+  // TODO: ?!?!?! push_as3_lua_userdata does not do AS3_Acquire! */
   SAFE_RELEASE(params);
-  SAFE_RELEASE(as_class); /* TODO might want to store classes in a table to save loading again */
+  /* TODO might want to store classes in a table to save loading again */
+  SAFE_RELEASE(as_class);
 
   LRETURN(L, stack, 1);
 }
@@ -374,7 +389,10 @@ static int as3_assign(lua_State * L)
   value = get_as3_value_from_lua_stack(L, 2);
   luaL_argcheck(L, value != AS3_Undefined(), 2, "'value' expected");
 
-  /* TODO how to assign the value of a String, Number, int, etc? var s:String; s = "hello"; and do we care? */
+  /*
+  * TODO: how to assign the value of a String, Number, int, etc?
+  * var s:String; s = "hello"; and do we care?
+  */
 
   LRETURN(L, stack, 0);
 }
@@ -602,10 +620,13 @@ static int as3_namespacecall(lua_State * L)
 /*
 * Print arguments to a trace()
 * Adapted from Lua 5.1.4 luaB_print()
-* NOTE: This function has string concatenation overhead due to forced \n in sztrace().
-* If there is a fputs() analog, use it (and rewrite this function again, based on luaB_print).
+* NOTE: This function has string concatenation overhead due to forced \n
+* in sztrace().
+* If there is a fputs() analog, use it (and rewrite this function again,
+* based on luaB_print).
 * Lua example: as3.trace("Hello", "from Lua Alchemy")
-* NOTE: This function made public to enable debugging logging from outer modules.
+* NOTE: This function made public to enable debugging logging from
+* outer modules.
 */
 int as3_trace(lua_State * L)
 {

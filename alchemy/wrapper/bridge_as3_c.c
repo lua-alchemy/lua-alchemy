@@ -20,7 +20,9 @@ void initialize_as3_constants()
   String_class = get_class2(NULL, "String");
   Boolean_class = get_class2(NULL, "Boolean");
   flash_utils_namespace = AS3_String("flash.utils");
-  getQualifiedClassName_method = AS3_NSGetS(flash_utils_namespace, "getQualifiedClassName");
+  getQualifiedClassName_method = AS3_NSGetS(
+      flash_utils_namespace, "getQualifiedClassName"
+    );
   Array_class = get_class2(NULL, "Array");
 }
 
@@ -49,7 +51,8 @@ AS3_Val get_class(const char * as_namespaceclass_path)
   if (class_ptr > as_namespaceclass_path)
   {
     as_namespace = AS3_StringN(
-        as_namespaceclass_path, (class_ptr - as_namespaceclass_path) / sizeof(char)
+        as_namespaceclass_path,
+        (class_ptr - as_namespaceclass_path) / sizeof(char)
       );
     class_ptr = class_ptr + 2; /* Skip '::' */
   }

@@ -229,7 +229,9 @@ public function luaInitializeState():(unsigned int)uint
 
 public function luaClose(luaState:(lua_State *)uint):void
 {
-  /* Note: Keep these traces. It is easy to get bad things happening in final GC */
+  /*
+  * Note: Keep these traces. It is easy to get bad things happening in final GC
+  */
   sztrace("luaClose() : begin");
   lua_close(luaState);
   sztrace("luaClose() : end");
