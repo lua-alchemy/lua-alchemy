@@ -4,7 +4,6 @@
 #include "callbacks_as3_lua.h"
 
 #include <lauxlib.h>
-/*#include <lualib.h>*/
 
 #include "lua-alchemy.h"
 #include "lstack.h"
@@ -305,4 +304,3 @@ AS3_Val setup_callback(lua_State * L, int index)
 
   return as3Function;
 }
-
