@@ -1,3 +1,19 @@
+Lua Alchemy Next Version (To be Released)
+-----------------------------------------
+
+Changes since v0.3:
+
+Some features were sponsored by the DragonRAD: http://dragonrad.com/
+(TODO: elaborate that)
+
+1. New demo: MiniDemoAIR, with instructions on how to build
+   AIR applications that use Lua Alchemy (including iOS targets).
+
+   Nothing special, really, except that, for Flex 4.6 at least,
+   AIR interpreter targets for iOS seem to be not compatible
+   with Adobe AIR and will crush upon launch. Release builds
+   in native code work just fine.
+
 Lua Alchemy v0.3 (2011-06-04)
 -----------------------------
 
