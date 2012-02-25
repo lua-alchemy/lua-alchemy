@@ -9,8 +9,6 @@ package wrapperSuite.tests
 
   import net.digitalprimates.fluint.tests.TestCase;
 
-  // TODO: Lua should be able to extend list of test *cases* as well!
-
   public dynamic class TestLuaBased extends CommonLuaAlchemyTestCase
   {
     import flash.utils.*;
