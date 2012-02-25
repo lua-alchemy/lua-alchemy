@@ -1,10 +1,9 @@
-Lua Alchemy Next Version (To be Released)
------------------------------------------
+Lua Alchemy v0.3.1 (To be released)
+-----------------------------------
 
 Changes since v0.3:
 
-Some features were sponsored by the DragonRAD: http://dragonrad.com/
-(TODO: elaborate that)
+Features 1-3 were sponsored by the DragonRAD: http://dragonrad.com/
 
 1. New demo: MiniDemoAIR, with instructions on how to build
    AIR applications that use Lua Alchemy (including iOS targets).
@@ -14,6 +13,21 @@ Some features were sponsored by the DragonRAD: http://dragonrad.com/
    with Adobe AIR and will crush upon launch. Release builds
    in native code work just fine.
 
+2. Functions doFile() and doString() are no longer deprecated due
+   to reentrancy problems with async versions (see below).
+
+3. Functions doFile() and doString() are now reentrant.
+   Note that if you find that you need reentrant doString(), then you
+   probably should use supplyFile() + doFile() instead.
+
+4. Functions doFileAsync() and doStringAsync() are now not callable
+   from Lua (not even from a separate state).
+   See here for details:
+
+   http://code.google.com/p/lua-alchemy/issues/detail?id=154
+
+5. Other minor fixes and improvements (see git log for more information).
+
 Lua Alchemy v0.3 (2011-06-04)
 -----------------------------
 
@@ -22,7 +36,7 @@ Changes since v0.2.2:
 Features 1-6 were sponsored by the DragonRAD: http://dragonrad.com/.
 
 1. AS3 API: doFileAsync(), doStringAsync(). Non-asynchronous versions
-   are now deprecated.
+   are now deprecated. [UPDATE: Not really. See v0.3.1]
 
 2. Finally got as3.flyield() to work -- only inside asynchronous calls.
 
