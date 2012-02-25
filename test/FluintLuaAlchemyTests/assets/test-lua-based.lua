@@ -8,10 +8,23 @@ local protectcallback = function(fn)
   end
 end
 
+-- All tests must have "test" prefix in their name.
 local tests = { }
 
-tests["testLuaBasedDummy"] = protectcallback(function()
-  -- Dummy
+-- Needed to disprove actual bug report (related to #149)
+tests["testLoadStringIsThere"] = protectcallback(function()
+  if not type(loadstring) == "function" then
+    return error(
+        "loadstring global should be function but instead is "
+     .. type(loadstring)
+      )
+  end
+  local code = assert(
+      loadstring([[return 42]], "@testLoadStringIsThere"),
+      "loadstring can compile code"
+    )
+  assert(type(code) == "function", "loadstring compiles code to function")
+  assert(code() == 42, "compiled code works as expected")
 end)
 
 return as3.toobject(tests)
