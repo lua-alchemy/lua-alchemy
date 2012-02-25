@@ -121,9 +121,9 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
   AS3_Val res;
 
   LCALL(L, stack);
-  if (LBASE(L, stack) != 0)
+
+  int base = LBASE(L, stack);
   {
-    LERROR(L, stack, "dirty state stack");
   }
 
   lua_pushboolean(L, 1); /* Placeholder for execution status */
@@ -148,7 +148,7 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
     /* NOTE: It is not necessary string! */
   }
 
-  res = create_as3_value_from_lua_stack(L, 1, LTOP(L, stack), FALSE);
+  res = create_as3_value_from_lua_stack(L, base + 1, LTOP(L, stack), FALSE);
 
   lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
 
@@ -162,10 +162,8 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
   lua_State * L = luaState;
 
   LCALL(L, stack);
-  if (LBASE(L, stack) != 0)
-  {
-    LERROR(L, stack, "dirty state stack");
-  }
+
+  int base = LBASE(L, stack);
 
   SPAM(("luaDoString(): begin (%s)", (isAsync) ? "async" : "sync"));
 
@@ -208,7 +206,7 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
 
   SPAM(("luaDoString(): before create_as3_value_from_lua_stack"));
 
-  res = create_as3_value_from_lua_stack(L, 1, LTOP(L, stack), FALSE);
+  res = create_as3_value_from_lua_stack(L, base + 1, LTOP(L, stack), FALSE);
 
   SPAM(("luaDoString(): after create_as3_value_from_lua_stack"));
 
