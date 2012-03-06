@@ -219,9 +219,7 @@ int do_pcall_with_traceback(
 {
   /* WARNING: Panic alert! Use L*_FN checkers here! */
 
-  SPAM((
-      "do_pcall_with_traceback(): begin (%s)", (is_async) ? "async" : "sync"
-    ));
+  SPAM(("do_pcall_with_traceback(): begin"));
 
   LCALL_ARGS(L, stack, 1 + narg); /* The function itself with arguments */
   int status = 0;

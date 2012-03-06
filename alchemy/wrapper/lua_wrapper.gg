@@ -180,7 +180,7 @@ AS3_Val doFileImpl(lua_State * luaState, AS3_Val strFileName, BOOL isAsync)
   if (status == 0)
   {
     LCHECK_FN(L, stack, 2, fatal_error);
-    SPAM(("doFile(): run begin (%s)", (isAsync) ? "async" : "sync"));
+    SPAM(("doFile(): run begin (%s)"));
     status = do_pcall_with_traceback(L, 0, LUA_MULTRET, isAsync);
     SPAM(("doFile(): run end"));
   }
@@ -212,7 +212,7 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
 
   int base = LBASE(L, stack);
 
-  SPAM(("luaDoString(): begin (%s)", (isAsync) ? "async" : "sync"));
+  SPAM(("luaDoString(): begin (%s)"));
 
   /*
   * TODO: Note that use of get_string_bytes here effectively denies
