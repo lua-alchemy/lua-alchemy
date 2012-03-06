@@ -109,7 +109,6 @@ package wrapperSuite.tests
     {
       var script:String = ( <![CDATA[
         assert(as3.class == nil)
-
       ]]> ).toString();
 
       doString(script, [true])
