@@ -282,6 +282,102 @@ AS3_Val luaDoStringImpl(lua_State * luaState, AS3_Val strValue, BOOL isAsync)
   return res;
 }
 
+AS3_Val callGlobalImpl(
+    lua_State * luaState,
+    AS3_Val keyAS3,
+    AS3_Val args,
+    BOOL isAsync
+  )
+{
+  /* WARNING: Panic alert! Use L*_FN checkers here! */
+
+  lua_State * L = luaState;
+
+  LCALL(L, stack);
+
+  int base = LBASE(L, stack);
+
+  SPAM(("callGlobal(): begin"));
+
+  /*
+  * TODO: Note that use of get_string_bytes here effectively denies
+  *       loading of bytecode -- as it currently does not support
+  *       strings with embedded zeroes.
+  */
+  int status = 0;
+  int nargs = 0;
+  size_t length = 0;
+  AS3_Malloced_Str key = get_string_bytes(keyAS3, &length);
+  AS3_Val res;
+
+  /* TODO: Fix and uncomment, see tests */
+  /*
+  if (isAsync && !can_do_async())
+  {
+    free(key);
+    sztrace("callGlobal(): can't do async from Lua");
+    return AS3_Array(
+        "AS3ValType, StrType",
+        AS3_False(),
+        "can't call callGlobalAsync from Lua"
+      );
+  }
+
+  enter_lua();
+  */
+
+  lua_pushboolean(L, 1); /* Placeholder for execution status */
+
+  /* Push the function on stack */
+  /* NOTE: Not using lua_getfield to allow for embedded zeroes */
+  lua_pushlstring(L, key, length);
+  free(key);
+  lua_gettable(L, LUA_GLOBALSINDEX);
+
+  /*
+  * Here we choose to go ahead and attempt to call the received value,
+  * instead of checking its callability first. Otherwise we would have to
+  * handle all the corner cases, like e.g. __call on numbers metatable.
+  * Luckily, Lua handles such things nicely, and error message meaning
+  * should be obvious to a somewhat experienced user.
+  */
+
+  /*
+  * Push arguments, converting primitive values to Lua for ease of use.
+  *
+  * TODO: Do we need non-converting version
+  *       (as with setGlobalLuaValue / setGlobal)?
+  */
+  nargs = push_as3_array_to_lua_stack_convert_values(L, args);
+
+  LCHECK_FN(L, stack, 1 + 1 + nargs, fatal_error);
+  SPAM(("callGlobal(): run begin"));
+  status = do_pcall_with_traceback(L, nargs, LUA_MULTRET, isAsync);
+  SPAM(("callGlobal(): run end"));
+
+  if (autotrace_error(L, status) != 0)
+  {
+    lua_pushboolean(L, 0); /* ERROR */
+    lua_replace(L, 1);
+    /* Error message is on stack */
+    /* NOTE: It is not necessary string! */
+  }
+
+  SPAM(("callGlobal(): before create_as3_value_from_lua_stack"));
+
+  res = create_as3_value_from_lua_stack(L, base + 1, LTOP(L, stack), FALSE);
+
+  SPAM(("callGlobal(): after create_as3_value_from_lua_stack"));
+
+  lua_pop(L, LEXTRA(L, stack)); /* Cleanup results */
+
+  SPAM(("callGlobal(): end"));
+
+  /*leave_lua();*/
+
+  return res;
+}
+
 /* end of passthru C section */
 }
 
@@ -362,4 +458,18 @@ public function setGlobalLuaValue(
 {
   push_as3_to_lua_stack(luaState, value);
   lua_setglobal(luaState, key);
+}
+
+public function callGlobal(
+    luaState:(lua_State *)uint,
+    key:(AS3_Val)*, // Not using String directly to handle embedded zeroes
+    args:(AS3_Val)Array
+  ):(AS3_Val)Array
+{
+  return callGlobalImpl(
+      luaState,
+      key,
+      args,
+      FALSE /* is not async */
+    );
 }
