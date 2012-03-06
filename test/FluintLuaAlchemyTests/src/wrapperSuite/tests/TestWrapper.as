@@ -204,9 +204,9 @@ package wrapperSuite.tests
       var luaAsset:ByteArray = new ByteArray();
       luaAsset.writeUTFBytes(script);
       const libInitializer:CLibInit = new CLibInit();
-      libInitializer.supplyFile("myFileDoFileNoError.lua", luaAsset);
+      libInitializer.supplyFile("myFileDoFileNoErrorAsync.lua", luaAsset);
 
-      doFileAsync(100, "myFileDoFileNoError.lua", [true, 42]);
+      doFileAsync(100, "myFileDoFileNoErrorAsync.lua", [true, 42]);
     }
 
     public function testDoFileNoFileAsync():void
@@ -224,9 +224,9 @@ package wrapperSuite.tests
       var luaAsset:ByteArray = new ByteArray();
       luaAsset.writeUTFBytes(script);
       const libInitializer:CLibInit = new CLibInit();
-      libInitializer.supplyFile("myFileSyntaxError.lua", luaAsset);
+      libInitializer.supplyFile("myFileSyntaxErrorAsync.lua", luaAsset);
 
-      doFileAsync(100, "myFileSyntaxError.lua", [false, "myFileSyntaxError.lua:2: '=' expected near 'code'"]);
+      doFileAsync(100, "myFileSyntaxErrorAsync.lua", [false, "myFileSyntaxErrorAsync.lua:2: '=' expected near 'code'"]);
     }
 
     public function testDoFileRuntimeErrorStringAsync():void
@@ -237,10 +237,10 @@ package wrapperSuite.tests
       var luaAsset:ByteArray = new ByteArray();
       luaAsset.writeUTFBytes(script);
       const libInitializer:CLibInit = new CLibInit();
-      libInitializer.supplyFile("myFileRuntimeErrorString.lua", luaAsset);
-      var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorString.lua");
+      libInitializer.supplyFile("myFileRuntimeErrorStringAsync.lua", luaAsset);
+      var stack:Array = lua_wrapper.doFile(luaState, "myFileRuntimeErrorStringAsync.lua");
 
-      doFileAsync(100, "myFileRuntimeErrorString.lua", [false, "myFileRuntimeErrorString.lua:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tmyFileRuntimeErrorString.lua:2: in main chunk"]);
+      doFileAsync(100, "myFileRuntimeErrorStringAsync.lua", [false, "myFileRuntimeErrorStringAsync.lua:2: my runtime error\nstack traceback:\n\t[C]: in function 'error'\n\tmyFileRuntimeErrorStringAsync.lua:2: in main chunk"]);
     }
 
     public function testDoFileRuntimeErrorTableAsync():void
@@ -251,10 +251,10 @@ package wrapperSuite.tests
       var luaAsset:ByteArray = new ByteArray();
       luaAsset.writeUTFBytes(script);
       const libInitializer:CLibInit = new CLibInit();
-      libInitializer.supplyFile("myFileRuntimeErrorTable.lua", luaAsset);
+      libInitializer.supplyFile("myFileRuntimeErrorTableAsync.lua", luaAsset);
 
       // TODO: stack[1] Should be a black-boxed object
-      doFileAsync(100, "myFileRuntimeErrorTable.lua", [false, "table"]);
+      doFileAsync(100, "myFileRuntimeErrorTableAsync.lua", [false, "table"]);
     }
   }
 }
