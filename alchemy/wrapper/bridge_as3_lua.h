@@ -25,6 +25,7 @@ int push_as3_to_lua_stack(lua_State * L, AS3_Val val);
 int push_as3_to_lua_stack_if_convertible(lua_State * L, AS3_Val val);
 
 int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array);
+int push_as3_array_to_lua_stack_convert_values(lua_State * L, AS3_Val array);
 
 AS3_Val as3_value_from_foreign_userdata(lua_State * L, int index);
 AS3_Val get_as3_value_from_lua_stack_type(lua_State * L, int i, int type);

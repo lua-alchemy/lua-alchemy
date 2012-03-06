@@ -38,6 +38,36 @@ int push_as3_array_to_lua_stack(lua_State * L, AS3_Val array)
   LRETURN(L, stack, len);
 }
 
+int push_as3_array_to_lua_stack_convert_values(lua_State * L, AS3_Val array)
+{
+  LCALL(L, stack);
+
+  int len = 0;
+  int i = 0;
+  AS3_Val cur;
+  AS3_Val len_v;
+
+  if (!AS3_InstanceOf(array, Array_class))
+  {
+    LRETURN(L, stack, 0);
+  }
+
+  len_v = AS3_GetS(array, "length");
+  len = AS3_IntValue(len_v);
+  SAFE_RELEASE(len_v);
+
+  for (i = 0; i < len; i++)
+  {
+    AS3_Val i_v = AS3_Int(i);
+    cur = AS3_Get(array, i_v);
+    SAFE_RELEASE(i_v);
+    push_as3_to_lua_stack(L, cur);
+    SAFE_RELEASE(cur);
+  }
+
+  LRETURN(L, stack, len);
+}
+
 /*
 * Take the foreign userdata at given Lua stack index
 * and convert it into an ActionScriptValue.
