@@ -220,6 +220,24 @@ package luaAlchemy
     }
 
     /**
+    * Synchronously call a global Lua function.
+    *
+    * Arguments are converted to native Lua types if possible.
+    *
+    * @param key The name of a function to call
+    * @param args Arguments to be passed to the function.
+    * @return The Lua return call stack.
+    */
+    public function callGlobal(key:String, ... args):Array
+    {
+      if (luaState == 0)
+      {
+        init();
+      }
+      return lua_wrapper.callGlobal(luaState, key, args);
+    }
+
+    /**
     * Supply a ByteArray as a file in Lua.
     *
     * @param name The name of the file within Lua

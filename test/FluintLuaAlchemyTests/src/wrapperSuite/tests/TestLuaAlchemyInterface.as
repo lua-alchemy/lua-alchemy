@@ -114,6 +114,143 @@ package wrapperSuite.tests
       doString(script, [true])
     }
 
+    public function testCallGlobalNoGlobal():void
+    {
+      var script:String = ( <![CDATA[
+        local my_global = 42 -- not a global
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      var stack:Array = myLuaAlchemy.callGlobal("my_global");
+      checkLuaResult([false, "attempt to call a nil value\nstack traceback:"], stack);
+    }
+
+    public function testCallGlobalNotAFunction():void
+    {
+      var script:String = ( <![CDATA[
+        my_global = 42
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      var stack:Array = myLuaAlchemy.callGlobal("my_global");
+      checkLuaResult([false, "attempt to call a number value\nstack traceback:"], stack);
+    }
+
+    public function testCallGlobalFunctionFails():void
+    {
+      var script:String = ( <![CDATA[
+        my_global = function()
+          error("expected error")
+        end
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      var stack:Array = myLuaAlchemy.callGlobal("my_global");
+      checkLuaResult([false, "luaDoString:3: expected error\nstack traceback:\n\t[C]: in function 'error'\n\tluaDoString:3: in function <luaDoString:2>"], stack);
+    }
+
+    public function testCallGlobalNoArgsNoReturnValue():void
+    {
+      var script:String = ( <![CDATA[
+        my_global = function(...)
+          assert(select("#", ...) == 0)
+        end
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      var stack:Array = myLuaAlchemy.callGlobal("my_global");
+      checkLuaResult([ true ], stack);
+    }
+
+    public function testCallGlobalSmoke():void
+    {
+      var script:String = ( <![CDATA[
+        my_global = function(...)
+          assert(select("#", ...) == 5, "bad number of args")
+          assert(select(1, ...) == nil, "expected nil")
+          assert(select(2, ...) == 42, "expected number")
+          assert(select(3, ...) == "forty two", "expected string")
+          assert(
+              as3.type(select(4, ...)) == "Array",
+              "expected array"
+            ) -- TODO: Check better
+          assert(select(5, ...) == nil, "expected nil")
+          return ...
+        end
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      // Note that full type conversion test is done in a separate suite.
+      // Now we're just smoke-testing that all is OK.
+      var stack:Array = myLuaAlchemy.callGlobal(
+          "my_global",
+          null,
+          42,
+          "forty two",
+          [ true ],
+          undefined
+        );
+      checkLuaResult(
+          [
+            true,
+            null,
+            42,
+            "forty two",
+            [ true ],
+            undefined
+          ],
+          stack
+        );
+    }
+
+    public function testCallGlobalMTSmoke():void
+    {
+      var script:String = ( <![CDATA[
+        local mt =
+        {
+          __call = function(t, ...)
+            -- Note that this argument is passed implicitly by Lua
+            assert(t == my_global, "bad t")
+
+            assert(select("#", ...) == 5, "bad number of args")
+            assert(select(1, ...) == nil, "expected nil")
+            assert(select(2, ...) == 42, "expected number")
+            assert(select(3, ...) == "forty two", "expected string")
+            assert(
+                as3.type(select(4, ...)) == "Array",
+                "expected array"
+              ) -- TODO: Check better
+            assert(select(5, ...) == nil, "expected nil")
+            return ...
+          end;
+        }
+        my_global = setmetatable({ }, mt)
+      ]]> ).toString();
+      doString(script, [ true ]);
+
+      // Note that full type conversion test is done in a separate suite.
+      // Now we're just smoke-testing that all is OK.
+      var stack:Array = myLuaAlchemy.callGlobal(
+          "my_global",
+          null,
+          42,
+          "forty two",
+          [ true ],
+          undefined
+        );
+      checkLuaResult(
+          [
+            true,
+            null,
+            42,
+            "forty two",
+            [ true ],
+            undefined
+          ],
+          stack
+        );
+    }
+
     /*
     * If you do anything in Lua after you invoked doStringAsync,
     * it crashes in luaV_execute.
