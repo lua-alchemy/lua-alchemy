@@ -26,7 +26,36 @@ Features 1-3 were sponsored by the DragonRAD: http://dragonrad.com/
 
    http://code.google.com/p/lua-alchemy/issues/detail?id=154
 
-5. Other minor fixes and improvements (see git log for more information).
+5. New functions in wrapper to call a global Lua function:
+
+      lua_wrapper.callGlobal(
+          lua,
+          globalLuaSymbol : String,
+          args : Array
+        ) : Array
+
+   (return value protocol is the same as doString()).
+
+   Argument values of primitive types are auto-converted to Lua types
+   for ease of use.
+
+   Note that the function is synchronous. Asynchronous version is still TODO.
+
+6. New function in LuaAlchemy to call a global Lua function:
+
+      lua.callGlobal(
+          globalLuaSymbol : String,
+          ... args
+        ) : Array
+
+   (return value protocol is the same as doString()).
+
+   Argument values of primitive types are auto-converted to Lua types
+   for ease of use.
+
+   Note that the function is synchronous. Asynchronous version is still TODO.
+
+7. Other minor fixes and improvements (see git log for more information).
 
 Lua Alchemy v0.3 (2011-06-04)
 -----------------------------
