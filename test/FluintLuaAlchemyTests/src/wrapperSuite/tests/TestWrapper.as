@@ -196,7 +196,9 @@ package wrapperSuite.tests
     public function testDoFileNoErrorAsync():void
     {
       var script:String = ( <![CDATA[
-        assert(as3.is_async == true)
+        assert(
+            as3.is_async == true, "must be in async mode: " .. tostring(as3.is_async)
+          )
         return 42
         ]]> ).toString();
       var luaAsset:ByteArray = new ByteArray();
