@@ -57,6 +57,7 @@
   <property name="swf.version.major" value="10"/>
   <property name="swf.version.minor" value="0"/>
   <property name="swf.version.revision" value="0"/>
+  <property name="swf.version.format" value="12"/>
   <property name="swf.application" value="${output.swf.name}"/>
   <property name="swf.swf" value="${output.swf.name}"/>
   <property name="swf.bgcolor" value="#FFFFFF"/>
@@ -106,6 +107,7 @@
         <!-- NOTE: this demo intentionally uses wrapper only -->
         <include name="lua-alchemy-wrapper.swc" />
       </compiler.include-libraries>
+      <swf-version>${swf.version.format}</swf-version>
     </mxmlc>
   </target>
 
@@ -120,6 +122,7 @@
         <!-- NOTE: this demo intentionally uses wrapper only -->
         <include name="lua-alchemy-wrapper.swc" />
       </compiler.include-libraries>
+      <swf-version>${swf.version.format}</swf-version>
     </mxmlc>
   </target>
 
