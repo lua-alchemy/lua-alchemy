@@ -1,3 +1,22 @@
+Lua Alchemy v0.3.2 (To be released)
+-----------------------------------
+
+Changes since v0.3.1:
+
+1. All SWF that we build are now compatible with Flash Player 11.2.
+
+   Unfortunately, to ensure compatibility we had to enforce
+   SWF format 12 (instead of SWF format 14 that is default
+   for Flex SDK 4.6).
+
+   If you're building a Lua Alchemy demo with earlier Flex SDK that
+   by some chance does not know yet about SWF format 12, just
+   change `swf.version.format` variable in `build.xml` to a lower value
+   (or remove `<swf-version>` tag from `<mxmlc>` tasks).
+
+   Note that lua-alchemy.swc itself should be SWF-format-agnostic,
+   and should work with any SWF format version.
+
 Lua Alchemy v0.3.1 (2012-03-19)
 -------------------------------
 
