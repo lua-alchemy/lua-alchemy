@@ -72,3 +72,5 @@ File Manifest
     demo/ - Flash and Flex demos
     etc/ - Odds and ends of various usefulness
     test/ - Lua and ActionScript tests
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/lua-alchemy/lua-alchemy/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
