@@ -60,6 +60,7 @@ We need Lua Alchemy to...
 
 File Manifest
 -------------
+
     AUTHORS - Contact information for the authors of lua-alchemy
     BUGS - List of known issues
     COPYRIGHT - Copyright for the lua-alchemy project
