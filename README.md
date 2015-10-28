@@ -1,3 +1,20 @@
+Lua Alchemy is no longer supported
+----------------------------------
+
+Dear Lua Alchemy users,
+
+Thank you for your support in all these years! As you know, Lua Alchemy is based on the old Adobe Alchemy technology, which is no longer supported by Adobe. 
+
+If you need Lua support in the browser, take a look at [lua.vm.js](https://kripken.github.io/lua.vm.js/lua.vm.js.html), [lua5.1.js](https://github.com/logiceditor-com/lua5.1.js/), [Moonshine](http://moonshinejs.org/) and other JS-based implementations. They are the future.
+
+If you really need to use Lua in Adobe Flash, you may want to find someone to sponsor Lua Alchemy port to [FlashCC](http://www.adobe.com/devnet-docs/flascc/README.html), which is the current supported version of Adobe Alchemy. [My company](http://logiceditor.com) engineers are available to do the actual work, but, alas, I do not have resources to do this as an unpaid personal hobby project myself. If you're interested, please contact us at lua-alchemy@logiceditor.com.
+
+If you need commercial support for the current Lua Alchemy, write at the same address.
+
+You can get free support from the community at the [Lua Alchemy mailing list](https://groups.google.com/forum/#!forum/lua-alchemy-dev) and on [StackOverflow](http://stackoverflow.com/search?q=lua-alchemy).
+
+-- Alexander Gladysh, the Lua Alchemy maintainer.
+
 Background
 ----------
 
